@@ -11,7 +11,8 @@ import {
   GamepadIcon,
   Library,
   Menu,
-  X
+  X,
+  Brain
 } from 'lucide-react';
 
 const navItems = [
@@ -23,6 +24,7 @@ const navItems = [
   { icon: BookOpen, label: 'Journal', path: '/journal' },
   { icon: GamepadIcon, label: 'Balance Game', path: '/game' },
   { icon: Library, label: 'Resources', path: '/resources' },
+  { icon: Brain, label: 'Ask AI', path: '/ask-ai' },
 ];
 
 export default function Layout() {

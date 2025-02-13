@@ -9,6 +9,7 @@ import Goals from './pages/Goals';
 import Journal from './pages/Journal';
 import Game from './pages/Game';
 import Resources from './pages/Resources';
+import AskAI from './pages/AskAI';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="journal" element={<Journal />} />
           <Route path="game" element={<Game />} />
           <Route path="resources" element={<Resources />} />
+          <Route path="ask-ai" element={<AskAI />} />
         </Route>
       </Routes>
     </BrowserRouter>

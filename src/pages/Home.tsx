@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   BarChart2, 
   Calendar, 
@@ -16,6 +17,12 @@ const iconMap = {
 };
 
 export default function Home() {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/ask-ai');
+  };
+
   return (
     <div className="space-y-20 py-10">
       {/* Hero Section */}
@@ -97,7 +104,11 @@ export default function Home() {
         <p className="text-xl text-gray-300 mb-8">
           Join thousands of others who have already improved their work-life balance.
         </p>
-        <button className="bg-cyan-500 hover:bg-cyan-600 text-white px-8 py-3 rounded-lg font-bold transition-colors">
+        <button 
+          onClick={handleGetStarted}
+          className="bg-cyan-500 hover:bg-cyan-600 text-white px-8 py-3 rounded-lg font-bold transition-colors transform hover:scale-105 duration-200 flex items-center justify-center gap-2 mx-auto"
+        >
+          <Brain className="h-5 w-5" />
           Get Started Now
         </button>
       </motion.section>
