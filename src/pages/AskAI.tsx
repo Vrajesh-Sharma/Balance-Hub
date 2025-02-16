@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import { Brain, Sparkles } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 interface ScheduleItem {
   activity: string;
   hours: number;
+}
+
+interface RecommendedTime {
+  name: string;
+  value: number;
+  color: string;
 }
 
 const AskAI: React.FC = () => {
@@ -17,11 +24,49 @@ const AskAI: React.FC = () => {
   const [messageType, setMessageType] = useState<'success' | 'warning' | 'error'>('success');
   const [showMessage, setShowMessage] = useState(false);
 
+  // Recommended time allocation for a balanced 24-hour day
+  const recommendedTime: RecommendedTime[] = [
+    { name: 'Work', value: 8, color: '#22D3EE' }, // Cyan
+    { name: 'Personal Time', value: 8, color: '#F472B6' }, // Pink
+    { name: 'Sleep', value: 8, color: '#A78BFA' }, // Purple
+  ];
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-gray-800 border border-gray-700 p-2 rounded-lg shadow-lg">
+          <p className="text-white font-medium">{`${payload[0].name}: ${payload[0].value} hours`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, name, value }: any) => {
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text 
+        x={x} 
+        y={y} 
+        fill="white" 
+        textAnchor={x > cx ? 'start' : 'end'} 
+        dominantBaseline="central"
+        className="text-sm font-medium"
+      >
+        {`${value}hrs`}
+      </text>
+    );
+  };
+
   const handleHoursChange = (index: number, hours: number) => {
     const newSchedule = [...scheduleItems];
     newSchedule[index].hours = hours;
     setScheduleItems(newSchedule);
-    setShowMessage(false); // Hide message when input changes
+    setShowMessage(false);
   };
 
   const handleAnalyzeClick = () => {
@@ -155,6 +200,49 @@ const AskAI: React.FC = () => {
                   : 'bg-red-900/50 text-red-400 border border-red-400'
             }`}>
               {message}
+            </div>
+          )}
+
+          {/* Pie Chart - Only show when there are warnings/errors */}
+          {showMessage && messageType !== 'success' && (
+            <div className="mt-8 p-6 bg-gray-800 rounded-xl shadow-xl border border-gray-700">
+              <h3 className="text-xl font-semibold text-white mb-6 text-center">
+                Recommended Daily Time Allocation
+              </h3>
+              <div className="h-[400px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={recommendedTime}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={150}
+                      innerRadius={80}
+                      dataKey="value"
+                      labelLine={false}
+                      label={renderCustomizedLabel}
+                      animationDuration={750}
+                      animationBegin={0}
+                    >
+                      {recommendedTime.map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={entry.color}
+                          className="transition-opacity duration-200 hover:opacity-80"
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend 
+                      verticalAlign="bottom" 
+                      height={36}
+                      formatter={(value) => (
+                        <span className="text-gray-300">{value}</span>
+                      )}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           )}
         </div>

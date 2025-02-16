@@ -68,6 +68,7 @@ export default function Journal() {
       const { error } = await mockApi.createJournalEntry(
         newEntry.content,
         newEntry.mood,
+        newEntry.category,
         format(new Date(), 'yyyy-MM-dd')
       );
       if (error) throw error;

@@ -31,26 +31,26 @@ export const homePageData = {
     {
       name: "Vrajesh Sharma",
       role: "AI Engineer",
-      content: "This platform has completely transformed how I manage my work-life balance. The insights are invaluable!",
-      image: "src/assets/IMG_20240628_121552924~2.jpg"
+      content: "Balance Hub has completely transformed how I manage my work-life balance. The insights are invaluable!",
+      image: "https://i.pinimg.com/736x/fe/1a/2e/fe1a2e4d4acb5670119f3ec052f877dd.jpg"
     },
     {
-      name: "Vrajesh Sharma",
-      role: "AI Engineer",
-      content: "This platform has completely transformed how I manage my work-life balance. The insights are invaluable!",
-      image: "src/assets/IMG_20240628_121552924~2.jpg"
+      name: "Yug Limbachiya",
+      role: "UI/UX Designer",
+      content: "Achieving balance felt impossible until I found Balance Hub. Now, I feel more in control and energized!",
+      image: "https://i.pinimg.com/736x/31/72/db/3172db5b899b0993c6077d76cd20e1df.jpg"
     },
     {
-      name: "Vrajesh Sharma",
-      role: "AI Engineer",
-      content: "This platform has completely transformed how I manage my work-life balance. The insights are invaluable!",
-      image: "src/assets/IMG_20240628_121552924~2.jpg"
+      name: "Parth Bhutaiya",
+      role: "Data Scientist",
+      content: "Balance Hub provides practical strategies that actually work. My work-life harmony has never been better!",
+      image: "https://i.pinimg.com/736x/fc/ef/30/fcef306368649b257431d9538b1566e2.jpg"
     },
     {
-      name: "Vrajesh Sharma",
-      role: "AI Engineer",
-      content: "This platform has completely transformed how I manage my work-life balance. The insights are invaluable!",
-      image: "src/assets/IMG_20240628_121552924~2.jpg"
+      name: "Utsav Ratpiya",
+      role: "Product Manager",
+      content: "Finally, a platform that understands the importance of both career growth and personal well-being.",
+      image: "https://i.pinimg.com/736x/51/6c/29/516c29cf8a2f7c70751649186565d400.jpg"
     }
   ]
 };
@@ -146,45 +146,46 @@ export const stressHubData = {
 
 // Journal Page Data
 export const journalData = {
-  prompts: [
-    {
-      id: 1,
-      question: "What were your main achievements today?",
-      category: "Accomplishments"
-    },
-    {
-      id: 2,
-      question: "How did you maintain work-life balance today?",
-      category: "Balance"
-    },
-    {
-      id: 3,
-      question: "What challenges did you face and how did you overcome them?",
-      category: "Challenges"
-    },
-    {
-      id: 4,
-      question: "What are you grateful for today?",
-      category: "Gratitude"
-    },
-    {
-      id: 5,
-      question: "What could you improve tomorrow?",
-      category: "Growth"
-    }
-  ],
   categories: [
-    { id: "work", label: "Work", color: "blue" },
-    { id: "personal", label: "Personal", color: "green" },
-    { id: "health", label: "Health", color: "red" },
-    { id: "relationships", label: "Relationships", color: "purple" }
+    { id: 'work', label: 'Work' },
+    { id: 'personal', label: 'Personal' },
+    { id: 'health', label: 'Health & Wellness' },
+    { id: 'goals', label: 'Goals & Achievements' },
+    { id: 'reflection', label: 'Daily Reflection' }
   ],
   moods: [
-    { id: "productive", label: "Productive", icon: "Zap" },
-    { id: "happy", label: "Happy", icon: "Smile" },
-    { id: "neutral", label: "Neutral", icon: "Meh" },
-    { id: "stressed", label: "Stressed", icon: "Frown" },
-    { id: "tired", label: "Tired", icon: "Battery" }
+    { id: 'productive', label: 'Productive' },
+    { id: 'happy', label: 'Happy' },
+    { id: 'neutral', label: 'Neutral' },
+    { id: 'stressed', label: 'Stressed' },
+    { id: 'tired', label: 'Tired' }
+  ],
+  prompts: [
+    { 
+      id: 1, 
+      category: 'Work',
+      question: 'What was your biggest achievement at work today?' 
+    },
+    { 
+      id: 2, 
+      category: 'Personal',
+      question: 'How did you maintain work-life balance today?' 
+    },
+    { 
+      id: 3, 
+      category: 'Health & Wellness',
+      question: 'What steps did you take today to maintain your physical and mental well-being?' 
+    },
+    { 
+      id: 4, 
+      category: 'Goals & Achievements',
+      question: 'What progress did you make towards your personal or professional goals?' 
+    },
+    { 
+      id: 5, 
+      category: 'Daily Reflection',
+      question: "What are three things you're grateful for today?"
+    }
   ]
 };
 

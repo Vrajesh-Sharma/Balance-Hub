@@ -8,6 +8,8 @@ import { balanceTrackerData } from '../lib/staticData';
 
 const { activityTypes, colors: COLORS } = balanceTrackerData;
 
+const formatHours = (value: number) => Number(value.toFixed(1));
+
 export default function BalanceTracker() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -71,9 +73,9 @@ export default function BalanceTracker() {
 
   const pieChartData = activityTypes.map((type) => ({
     name: type.label,
-    value: todayActivities.reduce((sum, activity) => 
+    value: formatHours(todayActivities.reduce((sum, activity) => 
       activity.type === type.value ? sum + activity.hours : sum
-    , 0),
+    , 0)),
   }));
 
   const weekDays = eachDayOfInterval({ start: startDate, end: endDate });
@@ -87,9 +89,9 @@ export default function BalanceTracker() {
       ...Object.fromEntries(
         activityTypes.map((type) => [
           type.value,
-          dayActivities.reduce((sum, activity) => 
+          formatHours(dayActivities.reduce((sum, activity) => 
             activity.type === type.value ? sum + activity.hours : sum
-          , 0),
+          , 0)),
         ])
       ),
     };
@@ -198,7 +200,7 @@ export default function BalanceTracker() {
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip />
+            <Tooltip formatter={(value) => `${value} hrs`} />
             <Legend />
           </PieChart>
         </motion.div>

@@ -42,12 +42,43 @@ export const goals = [
 ];
 
 // Dummy journal entries
-export const journalEntries = generatePastDates().map(date => ({
-  id: crypto.randomUUID(),
-  content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  mood: ['Happy', 'Productive', 'Tired', 'Energetic'][Math.floor(Math.random() * 4)],
-  date,
-}));
+export const journalEntries = [
+  {
+    id: 1,
+    date: '2024-02-10',
+    content: "Successfully completed the quarterly project presentation ahead of schedule. The team's effort paid off with positive feedback from stakeholders. Taking short breaks every hour helped maintain productivity.",
+    mood: 'productive',
+    category: 'work'
+  },
+  {
+    id: 2,
+    date: '2024-02-10',
+    content: "Dedicated two hours to personal development today. Read a chapter from 'Atomic Habits' and practiced meditation for 20 minutes. Feeling more centered and focused.",
+    mood: 'happy',
+    category: 'personal'
+  },
+  {
+    id: 3,
+    date: '2024-02-09',
+    content: 'Morning workout followed by a healthy breakfast. Energy levels were high throughout the day. Need to maintain this routine for better physical and mental health.',
+    mood: 'productive',
+    category: 'health'
+  },
+  {
+    id: 4,
+    date: '2024-02-09',
+    content: 'Made progress on my goal of learning web development. Completed two modules of the React course and built a small project. Small steps, but moving forward consistently.',
+    mood: 'happy',
+    category: 'goals'
+  },
+  {
+    id: 5,
+    date: '2024-02-08',
+    content: 'Today was challenging with multiple deadlines. Feeling stressed but managed to stay organized. Need to work on better time management strategies.',
+    mood: 'stressed',
+    category: 'reflection'
+  }
+];
 
 // Dummy schedules
 export const schedules = generatePastDates().flatMap(date => [
@@ -115,13 +146,20 @@ export const mockApi = {
   },
 
   // Journal Entries
-  createJournalEntry: async (content: string, mood: string, date: string) => {
-    const newEntry = { id: crypto.randomUUID(), content, mood, date };
-    journalEntries.push(newEntry);
-    return { data: newEntry, error: null };
+  getJournalEntries: () => {
+    return Promise.resolve({ data: journalEntries, error: null });
   },
-  getJournalEntries: async () => {
-    return { data: journalEntries, error: null };
+
+  createJournalEntry: (content: string, mood: string, date: string) => {
+    const newEntry = {
+      id: journalEntries.length + 1,
+      content,
+      mood,
+      date,
+      category: 'reflection' // Default category
+    };
+    journalEntries.unshift(newEntry);
+    return Promise.resolve({ data: newEntry, error: null });
   },
 
   // Schedules

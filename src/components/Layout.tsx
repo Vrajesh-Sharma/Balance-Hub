@@ -38,7 +38,7 @@ export default function Layout() {
         <div className="flex items-center justify-between py-4 px-6">
           <div className="flex items-center gap-2">
             <BarChart2 className="h-8 w-8 text-cyan-400" />
-            <h1 className="text-xl font-bold">Balance Hub</h1>
+            <h1 className="text-xl font-bold"><a href="/">Balance Hub</a></h1>
           </div>
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
