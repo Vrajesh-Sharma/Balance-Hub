@@ -199,11 +199,19 @@ export default function Journal() {
       </div>
 
       {showNewEntryModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowNewEntryModal(false);
+            }
+          }}
+        >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-gray-800 p-6 rounded-xl w-full max-w-2xl"
+            onClick={e => e.stopPropagation()}
           >
             <h2 className="text-xl font-bold mb-4">New Journal Entry</h2>
             <form onSubmit={handleAddEntry} className="space-y-4">

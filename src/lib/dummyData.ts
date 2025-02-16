@@ -150,13 +150,13 @@ export const mockApi = {
     return Promise.resolve({ data: journalEntries, error: null });
   },
 
-  createJournalEntry: (content: string, mood: string, date: string) => {
+  createJournalEntry: (content: string, mood: string, category: string, date: string) => {
     const newEntry = {
       id: journalEntries.length + 1,
       content,
       mood,
+      category,
       date,
-      category: 'reflection' // Default category
     };
     journalEntries.unshift(newEntry);
     return Promise.resolve({ data: newEntry, error: null });

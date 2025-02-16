@@ -24,12 +24,12 @@ export default function Home() {
   };
 
   return (
-    <div className="space-y-20 py-10">
+    <div className="space-y-8 py-10">
       {/* Hero Section */}
       <motion.section 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center space-y-6"
+        className="text-center space-y-6 mb-20"
       >
         <h1 className="text-5xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
           {homePageData.hero.title}
@@ -47,7 +47,7 @@ export default function Home() {
       </motion.section>
 
       {/* Features Grid */}
-      <section className="grid md:grid-cols-2 gap-8">
+      <section className="grid md:grid-cols-2 gap-8 mb-20">
         {homePageData.features.map((feature, index) => {
           const Icon = iconMap[feature.icon as keyof typeof iconMap];
           return (
@@ -67,7 +67,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section>
+      <section className="mb-20">
         <h2 className="text-3xl font-bold text-center mb-10">What Our Users Say</h2>
         <div className="grid md:grid-cols-2 gap-8">
           {homePageData.testimonials.map((testimonial, index) => (
@@ -98,7 +98,7 @@ export default function Home() {
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="text-center bg-gradient-to-r from-cyan-900 to-blue-900 p-12 rounded-xl"
+        className="text-center bg-gradient-to-r from-cyan-900 to-blue-900 p-12 rounded-xl mb-8"
       >
         <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Life?</h2>
         <p className="text-xl text-gray-300 mb-8">
@@ -112,6 +112,27 @@ export default function Home() {
           Get Started Now
         </button>
       </motion.section>
+
+      {/* Developer Signature */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center mt-2"
+      >
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800/50 rounded-full">
+          <span className="text-sm text-gray-400">Developed with</span>
+          <span className="text-red-500">❤️</span>
+          <span className="text-sm text-gray-400">by</span>
+          <a 
+            href="https://github.com/Vrajesh-Sharma" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-cyan-400 hover:text-cyan-300 transition-colors"
+          >
+            Vrajesh Sharma
+          </a>
+        </div>
+      </motion.div>
     </div>
   );
 }

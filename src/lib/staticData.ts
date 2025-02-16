@@ -150,8 +150,7 @@ export const journalData = {
     { id: 'work', label: 'Work' },
     { id: 'personal', label: 'Personal' },
     { id: 'health', label: 'Health & Wellness' },
-    { id: 'goals', label: 'Goals & Achievements' },
-    { id: 'reflection', label: 'Daily Reflection' }
+    { id: 'goals', label: 'Goals & Achievements' }
   ],
   moods: [
     { id: 'productive', label: 'Productive' },

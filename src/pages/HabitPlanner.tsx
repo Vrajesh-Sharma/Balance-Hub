@@ -144,11 +144,20 @@ export default function HabitPlanner() {
       </div>
 
       {showTemplateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[100]"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowTemplateModal(false);
+            }
+          }}
+          style={{ pointerEvents: 'auto' }}
+        >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-gray-800 p-6 rounded-xl w-full max-w-md"
+            onClick={e => e.stopPropagation()}
           >
             <h2 className="text-xl font-bold mb-4">
               Add Schedule for {format(selectedDate, 'MMMM d, yyyy')}
@@ -160,9 +169,9 @@ export default function HabitPlanner() {
                   key={template.name}
                   onClick={() => applyTemplate(template)}
                   disabled={loading}
-                  className="w-full flex items-center gap-4 p-4 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors disabled:opacity-50"
+                  className="w-full flex items-center gap-4 p-4 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <CalendarIcon size={24} className="text-cyan-500" />
+                  <CalendarIcon size={24} className="text-cyan-500 shrink-0" />
                   <div className="text-left">
                     <h3 className="font-medium">{template.name}</h3>
                     <p className="text-sm text-gray-400">
@@ -172,7 +181,7 @@ export default function HabitPlanner() {
                 </button>
               ))}
 
-              <div className="flex justify-end gap-4 mt-6">
+              <div className="flex justify-end gap-4 mt-6 pt-4 border-t border-gray-700">
                 <button
                   onClick={() => setShowTemplateModal(false)}
                   className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
