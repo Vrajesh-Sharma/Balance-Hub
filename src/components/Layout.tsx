@@ -12,7 +12,8 @@ import {
   Library,
   Menu,
   X,
-  Brain
+  Brain,
+  Timer
 } from 'lucide-react';
 
 const navItems = [
@@ -24,6 +25,7 @@ const navItems = [
   { icon: BookOpen, label: 'Journal', path: '/journal' },
   { icon: GamepadIcon, label: 'Balance Game', path: '/game' },
   { icon: Library, label: 'Resources', path: '/resources' },
+  { icon: Timer, label: 'Work Time', path: '/work-time' },
   { icon: Brain, label: 'Ask AI', path: '/ask-ai' },
 ];
 

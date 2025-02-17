@@ -10,6 +10,7 @@ import Journal from './pages/Journal';
 import Game from './pages/Game';
 import Resources from './pages/Resources';
 import AskAI from './pages/AskAI';
+import WorkTimeTracker from './pages/WorkTimeTracker';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="game" element={<Game />} />
           <Route path="resources" element={<Resources />} />
           <Route path="ask-ai" element={<AskAI />} />
+          <Route path="work-time" element={<WorkTimeTracker />} />
         </Route>
       </Routes>
     </BrowserRouter>
