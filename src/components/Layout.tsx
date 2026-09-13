@@ -27,6 +27,7 @@ const navItems = [
   { icon: Library, label: 'Resources', path: '/resources' },
   { icon: Timer, label: 'Work Time', path: '/work-time' },
   { icon: Brain, label: 'Ask AI', path: '/ask-ai' },
+  { icon: Brain, label: 'Smart Scheduler', path: '/smart-scheduler' },
 ];
 
 export default function Layout() {

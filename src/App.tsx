@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
@@ -11,6 +10,7 @@ import Game from './pages/Game';
 import Resources from './pages/Resources';
 import AskAI from './pages/AskAI';
 import WorkTimeTracker from './pages/WorkTimeTracker';
+import SmartScheduler from './pages/SmartScheduler';
 
 function App() {
   return (
@@ -27,6 +27,7 @@ function App() {
           <Route path="resources" element={<Resources />} />
           <Route path="ask-ai" element={<AskAI />} />
           <Route path="work-time" element={<WorkTimeTracker />} />
+          <Route path="smart-scheduler" element={<SmartScheduler />} />
         </Route>
       </Routes>
     </BrowserRouter>

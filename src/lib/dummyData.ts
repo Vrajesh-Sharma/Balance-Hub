@@ -1,109 +1,30 @@
 import { format, subDays } from 'date-fns';
+import { 
+  generateSyntheticProfile, 
+  aggregateUserProfile, 
+  getDefaultPreferences,
+  schedulesToCurrentFormat 
+} from '../soft-computing/data';
 
 // Generate dates for the last 7 days
 const generatePastDates = () => {
   return Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), i), 'yyyy-MM-dd'));
 };
 
-// Dummy activities data
-export const activities = generatePastDates().flatMap(date => [
-  { id: crypto.randomUUID(), type: 'work', hours: Math.random() * 8 + 2, date },
-  { id: crypto.randomUUID(), type: 'personal', hours: Math.random() * 4 + 1, date },
-  { id: crypto.randomUUID(), type: 'exercise', hours: Math.random() * 2 + 0.5, date },
-  { id: crypto.randomUUID(), type: 'hobbies', hours: Math.random() * 3 + 1, date },
-]);
+// Generate a realistic synthetic profile for the application
+let syntheticProfile = generateSyntheticProfile(30);
 
-// Dummy goals data
-export const goals = [
-  {
-    id: crypto.randomUUID(),
-    title: 'Complete Project Milestone',
-    category: 'work',
-    progress: 75,
-    deadline: format(subDays(new Date(), -7), 'yyyy-MM-dd'),
-    completed: false,
-  },
-  {
-    id: crypto.randomUUID(),
-    title: 'Read 2 Books',
-    category: 'personal',
-    progress: 50,
-    deadline: format(subDays(new Date(), -14), 'yyyy-MM-dd'),
-    completed: false,
-  },
-  {
-    id: crypto.randomUUID(),
-    title: 'Run 5K',
-    category: 'exercise',
-    progress: 90,
-    deadline: format(subDays(new Date(), -5), 'yyyy-MM-dd'),
-    completed: false,
-  },
-];
+// Dummy activities data (from synthetic profile)
+export const activities = syntheticProfile.activities;
 
-// Dummy journal entries
-export const journalEntries = [
-  {
-    id: 1,
-    date: '2024-02-10',
-    content: "Successfully completed the quarterly project presentation ahead of schedule. The team's effort paid off with positive feedback from stakeholders. Taking short breaks every hour helped maintain productivity.",
-    mood: 'productive',
-    category: 'work'
-  },
-  {
-    id: 2,
-    date: '2024-02-10',
-    content: "Dedicated two hours to personal development today. Read a chapter from 'Atomic Habits' and practiced meditation for 20 minutes. Feeling more centered and focused.",
-    mood: 'happy',
-    category: 'personal'
-  },
-  {
-    id: 3,
-    date: '2024-02-09',
-    content: 'Morning workout followed by a healthy breakfast. Energy levels were high throughout the day. Need to maintain this routine for better physical and mental health.',
-    mood: 'productive',
-    category: 'health'
-  },
-  {
-    id: 4,
-    date: '2024-02-09',
-    content: 'Made progress on my goal of learning web development. Completed two modules of the React course and built a small project. Small steps, but moving forward consistently.',
-    mood: 'happy',
-    category: 'goals'
-  },
-  {
-    id: 5,
-    date: '2024-02-08',
-    content: 'Today was challenging with multiple deadlines. Feeling stressed but managed to stay organized. Need to work on better time management strategies.',
-    mood: 'stressed',
-    category: 'reflection'
-  }
-];
+// Dummy goals data (from synthetic profile)
+export const goals = syntheticProfile.goals;
 
-// Dummy schedules
-export const schedules = generatePastDates().flatMap(date => [
-  {
-    id: crypto.randomUUID(),
-    title: 'Morning Workout',
-    start_time: `${date}T06:00:00Z`,
-    end_time: `${date}T07:00:00Z`,
-    template_name: 'Daily Routine',
-  },
-  {
-    id: crypto.randomUUID(),
-    title: 'Work Focus Time',
-    start_time: `${date}T09:00:00Z`,
-    end_time: `${date}T12:00:00Z`,
-    template_name: 'Work Schedule',
-  },
-  {
-    id: crypto.randomUUID(),
-    title: 'Family Time',
-    start_time: `${date}T18:00:00Z`,
-    end_time: `${date}T20:00:00Z`,
-    template_name: 'Evening Routine',
-  },
-]);
+// Dummy journal entries (from synthetic profile)
+export const journalEntries = syntheticProfile.journalEntries;
+
+// Dummy schedules (from synthetic profile)
+export const schedules = syntheticProfile.schedules;
 
 // Mock API functions to replace Supabase functions
 export const mockApi = {
@@ -179,5 +100,45 @@ export const mockApi = {
       data: schedules.filter(s => s.start_time >= startDate && s.end_time <= endDate),
       error: null,
     };
+  },
+};
+
+// Aggregator functions for Smart Scheduler
+export const smartSchedulerData = {
+  // Get aggregated user inputs for Fuzzy Logic
+  getUserInputs: () => {
+    return aggregateUserProfile(
+      activities,
+      [], // workLogs would come from WorkTimeTracker localStorage
+      journalEntries,
+      goals,
+      schedules,
+      getDefaultPreferences()
+    );
+  },
+
+  // Get current schedule format for GA baseline comparison
+  getCurrentSchedule: () => {
+    return schedulesToCurrentFormat(schedules);
+  },
+
+  // Get user preferences
+  getPreferences: () => {
+    return getDefaultPreferences();
+  },
+
+  // Regenerate synthetic profile (for testing)
+  regenerateProfile: (days = 30) => {
+    syntheticProfile = generateSyntheticProfile(days);
+    // Update the exported arrays
+    activities.length = 0;
+    activities.push(...syntheticProfile.activities);
+    goals.length = 0;
+    goals.push(...syntheticProfile.goals);
+    journalEntries.length = 0;
+    journalEntries.push(...syntheticProfile.journalEntries);
+    schedules.length = 0;
+    schedules.push(...syntheticProfile.schedules);
+    return syntheticProfile;
   },
 }; 

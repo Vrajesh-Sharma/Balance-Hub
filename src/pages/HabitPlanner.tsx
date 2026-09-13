@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { Plus, Calendar as CalendarIcon, AlertCircle } from 'lucide-react';
+import { Plus, Calendar as CalendarIcon, AlertCircle, Brain, Zap } from 'lucide-react';
 import { format } from 'date-fns';
 import { mockApi } from '../lib/dummyData';
+import { Link } from 'react-router-dom';
 
 const templates = [
   {
@@ -107,13 +108,23 @@ export default function HabitPlanner() {
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-8 flex justify-between items-center">
         <h1 className="text-2xl font-bold">Habit Planner</h1>
-        <button
-          onClick={() => setShowTemplateModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 rounded-lg transition-colors"
-        >
-          <Plus size={20} />
-          Add Schedule
-        </button>
+        <div className="flex items-center gap-4">
+          <Link
+            to="/smart-scheduler"
+            className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 rounded-lg transition-colors"
+          >
+            <Zap className="h-4 w-4" />
+            <Brain className="h-4 w-4" />
+            Optimize with AI
+          </Link>
+          <button
+            onClick={() => setShowTemplateModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+          >
+            <Plus size={20} />
+            Add Schedule
+          </button>
+        </div>
       </div>
 
       {error && (
