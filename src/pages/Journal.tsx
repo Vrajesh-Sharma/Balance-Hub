@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BookOpen, 
   Plus, 
@@ -12,7 +12,11 @@ import {
   Frown,
   Battery,
   AlertCircle,
-  Tag
+  Tag,
+  Pen,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { mockApi } from '../lib/dummyData';
@@ -26,9 +30,24 @@ const moodIcons = {
   tired: Battery,
 };
 
+const moodColors = {
+  productive: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20',
+  happy: 'text-green-400 bg-green-500/10 border-green-500/20',
+  neutral: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+  stressed: 'text-red-400 bg-red-500/10 border-red-500/20',
+  tired: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
+};
+
+const moodLabels = {
+  productive: 'Productive',
+  happy: 'Happy',
+  neutral: 'Neutral',
+  stressed: 'Stressed',
+  tired: 'Tired',
+};
+
 export default function Journal() {
   const [showNewEntryModal, setShowNewEntryModal] = React.useState(false);
-  const [selectedPrompt, setSelectedPrompt] = React.useState('');
   const [selectedCategory, setSelectedCategory] = React.useState('');
   const [searchQuery, setSearchQuery] = React.useState('');
   const [entries, setEntries] = React.useState<any[]>([]);
@@ -39,6 +58,7 @@ export default function Journal() {
     mood: 'neutral',
     category: '',
   });
+  const [showFilters, setShowFilters] = React.useState(false);
 
   React.useEffect(() => {
     loadEntries();
@@ -76,11 +96,21 @@ export default function Journal() {
       await loadEntries();
       setShowNewEntryModal(false);
       setNewEntry({ content: '', mood: 'neutral', category: '' });
-      setSelectedPrompt('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create journal entry');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteEntry = async (id: string) => {
+    if (!confirm('Delete this entry?')) return;
+    try {
+      const { error } = await mockApi.deleteJournalEntry(id);
+      if (error) throw error;
+      await loadEntries();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete entry');
     }
   };
 
@@ -94,199 +124,427 @@ export default function Journal() {
     return matchesSearch && matchesCategory;
   });
 
+  const stats = {
+    total: entries.length,
+    thisWeek: entries.filter(e => new Date(e.date) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length,
+    categories: new Set(entries.map(e => e.category)).size,
+    avgLength: entries.length > 0 ? Math.round(entries.reduce((sum, e) => sum + e.content.length, 0) / entries.length) : 0,
+  };
+
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold mb-2">Work-Life Journal</h1>
-          <p className="text-gray-400">Document your journey and track your growth</p>
+    <div className="container-custom py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-8"
+      >
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-display-sm font-display font-bold text-white flex items-center gap-3">
+              <BookOpen className="h-8 w-8 text-primary-400" />
+              Work-Life Journal
+            </h1>
+            <p className="text-dark-400 mt-1">Document your journey and track your growth</p>
+          </div>
+          <button
+            onClick={() => setShowNewEntryModal(true)}
+            className="btn-primary"
+          >
+            <Plus className="h-5 w-5" />
+            New Entry
+          </button>
         </div>
-        <button
-          onClick={() => setShowNewEntryModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 rounded-lg transition-colors"
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="card p-6"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-dark-400 text-sm font-medium">Total Entries</p>
+                <p className="text-3xl font-display font-bold text-white mt-1">{stats.total}</p>
+              </div>
+              <div className="p-3 bg-primary-500/10 rounded-xl text-primary-400">
+                <BookOpen className="h-6 w-6" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="card p-6"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-dark-400 text-sm font-medium">This Week</p>
+                <p className="text-3xl font-display font-bold text-white mt-1">{stats.thisWeek}</p>
+              </div>
+              <div className="p-3 bg-green-500/10 rounded-xl text-green-400">
+                <Calendar className="h-6 w-6" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="card p-6"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-dark-400 text-sm font-medium">Categories</p>
+                <p className="text-3xl font-display font-bold text-white mt-1">{stats.categories}</p>
+              </div>
+              <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400">
+                <Tag className="h-6 w-6" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="card p-6"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-dark-400 text-sm font-medium">Avg Length</p>
+                <p className="text-3xl font-display font-bold text-white mt-1">{stats.avgLength} chars</p>
+              </div>
+              <div className="p-3 bg-orange-500/10 rounded-xl text-orange-400">
+                <Pen className="h-6 w-6" />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Error Display */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400"
+            role="alert"
+          >
+            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+            <span className="text-sm">{error}</span>
+          </motion.div>
+        )}
+
+        {/* Search & Filters */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="card p-6"
         >
-          <Plus size={20} />
-          New Entry
-        </button>
-      </div>
-
-      {error && (
-        <div className="mb-6 flex items-center gap-2 text-red-500 bg-red-500 bg-opacity-10 p-4 rounded-lg">
-          <AlertCircle size={20} />
-          {error}
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-        <div className="lg:col-span-3">
-          <div className="flex gap-4 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-500" size={20} />
               <input
                 type="text"
                 placeholder="Search entries..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-800 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none"
+                className="input pl-12"
               />
             </div>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 bg-gray-800 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none"
-            >
-              <option value="">All Categories</option>
-              {journalData.categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-y-4">
-            {filteredEntries.map((entry) => {
-              const MoodIcon = moodIcons[entry.mood as keyof typeof moodIcons] || Meh;
-              return (
-                <motion.div
-                  key={entry.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-gray-800 p-6 rounded-xl"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <Calendar size={20} className="text-cyan-500" />
-                        <span className="text-gray-400">
-                          {format(new Date(entry.date), 'MMMM d, yyyy')}
-                        </span>
-                      </div>
-                      {entry.category && (
-                        <div className="flex items-center gap-2 px-3 py-1 bg-gray-700 rounded-full">
-                          <Tag size={16} />
-                          <span className="text-sm">{entry.category}</span>
-                        </div>
-                      )}
-                    </div>
-                    <MoodIcon size={24} className="text-cyan-500" />
-                  </div>
-                  <p className="text-gray-300 whitespace-pre-wrap">{entry.content}</p>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="bg-gray-800 p-6 rounded-xl h-fit">
-          <h2 className="text-lg font-semibold mb-4">Writing Prompts</h2>
-          <div className="space-y-3">
-            {journalData.prompts.map((prompt) => (
+            <div className="flex items-center gap-3">
               <button
-                key={prompt.id}
-                onClick={() => {
-                  setShowNewEntryModal(true);
-                  setNewEntry(prev => ({ ...prev, content: prompt.question }));
-                }}
-                className="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+                onClick={() => setShowFilters(!showFilters)}
+                className={`btn-secondary btn-sm flex items-center gap-2 ${showFilters ? 'bg-primary-500/20 border-primary-500/30 text-primary-400' : ''}`}
               >
-                <p className="text-sm text-gray-300">{prompt.question}</p>
-                <span className="text-xs text-cyan-500 mt-1">{prompt.category}</span>
+                <Filter className="h-4 w-4" />
+                Filters
               </button>
-            ))}
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="input w-auto min-w-[180px]"
+              >
+                <option value="">All Categories</option>
+                {journalData.categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {showNewEntryModal && (
-        <div 
-          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setShowNewEntryModal(false);
-            }
-          }}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-gray-800 p-6 rounded-xl w-full max-w-2xl"
-            onClick={e => e.stopPropagation()}
-          >
-            <h2 className="text-xl font-bold mb-4">New Journal Entry</h2>
-            <form onSubmit={handleAddEntry} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Category</label>
-                <select
-                  value={newEntry.category}
-                  onChange={(e) => setNewEntry({ ...newEntry, category: e.target.value })}
-                  className="w-full bg-gray-700 rounded-lg p-2"
-                  required
-                >
-                  <option value="">Select category...</option>
-                  {journalData.categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Content</label>
-                <textarea
-                  value={newEntry.content}
-                  onChange={(e) => setNewEntry({ ...newEntry, content: e.target.value })}
-                  className="w-full bg-gray-700 rounded-lg p-2 min-h-[200px]"
-                  placeholder="Write your thoughts here..."
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Mood</label>
-                <div className="flex gap-4">
+          {/* Advanced Filters */}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-4 pt-4 border-t border-dark-700"
+              >
+                <div className="flex flex-wrap gap-3">
                   {journalData.moods.map((mood) => {
                     const Icon = moodIcons[mood.id as keyof typeof moodIcons];
                     return (
                       <button
                         key={mood.id}
-                        type="button"
-                        onClick={() => setNewEntry({ ...newEntry, mood: mood.id })}
-                        className={`p-3 rounded-lg transition-colors ${
-                          newEntry.mood === mood.id
-                            ? 'bg-cyan-500 bg-opacity-20 border border-cyan-500'
-                            : 'bg-gray-700 hover:bg-gray-600'
-                        }`}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${moodColors[mood.id as keyof typeof moodColors]}`}
                       >
-                        <Icon size={24} />
+                        <Icon className="h-4 w-4 inline mr-1" />
+                        {moodLabels[mood.id as keyof typeof moodLabels]}
                       </button>
                     );
                   })}
                 </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* Entries List */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="card overflow-hidden"
+        >
+          {filteredEntries.length > 0 ? (
+            <div className="divide-y divide-dark-700">
+              {filteredEntries.map((entry, index) => {
+                const MoodIcon = moodIcons[entry.mood as keyof typeof moodIcons] || Meh;
+                const moodColor = moodColors[entry.mood as keyof typeof moodColors] || moodColors.neutral;
+                return (
+                  <motion.div
+                    key={entry.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.03 }}
+                    className="p-6 hover:bg-dark-800/50 transition-colors group"
+                  >
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <div className="flex flex-col items-center justify-center min-w-[60px] px-3 py-2 bg-dark-800 rounded-xl border border-dark-700">
+                          <span className="font-bold text-white text-lg">{format(new Date(entry.date), 'MMM')}</span>
+                          <span className="font-display font-bold text-2xl text-primary-400">{format(new Date(entry.date), 'd')}</span>
+                          <span className="text-xs text-dark-400">{format(new Date(entry.date), 'EEE')}</span>
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-3 flex-wrap">
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${moodColor}`}>
+                              <MoodIcon className="h-3 w-3 inline mr-1" />
+                              {moodLabels[entry.mood as keyof typeof moodLabels]}
+                            </span>
+                            {entry.category && (
+                              <span className="px-3 py-1 bg-dark-700 rounded-full text-xs text-dark-300 flex items-center gap-1">
+                                <Tag className="h-3 w-3" />
+                                {entry.category}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => handleDeleteEntry(entry.id)}
+                          className="p-2 text-dark-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
+                          aria-label="Delete entry"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-dark-300 whitespace-pre-wrap leading-relaxed">{entry.content}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="p-16 text-center">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-dark-400"
+              >
+                <BookOpen className="h-16 w-16 mx-auto mb-6 text-dark-600" />
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  {searchQuery || selectedCategory ? 'No matching entries' : 'Start your journal'}
+                </h3>
+                <p className="mb-6 max-w-md mx-auto">
+                  {searchQuery || selectedCategory
+                    ? 'Try adjusting your search or filters'
+                    : 'Document your thoughts, track your mood, and build a habit of reflection.'}
+                </p>
+                {!searchQuery && !selectedCategory && (
+                  <button
+                    onClick={() => setShowNewEntryModal(true)}
+                    className="btn-primary"
+                  >
+                    <Plus className="h-5 w-5" />
+                    Write First Entry
+                  </button>
+                )}
+              </motion.div>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Writing Prompts Sidebar */}
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+          className="hidden lg:block"
+        >
+          <div className="card p-6 h-fit sticky top-24">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-heading-md font-bold text-white flex items-center gap-2">
+                <Zap className="h-5 w-5 text-yellow-400" />
+                Writing Prompts
+              </h2>
+            </div>
+            <div className="space-y-3">
+              {journalData.prompts.map((prompt) => (
+                <motion.button
+                  key={prompt.id}
+                  onClick={() => {
+                    setShowNewEntryModal(true);
+                    setNewEntry(prev => ({ ...prev, content: prompt.question }));
+                  }}
+                  whileHover={{ x: 4 }}
+                  className="w-full text-left p-4 rounded-xl transition-all duration-300 bg-dark-800/50 border border-dark-700 hover:border-primary-500/30 hover:bg-primary-500/5"
+                >
+                  <p className="text-sm text-dark-300 mb-2">{prompt.question}</p>
+                  <span className="text-xs px-2 py-1 bg-primary-500/10 text-primary-400 rounded-full">{prompt.category}</span>
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* New Entry Modal */}
+      <AnimatePresence>
+        {showNewEntryModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            onClick={() => setShowNewEntryModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-dark-900 border border-dark-700 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="p-6 border-b border-dark-700 flex items-center justify-between">
+                <h2 className="text-heading-md font-bold text-white">New Journal Entry</h2>
+                <button
+                  onClick={() => setShowNewEntryModal(false)}
+                  className="p-2 rounded-xl text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
+                >
+                  <ChevronUp className="h-6 w-6" />
+                </button>
               </div>
 
-              <div className="flex justify-end gap-4 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowNewEntryModal(false)}
-                  className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 disabled:opacity-50 rounded-lg transition-colors"
-                >
-                  <BookOpen size={20} />
-                  Save Entry
-                </button>
-              </div>
-            </form>
+              <form onSubmit={handleAddEntry} className="p-6 space-y-6">
+                <div>
+                  <label className="label">Category</label>
+                  <select
+                    value={newEntry.category}
+                    onChange={(e) => setNewEntry({ ...newEntry, category: e.target.value })}
+                    className="input"
+                    required
+                  >
+                    <option value="">Select category...</option>
+                    {journalData.categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="label">Content</label>
+                  <textarea
+                    value={newEntry.content}
+                    onChange={(e) => setNewEntry({ ...newEntry, content: e.target.value })}
+                    className="input min-h-[200px] resize-y"
+                    placeholder="Write your thoughts here..."
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="label">Mood</label>
+                  <div className="flex flex-wrap gap-3">
+                    {journalData.moods.map((mood) => {
+                      const Icon = moodIcons[mood.id as keyof typeof moodIcons];
+                      const isSelected = newEntry.mood === mood.id;
+                      const color = moodColors[mood.id as keyof typeof moodColors];
+                      return (
+                        <button
+                          key={mood.id}
+                          type="button"
+                          onClick={() => setNewEntry({ ...newEntry, mood: mood.id })}
+                          className={`p-4 rounded-xl transition-all duration-200 flex flex-col items-center gap-2 min-w-[80px] ${isSelected ? `border-2 ${color.replace('border-', 'border-2 ')}` : `border ${color} hover:border-opacity-50`}`}
+                        >
+                          <Icon className={`h-7 w-7 ${color.split(' ')[0]}`} />
+                          <span className="text-sm font-medium capitalize">{moodLabels[mood.id as keyof typeof moodLabels]}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-4 pt-4 border-t border-dark-700">
+                  <button
+                    type="button"
+                    onClick={() => setShowNewEntryModal(false)}
+                    className="btn-secondary"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="btn-primary"
+                  >
+                    {loading ? (
+                      <>
+                        <motion.span
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                          className="h-5 w-5"
+                        >
+                          <Pen className="h-5 w-5" />
+                        </motion.span>
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <BookOpen className="h-5 w-5" />
+                        Save Entry
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
           </motion.div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 }

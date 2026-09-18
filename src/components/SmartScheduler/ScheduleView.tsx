@@ -40,8 +40,16 @@ export default function ScheduleView({ slots, title, className = '' }: ScheduleV
             style={{ borderLeft: `4px solid ${ACTIVITY_COLORS[slot.activity]}` }}
           >
             <div className="w-20 text-right text-sm text-gray-400 font-mono">
-              {format(new Date(`2000-01-01T${String(Math.floor(slot.start)).padStart(2, '0')}:${(slot.start % 1) * 60}:00`), 'h:mm a')} -{' '}
-              {format(new Date(`2000-01-01T${String(Math.floor(slot.end)).padStart(2, '0')}:${(slot.end % 1) * 60}:00`), 'h:mm a')}
+              {(() => {
+                const formatTime = (time: number) => {
+                  const hours = Math.floor(time);
+                  const minutes = Math.round((time % 1) * 60);
+                  const normalizedHours = hours % 24;
+                  const date = new Date(2000, 0, 1, normalizedHours, minutes);
+                  return format(date, 'h:mm a');
+                };
+                return `${formatTime(slot.start)} - ${formatTime(slot.end)}`;
+              })()}
             </div>
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-medium shrink-0"

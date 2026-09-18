@@ -1,63 +1,79 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { Plus, Calendar as CalendarIcon, AlertCircle, Brain, Zap } from 'lucide-react';
-import { format } from 'date-fns';
+import { Plus, Calendar as CalendarIcon, AlertCircle, Brain, Zap, Trash2, Edit, ChevronDown, ChevronUp } from 'lucide-react';
+import { format, startOfMonth, endOfMonth, addMonths, subMonths } from 'date-fns';
 import { mockApi } from '../lib/dummyData';
 import { Link } from 'react-router-dom';
 
 const templates = [
   {
     name: 'Morning Routine',
+    color: 'bg-primary-500',
     schedule: [
-      { time: '06:00', activity: 'Morning Workout' },
-      { time: '07:00', activity: 'Breakfast & Planning' },
-      { time: '08:00', activity: 'Deep Work Session' },
+      { time: '06:00', activity: 'Morning Workout', duration: 45 },
+      { time: '07:00', activity: 'Breakfast & Planning', duration: 30 },
+      { time: '08:00', activity: 'Deep Work Session', duration: 120 },
     ],
   },
   {
     name: 'Focus Day',
+    color: 'bg-secondary-500',
     schedule: [
-      { time: '09:00', activity: 'Team Meeting' },
-      { time: '10:00', activity: 'Project Work' },
-      { time: '14:00', activity: 'Learning Session' },
+      { time: '09:00', activity: 'Team Meeting', duration: 60 },
+      { time: '10:30', activity: 'Project Work', duration: 180 },
+      { time: '14:00', activity: 'Learning Session', duration: 90 },
     ],
   },
   {
     name: 'Balanced Day',
+    color: 'bg-green-500',
     schedule: [
-      { time: '08:00', activity: 'Exercise' },
-      { time: '10:00', activity: 'Work Block' },
-      { time: '15:00', activity: 'Personal Time' },
+      { time: '08:00', activity: 'Exercise', duration: 60 },
+      { time: '10:00', activity: 'Work Block', duration: 180 },
+      { time: '14:00', activity: 'Lunch & Walk', duration: 60 },
+      { time: '15:30', activity: 'Personal Time', duration: 120 },
+    ],
+  },
+  {
+    name: 'Evening Wind-down',
+    color: 'bg-purple-500',
+    schedule: [
+      { time: '17:00', activity: 'Wrap Up Work', duration: 30 },
+      { time: '17:30', activity: 'Light Exercise', duration: 45 },
+      { time: '18:30', activity: 'Dinner', duration: 60 },
+      { time: '19:30', activity: 'Reading/Hobby', duration: 90 },
+      { time: '21:00', activity: 'Meditation', duration: 20 },
     ],
   },
 ];
 
 export default function HabitPlanner() {
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
+  const [currentMonth, setCurrentMonth] = React.useState(new Date());
   const [showTemplateModal, setShowTemplateModal] = React.useState(false);
+  const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [schedules, setSchedules] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [viewMode, setViewMode] = React.useState<'month' | 'week'>('month');
 
   React.useEffect(() => {
     loadSchedules();
-  }, []);
+  }, [currentMonth]);
 
   const loadSchedules = async () => {
     setLoading(true);
     setError(null);
     try {
-      const startDate = new Date();
-      startDate.setMonth(startDate.getMonth() - 1);
-      const endDate = new Date();
-      endDate.setMonth(endDate.getMonth() + 1);
+      const start = startOfMonth(subMonths(currentMonth, 1));
+      const end = endOfMonth(addMonths(currentMonth, 1));
 
       const { data, error } = await mockApi.getSchedules(
-        format(startDate, 'yyyy-MM-dd'),
-        format(endDate, 'yyyy-MM-dd')
+        format(start, 'yyyy-MM-dd'),
+        format(end, 'yyyy-MM-dd')
       );
       if (error) throw error;
       setSchedules(data || []);
@@ -73,18 +89,33 @@ export default function HabitPlanner() {
     setShowTemplateModal(true);
   };
 
+  const handleEventClick = (info: any) => {
+    if (confirm(`Delete "${info.event.title}"?`)) {
+      deleteEvent(info.event.id);
+    }
+  };
+
+  const deleteEvent = async (id: string) => {
+    try {
+      const { error } = await mockApi.deleteSchedule(id);
+      if (error) throw error;
+      await loadSchedules();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete event');
+    }
+  };
+
   const applyTemplate = async (template: typeof templates[0]) => {
     setLoading(true);
     setError(null);
     try {
-      const baseDate = format(selectedDate, 'yyyy-MM-dd');
       const schedulePromises = template.schedule.map((item) => {
         const [hours, minutes] = item.time.split(':').map(Number);
         const startTime = new Date(selectedDate);
         startTime.setHours(hours, minutes, 0);
         
         const endTime = new Date(startTime);
-        endTime.setMinutes(endTime.getMinutes() + 45); // Default duration of 45 minutes
+        endTime.setMinutes(endTime.getMinutes() + item.duration);
 
         return mockApi.createSchedule(
           item.activity,
@@ -104,106 +135,387 @@ export default function HabitPlanner() {
     }
   };
 
+  const formatEventTime = (start: string, end: string) => {
+    return `${format(new Date(start), 'HH:mm')} - ${format(new Date(end), 'HH:mm')}`;
+  };
+
+  const calendarEvents = schedules.map((schedule) => ({
+    id: schedule.id,
+    title: schedule.title,
+    start: schedule.start_time,
+    end: schedule.end_time,
+    backgroundColor: '#0891b2',
+    borderColor: '#06b6d4',
+    extendedProps: {
+      category: schedule.category,
+    },
+  }));
+
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="mb-8 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Habit Planner</h1>
-        <div className="flex items-center gap-4">
-          <Link
-            to="/smart-scheduler"
-            className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 rounded-lg transition-colors"
-          >
-            <Zap className="h-4 w-4" />
-            <Brain className="h-4 w-4" />
-            Optimize with AI
-          </Link>
-          <button
-            onClick={() => setShowTemplateModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
-          >
-            <Plus size={20} />
-            Add Schedule
-          </button>
+    <div className="container-custom py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-8"
+      >
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-display-sm font-display font-bold text-white">Habit Planner</h1>
+            <p className="text-dark-400 mt-1">Plan and visualize your daily routines</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/smart-scheduler"
+              className="btn-primary btn-sm group"
+            >
+              <Zap className="h-4 w-4" />
+              <Brain className="h-4 w-4" />
+              Optimize with AI
+              <motion.div className="group-hover:translate-x-1 transition-transform">
+                <ChevronDown className="h-4 w-4" />
+              </motion.div>
+            </Link>
+            <button
+              onClick={() => {
+                setSelectedDate(new Date());
+                setShowTemplateModal(true);
+              }}
+              className="btn-secondary btn-sm"
+            >
+              <Plus className="h-4 w-4" />
+              Add Schedule
+            </button>
+          </div>
         </div>
-      </div>
 
-      {error && (
-        <div className="mb-6 flex items-center gap-2 text-red-500 bg-red-500 bg-opacity-10 p-4 rounded-lg">
-          <AlertCircle size={20} />
-          {error}
-        </div>
-      )}
-
-      <div className="bg-gray-800 p-6 rounded-xl">
-        <FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
-          dateClick={handleDateClick}
-          events={schedules.map((schedule) => ({
-            title: schedule.title,
-            start: schedule.start_time,
-            end: schedule.end_time,
-            backgroundColor: '#0891b2', // cyan-600
-          }))}
-          height="auto"
-          headerToolbar={{
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,dayGridWeek',
-          }}
-        />
-      </div>
-
-      {showTemplateModal && (
-        <div 
-          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[100]"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setShowTemplateModal(false);
-            }
-          }}
-          style={{ pointerEvents: 'auto' }}
-        >
+        {/* Error Display */}
+        {error && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-gray-800 p-6 rounded-xl w-full max-w-md"
-            onClick={e => e.stopPropagation()}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400"
+            role="alert"
           >
-            <h2 className="text-xl font-bold mb-4">
-              Add Schedule for {format(selectedDate, 'MMMM d, yyyy')}
-            </h2>
+            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+            <span className="text-sm">{error}</span>
+          </motion.div>
+        )}
 
-            <div className="space-y-4">
-              {templates.map((template) => (
-                <button
-                  key={template.name}
-                  onClick={() => applyTemplate(template)}
-                  disabled={loading}
-                  className="w-full flex items-center gap-4 p-4 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <CalendarIcon size={24} className="text-cyan-500 shrink-0" />
-                  <div className="text-left">
-                    <h3 className="font-medium">{template.name}</h3>
-                    <p className="text-sm text-gray-400">
-                      {template.schedule.length} activities
-                    </p>
-                  </div>
-                </button>
-              ))}
+        {/* Calendar View Toggle */}
+        <div className="card p-2 flex items-center justify-between">
+          <div className="flex items-center gap-1 bg-dark-800 p-1 rounded-xl">
+            <button
+              onClick={() => setViewMode('month')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                viewMode === 'month'
+                  ? 'bg-white text-dark-950 shadow-sm'
+                  : 'text-dark-400 hover:text-white'
+              }`}
+            >
+              Month
+            </button>
+            <button
+              onClick={() => setViewMode('week')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                viewMode === 'week'
+                  ? 'bg-white text-dark-950 shadow-sm'
+                  : 'text-dark-400 hover:text-white'
+              }`}
+            >
+              Week
+            </button>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+              className="p-2 rounded-xl text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
+              aria-label="Previous month"
+            >
+              <ChevronDown className="h-5 w-5 rotate-90" />
+            </button>
+            <span className="font-medium text-white min-w-[150px] text-center">
+              {format(currentMonth, 'MMMM yyyy')}
+            </span>
+            <button
+              onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+              className="p-2 rounded-xl text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
+              aria-label="Next month"
+            >
+              <ChevronDown className="h-5 w-5 -rotate-90" />
+            </button>
+            <button
+              onClick={() => setCurrentMonth(new Date())}
+              className="btn-secondary btn-sm hidden sm:flex"
+            >
+              Today
+            </button>
+          </div>
+        </div>
 
-              <div className="flex justify-end gap-4 mt-6 pt-4 border-t border-gray-700">
-                <button
-                  onClick={() => setShowTemplateModal(false)}
-                  className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
-                >
-                  Cancel
-                </button>
+        {/* Calendar */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="card overflow-hidden"
+        >
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView={viewMode === 'month' ? 'dayGridMonth' : 'timeGridWeek'}
+            dateClick={handleDateClick}
+            eventClick={handleEventClick}
+            events={calendarEvents}
+            height="auto"
+            headerToolbar={false}
+            slotMinTime="06:00:00"
+            slotMaxTime="22:00:00"
+            allDaySlot={false}
+            eventTimeFormat={{
+              hour: '2-digit',
+              minute: '2-digit',
+              meridiem: false,
+              hour12: false,
+            }}
+            eventDisplay="block"
+            eventContent={(eventInfo) => (
+              <div className="p-1.5 h-full flex flex-col justify-between">
+                <span className="text-xs font-medium truncate">{eventInfo.timeText}</span>
+                <span className="text-xs truncate">{eventInfo.event.title}</span>
+                {eventInfo.event.extendedProps.category && (
+                  <span className="text-[10px] px-1.5 py-0.5 bg-white/20 rounded text-center truncate">
+                    {eventInfo.event.extendedProps.category}
+                  </span>
+                )}
+              </div>
+            )}
+            dayHeaderClassNames="bg-dark-900/50 text-dark-300 font-medium py-2"
+            dayCellClassNames="border-dark-800"
+            todayClassNames="bg-primary-500/10"
+          />
+        </motion.div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="card p-6"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-dark-400 text-sm font-medium">This Month</p>
+                <p className="text-3xl font-display font-bold text-white mt-1">{schedules.length}</p>
+              </div>
+              <div className="p-3 bg-primary-500/10 rounded-xl text-primary-400">
+                <CalendarIcon className="h-6 w-6" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="card p-6"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-dark-400 text-sm font-medium">Hours Scheduled</p>
+                <p className="text-3xl font-display font-bold text-white mt-1">
+                  {schedules.reduce((sum, s) => {
+                    const start = new Date(s.start_time);
+                    const end = new Date(s.end_time);
+                    return sum + (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+                  }, 0).toFixed(1)}
+                </p>
+              </div>
+              <div className="p-3 bg-secondary-500/10 rounded-xl text-secondary-400">
+                <Zap className="h-6 w-6" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="card p-6"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-dark-400 text-sm font-medium">Categories</p>
+                <p className="text-3xl font-display font-bold text-white mt-1">
+                  {new Set(schedules.map(s => s.category)).size}
+                </p>
+              </div>
+              <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400">
+                <Brain className="h-6 w-6" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="card p-6"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-dark-400 text-sm font-medium">Avg/Day</p>
+                <p className="text-3xl font-display font-bold text-white mt-1">
+                  {(schedules.length / Math.max(new Set(schedules.map(s => s.date)).size, 1)).toFixed(1)}
+                </p>
+              </div>
+              <div className="p-3 bg-orange-500/10 rounded-xl text-orange-400">
+                <Trash2 className="h-6 w-6" />
               </div>
             </div>
           </motion.div>
         </div>
-      )}
+
+        {/* Upcoming Events List */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="card overflow-hidden"
+        >
+          <div className="p-6 border-b border-dark-700 flex items-center justify-between">
+            <h2 className="text-heading-md font-bold text-white flex items-center gap-2">
+              <CalendarIcon className="h-5 w-5 text-primary-400" />
+              Upcoming Schedule
+            </h2>
+          </div>
+          
+          <div className="divide-y divide-dark-700">
+            {schedules
+              .filter(s => new Date(s.start_time) >= new Date())
+              .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())
+              .slice(0, 10)
+              .map((schedule) => (
+                <motion.div
+                  key={schedule.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="p-4 hover:bg-dark-800/50 transition-colors flex items-center justify-between gap-4"
+                >
+                  <div className="flex items-center gap-4 flex-1 min-w-0">
+                    <div className="flex flex-col items-center justify-center min-w-[60px] px-3 py-2 bg-dark-800 rounded-xl border border-dark-700">
+                      <span className="font-bold text-white text-lg">{format(new Date(schedule.start_time), 'MMM')}</span>
+                      <span className="font-display font-bold text-2xl text-primary-400">{format(new Date(schedule.start_time), 'd')}</span>
+                      <span className="text-xs text-dark-400">{format(new Date(schedule.start_time), 'EEE')}</span>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-medium text-white truncate">{schedule.title}</p>
+                      <p className="text-sm text-dark-400 flex items-center gap-2">
+                        <span>{formatEventTime(schedule.start_time, schedule.end_time)}</span>
+                        {schedule.category && (
+                          <>
+                            <span className="text-dark-600">·</span>
+                            <span className="px-2 py-0.5 bg-dark-700 rounded text-xs">{schedule.category}</span>
+                          </>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => deleteEvent(schedule.id)}
+                    className="p-2 text-dark-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors opacity-0 group-hover:opacity-100"
+                    aria-label="Delete event"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </motion.div>
+              ))}
+            {schedules.length === 0 && (
+              <div className="p-12 text-center text-dark-400">
+                <CalendarIcon className="h-12 w-12 mx-auto mb-4 text-dark-600" />
+                <p className="text-lg">No schedules yet</p>
+                <p className="text-sm mt-1">Click any date to add your first habit</p>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Template Modal */}
+        <AnimatePresence>
+          {showTemplateModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+              onClick={() => setShowTemplateModal(false)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="bg-dark-900 border border-dark-700 rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
+                onClick={e => e.stopPropagation()}
+              >
+                <div className="p-6 border-b border-dark-700 flex items-center justify-between">
+                  <h2 className="text-heading-md font-bold text-white">
+                    Add Schedule for {format(selectedDate, 'MMMM d, yyyy')}
+                  </h2>
+                  <button
+                    onClick={() => setShowTemplateModal(false)}
+                    className="p-2 rounded-xl text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
+                  >
+                    <ChevronUp className="h-6 w-6" />
+                  </button>
+                </div>
+
+                <div className="p-6 space-y-4">
+                  {templates.map((template) => (
+                    <motion.button
+                      key={template.name}
+                      onClick={() => applyTemplate(template)}
+                      disabled={loading}
+                      whileHover={{ x: 4 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full text-left p-4 rounded-xl transition-all duration-300 bg-dark-800/50 border border-dark-700 hover:border-dark-600 disabled:opacity-50"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className={`p-3 rounded-xl ${template.color} shrink-0`}>
+                          <CalendarIcon className="h-5 w-5 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-white">{template.name}</h3>
+                          <p className="text-sm text-dark-400 mt-1">
+                            {template.schedule.length} activities · {template.schedule.reduce((sum, s) => sum + s.duration, 0)} min total
+                          </p>
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {template.schedule.map((item, idx) => (
+                              <span key={idx} className="px-2 py-1 bg-dark-700 rounded text-xs text-dark-300">
+                                {item.time} {item.activity}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <Zap className="h-5 w-5 text-primary-400 shrink-0 self-center" />
+                      </div>
+                    </motion.button>
+                  ))}
+
+                  <div className="flex justify-end gap-4 pt-4 border-t border-dark-700">
+                    <button
+                      onClick={() => setShowTemplateModal(false)}
+                      className="btn-secondary"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 }

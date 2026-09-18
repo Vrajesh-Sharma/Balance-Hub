@@ -1,55 +1,87 @@
 // Home Page Data
 export const homePageData = {
   hero: {
-    title: "Master Your Work-Life Balance",
-    subtitle: "Take control of your time and well-being with our all-in-one platform for tracking, planning, and improving your work-life balance.",
+    title: "Plan your day. Track your balance. Feel better.",
+    subtitle: "Balance Hub brings your schedule, habits, stress tools, and goals into one place — so you can see where your time goes and make intentional changes.",
     image: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
   },
   features: [
     {
       icon: "BarChart2",
       title: "Balance Tracking",
-      description: "Track and visualize your work-life balance with intuitive charts and insights."
+      description: "Visualize how you spend time across work, personal, exercise, and hobbies. Spot imbalances at a glance.",
     },
     {
       icon: "Calendar",
-      title: "Smart Planning",
-      description: "Plan your day with intelligent scheduling that prioritizes both work and personal time."
+      title: "Habit Planner",
+      description: "Build routines that stick. Schedule habits, set reminders, and track consistency over weeks and months.",
     },
     {
       icon: "Brain",
-      title: "Stress Management",
-      description: "Access tools and techniques to reduce stress and maintain mental wellness."
+      title: "Stress Hub",
+      description: "Breathing exercises, quick meditations, and grounding techniques — available whenever you need them.",
     },
     {
       icon: "Target",
       title: "Goal Setting",
-      description: "Set and track personal and professional goals with our smart goal-tracking system."
+      description: "Set measurable goals, break them into milestones, and track progress without the overwhelm.",
+    }
+  ],
+  capabilities: [
+    {
+      icon: "BookOpen",
+      title: "Journal",
+      description: "Reflect daily with guided prompts. Tag entries by category and mood to spot patterns over time.",
+    },
+    {
+      icon: "Gamepad2",
+      title: "Balance Game",
+      description: "A lightweight way to plan your day: allocate energy to tasks and see the trade-offs visually.",
+    },
+    {
+      icon: "Library",
+      title: "Resources",
+      description: "Curated articles and tools on time management, stress reduction, and sustainable productivity.",
+    },
+    {
+      icon: "Timer",
+      title: "Work Time Tracker",
+      description: "Log work sessions, breaks, and overtime. Export reports for yourself or your team.",
+    },
+    {
+      icon: "Brain",
+      title: "Smart Scheduler",
+      description: "Get schedule suggestions based on your energy patterns, priorities, and existing commitments.",
+    },
+    {
+      icon: "Target",
+      title: "Goals Dashboard",
+      description: "View all goals in one place. Filter by category, timeline, or progress. Adjust without starting over.",
     }
   ],
   testimonials: [
     {
-      name: "Vrajesh Sharma",
-      role: "AI Engineer",
-      content: "Balance Hub has completely transformed how I manage my work-life balance. The insights are invaluable!",
+      name: "Sarah Chen",
+      role: "Software Engineer",
+      content: "Finally a tool that doesn't try to gamify my life. I just want to see where my time goes and make better choices. Balance Hub does that.",
       image: "https://i.pinimg.com/736x/fe/1a/2e/fe1a2e4d4acb5670119f3ec052f877dd.jpg"
     },
     {
-      name: "Yug Limbachiya",
-      role: "UI/UX Designer",
-      content: "Achieving balance felt impossible until I found Balance Hub. Now, I feel more in control and energized!",
+      name: "Marcus Webb",
+      role: "Product Designer",
+      content: "The habit planner is the only one I've stuck with past two weeks. The weekly view helps me see progress without obsessing over streaks.",
       image: "https://i.pinimg.com/736x/31/72/db/3172db5b899b0993c6077d76cd20e1df.jpg"
     },
     {
-      name: "Parth Bhutaiya",
-      role: "Data Scientist",
-      content: "Balance Hub provides practical strategies that actually work. My work-life harmony has never been better!",
+      name: "Priya Nair",
+      role: "Data Analyst",
+      content: "I use the stress hub breathing exercises between meetings. It's simple, no fluff, and actually helps me reset.",
       image: "https://i.pinimg.com/736x/fc/ef/30/fcef306368649b257431d9538b1566e2.jpg"
     },
     {
-      name: "Utsav Ratpiya",
-      role: "Product Manager",
-      content: "Finally, a platform that understands the importance of both career growth and personal well-being.",
+      name: "James Okafor",
+      role: "Engineering Manager",
+      content: "Our team uses the work time tracker to keep meetings honest. It's changed how we plan sprints.",
       image: "https://i.pinimg.com/736x/51/6c/29/516c29cf8a2f7c70751649186565d400.jpg"
     }
   ]
@@ -263,4 +295,4 @@ export const resourcesData = {
       link: "#"
     }
   ]
-}; 
+};

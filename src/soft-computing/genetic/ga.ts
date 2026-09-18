@@ -7,7 +7,7 @@ import {
   OptimizedSchedule,
   ConstraintViolation 
 } from '../../types';
-import { calculateFitness, createTemplateChromosome, createCurrentScheduleChromosome, decodeChromosome } from './chromosome';
+import { calculateFitness, createTemplateChromosome, createRandomChromosome, createCurrentScheduleChromosome, decodeChromosome } from './chromosome';
 import { tournamentSelection, twoPointCrossover, mutate, elitism, blockSwapMutation } from './operators';
 
 const DEFAULT_CONFIG: GAConfig = {
@@ -154,29 +154,29 @@ function generateInitialPopulation(
   const randomCount = size - templateCount - currentCount;
   
   for (let i = 0; i < templateCount; i++) {
-    population.push(require('./chromosome').createTemplateChromosome(templates[i % templates.length], prefs));
+    population.push(createTemplateChromosome(templates[i % templates.length], prefs));
   }
   
   for (let i = 0; i < currentCount; i++) {
-    population.push(require('./chromosome').createRandomChromosome(inputs, prefs));
+    population.push(createRandomChromosome(inputs, prefs));
   }
   
   for (let i = 0; i < randomCount; i++) {
-    population.push(require('./chromosome').createRandomChromosome(inputs, prefs));
+    population.push(createRandomChromosome(inputs, prefs));
   }
   
   return population;
 }
 
-export function runBaselineComparisons(
+export async function runBaselineComparisons(
   inputs: UserInputs,
   prefs: UserPreferences,
   currentSchedule: any[],
   weights: FitnessWeights = DEFAULT_WEIGHTS
-): Array<{ name: string; schedule: any; fitness: number; balanceScore: number; productivityScore: number; stressScore: number; violations: ConstraintViolation[] }> {
+): Promise<Array<{ name: string; schedule: any; fitness: number; balanceScore: number; productivityScore: number; stressScore: number; violations: ConstraintViolation[] }>> {
   const results = [];
   
-  const gaResult = runGeneticAlgorithm(inputs, prefs, { config: { generations: 50, populationSize: 50 } });
+  const gaResult = await runGeneticAlgorithm(inputs, prefs, { config: { generations: 50, populationSize: 50 } });
   results.push({
     name: 'Genetic Algorithm',
     schedule: gaResult.slots,
