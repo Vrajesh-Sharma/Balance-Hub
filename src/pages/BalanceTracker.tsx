@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BarChart, PieChart, Pie, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, ResponsiveContainer } from 'recharts';
-import { Clock, Download, AlertCircle, Plus, Trash2, Calendar } from 'lucide-react';
-import { format, startOfWeek, endOfWeek, eachDayOfInterval, parseISO, subDays } from 'date-fns';
+import { Clock, Download, Calendar, Plus, Trash2, AlertCircle } from 'lucide-react';
+import { format, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 import { mockApi } from '../lib/dummyData';
 import { balanceTrackerData } from '../lib/staticData';
 
@@ -24,6 +24,13 @@ const activityIcons: Record<string, React.ComponentType<{ className?: string }>>
   hobbies: () => <Plus className="h-4 w-4" />,
 };
 
+const ACTIVITY_COLOR_MAP: Record<string, string> = {
+  work: COLORS[0],
+  personal: COLORS[1],
+  exercise: COLORS[2],
+  hobbies: COLORS[3],
+};
+
 export default function BalanceTracker() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -32,7 +39,6 @@ export default function BalanceTracker() {
   const [hours, setHours] = React.useState('');
   const [showHistory, setShowHistory] = React.useState(false);
 
-  // Get the current week's start and end dates
   const startDate = startOfWeek(new Date());
   const endDate = endOfWeek(new Date());
 
@@ -70,7 +76,7 @@ export default function BalanceTracker() {
         format(new Date(), 'yyyy-MM-dd')
       );
       if (error) throw error;
-      
+
       setSelectedActivity('');
       setHours('');
       await loadActivities();
@@ -98,7 +104,7 @@ export default function BalanceTracker() {
   const handleExport = () => {
     const csv = [
       ['Date', 'Activity Type', 'Hours'].join(','),
-      ...activities.map((activity) => 
+      ...activities.map((activity) =>
         [activity.date, activity.type, activity.hours].join(',')
       ),
     ].join('\n');
@@ -114,16 +120,14 @@ export default function BalanceTracker() {
     document.body.removeChild(a);
   };
 
-  // Process data for charts
   const todayActivities = activities.filter(
     (activity) => activity.date === format(new Date(), 'yyyy-MM-dd')
   );
 
   const pieChartData = activityTypes.map((type) => ({
     name: type.label,
-    value: formatHours(todayActivities.reduce((sum, activity) => 
-      activity.type === type.value ? sum + activity.hours : sum
-    , 0)),
+    value: formatHours(todayActivities.reduce((sum, activity) =>
+      activity.type === type.value ? sum + activity.hours : sum, 0)),
   })).filter(d => d.value > 0);
 
   const weekDays = eachDayOfInterval({ start: startDate, end: endDate });
@@ -138,9 +142,8 @@ export default function BalanceTracker() {
       ...Object.fromEntries(
         activityTypes.map((type) => [
           type.value,
-          formatHours(dayActivities.reduce((sum, activity) => 
-            activity.type === type.value ? sum + activity.hours : sum
-          , 0)),
+          formatHours(dayActivities.reduce((sum, activity) =>
+            activity.type === type.value ? sum + activity.hours : sum, 0)),
         ])
       ),
     };
@@ -149,28 +152,71 @@ export default function BalanceTracker() {
   const totalHoursToday = todayActivities.reduce((sum, a) => sum + a.hours, 0);
   const totalHoursWeek = activities.reduce((sum, a) => sum + a.hours, 0);
 
-  // Recent activities for history
+  const workHoursToday = todayActivities
+    .filter(a => a.type === 'work')
+    .reduce((s, a) => s + a.hours, 0);
+  const balanceScore = activityTypes.length > 0 && totalHoursToday > 0
+    ? Math.round(100 - Math.abs((workHoursToday / totalHoursToday) * 100 - 50) * 2)
+    : 0;
+
   const recentActivities = [...activities]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 10);
 
+  const metrics = [
+    {
+      label: "Today's Total",
+      value: `${formatHours(totalHoursToday)} hrs`,
+      subtext: "Today",
+      icon: <Clock className="h-5 w-5" />,
+      iconColor: "text-primary-400",
+      iconBg: "bg-primary-500/10",
+    },
+    {
+      label: "Weekly Total",
+      value: `${formatHours(totalHoursWeek)} hrs`,
+      subtext: "This week",
+      icon: <Calendar className="h-5 w-5" />,
+      iconColor: "text-secondary-400",
+      iconBg: "bg-secondary-500/10",
+    },
+    {
+      label: "Activities Logged",
+      value: activities.length.toString(),
+      subtext: "This week",
+      icon: <Plus className="h-5 w-5" />,
+      iconColor: "text-green-400",
+      iconBg: "bg-green-500/10",
+    },
+    {
+      label: "Balance Score",
+      value: `${balanceScore}%`,
+      subtext: "Based on today's work/personal split",
+      icon: <Trash2 className="h-5 w-5" />,
+      iconColor: "text-purple-400",
+      iconBg: "bg-purple-500/10",
+    },
+  ];
+
   return (
-    <div className="container-custom py-8">
+    <div className="container-custom py-8 lg:py-12">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-8"
+        transition={{ duration: 0.4 }}
+        className="space-y-10 lg:space-y-12"
       >
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-display-sm font-display font-bold text-white">Activity Tracker</h1>
-            <p className="text-dark-400 mt-1">Track and visualize your daily time allocation</p>
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="text-display-sm font-bold text-white tracking-tight">Activity Tracker</h1>
+            <p className="text-body-md text-dark-400">See where your time goes and keep your day balanced.</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               onClick={handleExport}
               className="btn-secondary btn-sm"
+              disabled={activities.length === 0}
             >
               <Download className="h-4 w-4" />
               Export CSV
@@ -185,154 +231,76 @@ export default function BalanceTracker() {
           </div>
         </div>
 
-        {/* Summary Cards */}
+        {/* Summary Metrics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="card p-6"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-dark-400 text-sm font-medium">Today's Total</p>
-                <p className="text-3xl font-display font-bold text-white mt-1">{formatHours(totalHoursToday)} hrs</p>
+          {metrics.map((metric, index) => (
+            <motion.div
+              key={metric.label}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.06, duration: 0.3 }}
+              className="bg-dark-900 border border-dark-700 rounded-xl p-5 hover:border-dark-600 transition-colors"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="text-caption font-medium text-dark-400 tracking-wide uppercase">{metric.label}</p>
+                  <p className="text-heading-lg font-display font-bold text-white mt-1.5 truncate">{metric.value}</p>
+                  <p className="text-caption text-dark-500 mt-0.5">{metric.subtext}</p>
+                </div>
+                <div className={`p-2.5 rounded-lg ${metric.iconBg} ${metric.iconColor} flex-shrink-0`}>
+                  {metric.icon}
+                </div>
               </div>
-              <div className="p-3 bg-primary-500/10 rounded-xl text-primary-400">
-                <Clock className="h-6 w-6" />
-              </div>
-            </div>
-            <div className="mt-4 h-1.5 bg-dark-800 rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${Math.min(totalHoursToday / 24 * 100, 100)}%` }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-                className="h-full bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full"
-              />
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="card p-6"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-dark-400 text-sm font-medium">Weekly Total</p>
-                <p className="text-3xl font-display font-bold text-white mt-1">{formatHours(totalHoursWeek)} hrs</p>
-              </div>
-              <div className="p-3 bg-secondary-500/10 rounded-xl text-secondary-400">
-                <Calendar className="h-6 w-6" />
-              </div>
-            </div>
-            <div className="mt-4 h-1.5 bg-dark-800 rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${Math.min(totalHoursWeek / (24 * 7) * 100, 100)}%` }}
-                transition={{ delay: 0.35, duration: 0.6 }}
-                className="h-full bg-gradient-to-r from-secondary-500 to-pink-500 rounded-full"
-              />
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="card p-6"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-dark-400 text-sm font-medium">Activities Logged</p>
-                <p className="text-3xl font-display font-bold text-white mt-1">{activities.length}</p>
-              </div>
-              <div className="p-3 bg-green-500/10 rounded-xl text-green-400">
-                <Plus className="h-6 w-6" />
-              </div>
-            </div>
-            <div className="mt-4 text-sm text-dark-400">
-              This week
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="card p-6"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-dark-400 text-sm font-medium">Balance Score</p>
-                <p className="text-3xl font-display font-bold text-white mt-1">
-                  {activityTypes.length > 0 ? Math.round(100 - Math.abs(
-                    (todayActivities.filter(a => a.type === 'work').reduce((s, a) => s + a.hours, 0) / Math.max(totalHoursToday, 1)) * 100 - 50
-                  ) * 2) : 0}%
-                </p>
-              </div>
-              <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400">
-                <Trash2 className="h-6 w-6" />
-              </div>
-            </div>
-            <div className="mt-4 text-sm text-dark-400">
-              Higher is more balanced
-            </div>
-          </motion.div>
+            </motion.div>
+          ))}
         </div>
 
         {/* Error Display */}
         {error && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400"
+            className="flex items-center gap-3 p-3.5 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400"
             role="alert"
           >
-            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+            <AlertCircle className="h-4 w-4 flex-shrink-0" />
             <span className="text-sm">{error}</span>
           </motion.div>
         )}
 
         {/* Log Activity Form */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="card p-6"
+          transition={{ delay: 0.12, duration: 0.3 }}
+          className="bg-dark-900 border border-dark-700 rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
         >
-          <h2 className="text-heading-md font-bold text-white mb-6 flex items-center gap-2">
+          <div className="flex items-center gap-2 mb-5">
             <Plus className="h-5 w-5 text-primary-400" />
-            Log New Activity
-          </h2>
-          
-          <form onSubmit={handleSubmit} className="space-y-4 md:space-y-0 md:grid md:grid-cols-12 md:gap-4">
-            <div className="md:col-span-5">
+            <h2 className="text-heading-md font-semibold text-white">Log New Activity</h2>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4 sm:grid sm:grid-cols-[1fr_1fr_auto] sm:gap-4 sm:items-end">
+            <div className="sm:col-span-5">
               <label htmlFor="activity-type" className="label">Activity Type</label>
-              <div className="relative">
-                <select
-                  id="activity-type"
-                  value={selectedActivity}
-                  onChange={(e) => setSelectedActivity(e.target.value)}
-                  className="input appearance-none pr-10"
-                  required
-                  disabled={loading}
-                >
-                  <option value="">Select activity type...</option>
-                  {activityTypes.map((type) => (
-                    <option key={type.value} value={type.value}>
-                      {type.label}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-500 pointer-events-none">
-                  <Calendar className="h-4 w-4" />
-                </div>
-              </div>
+              <select
+                id="activity-type"
+                value={selectedActivity}
+                onChange={(e) => setSelectedActivity(e.target.value)}
+                className="input appearance-none"
+                required
+                disabled={loading}
+              >
+                <option value="">Select activity type...</option>
+                {activityTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <div className="md:col-span-3">
+            <div className="sm:col-span-3">
               <label htmlFor="hours" className="label">Hours</label>
               <div className="relative">
                 <input
@@ -348,17 +316,15 @@ export default function BalanceTracker() {
                   required
                   disabled={loading}
                 />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-500 pointer-events-none text-sm">
-                  hrs
-                </div>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-500 pointer-events-none text-sm">hrs</span>
               </div>
             </div>
 
-            <div className="md:col-span-4 flex items-end">
+            <div className="sm:col-span-4 w-full sm:w-auto">
               <button
                 type="submit"
                 disabled={loading || !selectedActivity || !hours}
-                className="btn-primary w-full justify-center gap-2"
+                className="btn-primary w-full sm:w-auto justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -386,18 +352,18 @@ export default function BalanceTracker() {
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Today's Balance Pie Chart */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="card p-6"
+            transition={{ delay: 0.18, duration: 0.3 }}
+            className="bg-dark-900 border border-dark-700 rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
           >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-heading-md font-bold text-white">Today's Balance</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+              <h2 className="text-heading-md font-semibold text-white">Today's Balance</h2>
               <span className="text-sm text-dark-400">{formatHours(totalHoursToday)} hrs total</span>
             </div>
-            
+
             {pieChartData.length > 0 ? (
-              <div className="h-72 flex items-center justify-center">
+              <div className="h-64 sm:h-72 flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -407,16 +373,15 @@ export default function BalanceTracker() {
                       labelLine={false}
                       innerRadius={60}
                       outerRadius={100}
-                      fill="#8884d8"
                       dataKey="value"
                       label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                     >
                       {pieChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell key={`cell-${index}`} fill={ACTIVITY_COLOR_MAP[activityTypes.find(t => t.label === entry.name)?.value || ''] || COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: number) => `${formatHours(value)} hrs`}
+                      formatter={(value: number) => [`${formatHours(value)} hrs`, '']}
                       contentStyle={{
                         backgroundColor: '#1e293b',
                         border: '1px solid #334155',
@@ -432,8 +397,11 @@ export default function BalanceTracker() {
                       iconType="circle"
                       iconSize={10}
                       formatter={(value) => (
-                        <span className="flex items-center gap-2 text-dark-300">
-                          <span className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[activityTypes.findIndex(t => t.label === value)] }} />
+                        <span className="flex items-center gap-2 text-dark-300 text-sm">
+                          <span
+                            className="w-2.5 h-2.5 rounded-full"
+                            style={{ backgroundColor: ACTIVITY_COLOR_MAP[activityTypes.find(t => t.label === value)?.value || ''] || '#8884d8' }}
+                          />
                           {value}
                         </span>
                       )}
@@ -442,27 +410,27 @@ export default function BalanceTracker() {
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="h-72 flex flex-col items-center justify-center text-dark-400">
-                <Clock className="h-12 w-12 mb-4 text-dark-600" />
-                <p className="text-center">No activities logged today</p>
-                <p className="text-sm mt-1">Log your first activity above to see the balance</p>
+              <div className="h-64 sm:h-72 flex flex-col items-center justify-center text-dark-400">
+                <Clock className="h-10 w-10 mb-3 text-dark-600" />
+                <p className="text-center text-body-md">No activity logged today</p>
+                <p className="text-sm text-dark-500 mt-1">Log an activity above to start tracking your day</p>
               </div>
             )}
           </motion.div>
 
           {/* Weekly Overview Bar Chart */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="card p-6"
+            transition={{ delay: 0.22, duration: 0.3 }}
+            className="bg-dark-900 border border-dark-700 rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
           >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-heading-md font-bold text-white">Weekly Overview</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+              <h2 className="text-heading-md font-semibold text-white">Weekly Overview</h2>
               <span className="text-sm text-dark-400">{formatHours(totalHoursWeek)} hrs total</span>
             </div>
-            
-            <div className="h-72">
+
+            <div className="h-64 sm:h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={weeklyData} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
@@ -471,7 +439,7 @@ export default function BalanceTracker() {
                     axisLine={false}
                     tickLine={false}
                     tick={{ fill: '#64748b', fontSize: 12 }}
-                    tickFormatter={(value) => formatHours(value)}
+                    tickFormatter={(value) => String(formatHours(value))}
                   />
                   <YAxis
                     type="category"
@@ -479,7 +447,7 @@ export default function BalanceTracker() {
                     axisLine={false}
                     tickLine={false}
                     tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 500 }}
-                    width={60}
+                    width={55}
                   />
                   <Tooltip
                     formatter={(value: number, name: string) => [formatHours(value), activityLabels[name] || name]}
@@ -497,10 +465,13 @@ export default function BalanceTracker() {
                     verticalAlign="bottom"
                     iconType="circle"
                     iconSize={8}
-                    wrapperStyle={{ paddingTop: 12, paddingBottom: 4 }}
+                    wrapperStyle={{ paddingTop: 8, paddingBottom: 4 }}
                     formatter={(value) => (
                       <span className="flex items-center gap-2 text-dark-300 text-sm">
-                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[activityTypes.findIndex(t => t.value === value)] }} />
+                        <span
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: ACTIVITY_COLOR_MAP[value] || '#8884d8' }}
+                        />
                         {activityLabels[value] || value}
                       </span>
                     )}
@@ -512,7 +483,7 @@ export default function BalanceTracker() {
                       stackId="a"
                       fill={COLORS[index % COLORS.length]}
                       radius={[0, 4, 4, 0]}
-                      maxBarSize={32}
+                      maxBarSize={28}
                     />
                   ))}
                 </BarChart>
@@ -527,45 +498,45 @@ export default function BalanceTracker() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="card overflow-hidden"
+            transition={{ duration: 0.25 }}
+            className="bg-dark-900 border border-dark-700 rounded-xl overflow-hidden hover:border-dark-600 transition-colors"
           >
-            <div className="p-6 border-b border-dark-700">
-              <h2 className="text-heading-md font-bold text-white flex items-center gap-2">
+            <div className="px-5 sm:px-6 py-4 border-b border-dark-700">
+              <h2 className="text-heading-md font-semibold text-white flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary-400" />
                 Recent Activities
               </h2>
             </div>
-            
+
             <div className="divide-y divide-dark-700">
               {recentActivities.length > 0 ? (
-                recentActivities.map((activity) => {
+                recentActivities.map((activity, index) => {
                   const typeInfo = activityTypes.find(t => t.value === activity.type);
                   const Icon = activityIcons[activity.type] || Calendar;
-                  const iconColor = typeInfo 
-                    ? COLORS[activityTypes.findIndex(t => t.value === activity.type)] || '#8884d8'
-                    : 'text-dark-400';
+                  const iconColor = typeInfo ? ACTIVITY_COLOR_MAP[typeInfo.value] : '#64748b';
                   return (
                     <motion.div
                       key={activity.id}
-                      initial={{ opacity: 0, x: -20 }}
+                      initial={{ opacity: 0, x: -12 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="p-4 hover:bg-dark-800/50 transition-colors flex items-center justify-between gap-4"
+                      transition={{ delay: index * 0.03 }}
+                      className="px-5 sm:px-6 py-4 hover:bg-dark-800/50 transition-colors flex items-center justify-between gap-4"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="p-2 bg-dark-800 rounded-xl">
-                          <Icon className={`h-5 w-5 ${typeInfo ? `text-[${iconColor}]` : 'text-dark-400'}`} />
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="p-2 bg-dark-800 rounded-lg flex-shrink-0" style={{ color: iconColor }}>
+                          <Icon className="h-5 w-5" />
                         </div>
-                        <div>
-                          <p className="font-medium text-white">{typeInfo?.label || activity.type}</p>
+                        <div className="min-w-0">
+                          <p className="font-medium text-white truncate">{typeInfo?.label || activity.type}</p>
                           <p className="text-sm text-dark-400">{format(new Date(activity.date), 'MMM d, yyyy')}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono font-bold text-primary-400 text-lg">{formatHours(activity.hours)} hrs</span>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <span className="font-mono font-bold text-primary-400 text-base">{formatHours(activity.hours)} hrs</span>
                         <button
                           onClick={() => handleDelete(activity.id)}
                           disabled={loading}
-                          className="p-2 text-dark-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors disabled:opacity-50"
+                          className="p-2 text-dark-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
                           aria-label="Delete activity"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -575,10 +546,10 @@ export default function BalanceTracker() {
                   );
                 })
               ) : (
-                <div className="p-12 text-center text-dark-400">
-                  <Calendar className="h-12 w-12 mx-auto mb-4 text-dark-600" />
-                  <p>No activities logged yet</p>
-                  <p className="text-sm mt-1">Your history will appear here</p>
+                <div className="px-5 sm:px-6 py-10 text-center text-dark-400">
+                  <Calendar className="h-10 w-10 mx-auto mb-3 text-dark-600" />
+                  <p className="text-body-md">No activities logged yet</p>
+                  <p className="text-sm text-dark-500 mt-1">Your history will appear here</p>
                 </div>
               )}
             </div>

@@ -40,6 +40,13 @@ export const mockApi = {
       error: null 
     };
   },
+  deleteActivity: async (id: string) => {
+    const index = activities.findIndex(a => a.id === id);
+    if (index !== -1) {
+      activities.splice(index, 1);
+    }
+    return { data: null, error: null };
+  },
 
   // Goals
   createGoal: async (title: string, category: string, deadline: string) => {
