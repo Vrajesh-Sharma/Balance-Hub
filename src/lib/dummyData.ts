@@ -108,6 +108,13 @@ export const mockApi = {
       error: null,
     };
   },
+  deleteSchedule: async (id: string) => {
+    const index = schedules.findIndex(s => s.id === id);
+    if (index !== -1) {
+      schedules.splice(index, 1);
+    }
+    return { data: null, error: null };
+  },
 };
 
 // Aggregator functions for Smart Scheduler

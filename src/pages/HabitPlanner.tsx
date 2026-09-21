@@ -4,15 +4,24 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { Plus, Calendar as CalendarIcon, AlertCircle, Brain, Zap, Trash2, Edit, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Calendar as CalendarIcon, AlertCircle, Brain, Zap, Trash2, ChevronDown, ChevronUp, Timer } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, addMonths, subMonths } from 'date-fns';
 import { mockApi } from '../lib/dummyData';
 import { Link } from 'react-router-dom';
 
+interface Schedule {
+  id: string;
+  title: string;
+  start_time: string;
+  end_time: string;
+  category: string;
+  template_name?: string;
+}
+
 const templates = [
   {
     name: 'Morning Routine',
-    color: 'bg-primary-500',
+    color: 'bg-primary-500/20 text-primary-400 border border-primary-500/30',
     schedule: [
       { time: '06:00', activity: 'Morning Workout', duration: 45 },
       { time: '07:00', activity: 'Breakfast & Planning', duration: 30 },
@@ -21,7 +30,7 @@ const templates = [
   },
   {
     name: 'Focus Day',
-    color: 'bg-secondary-500',
+    color: 'bg-secondary-500/20 text-secondary-400 border border-secondary-500/30',
     schedule: [
       { time: '09:00', activity: 'Team Meeting', duration: 60 },
       { time: '10:30', activity: 'Project Work', duration: 180 },
@@ -30,7 +39,7 @@ const templates = [
   },
   {
     name: 'Balanced Day',
-    color: 'bg-green-500',
+    color: 'bg-green-500/20 text-green-400 border border-green-500/30',
     schedule: [
       { time: '08:00', activity: 'Exercise', duration: 60 },
       { time: '10:00', activity: 'Work Block', duration: 180 },
@@ -40,7 +49,7 @@ const templates = [
   },
   {
     name: 'Evening Wind-down',
-    color: 'bg-purple-500',
+    color: 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
     schedule: [
       { time: '17:00', activity: 'Wrap Up Work', duration: 30 },
       { time: '17:30', activity: 'Light Exercise', duration: 45 },
@@ -55,10 +64,11 @@ export default function HabitPlanner() {
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
   const [showTemplateModal, setShowTemplateModal] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState(new Date());
-  const [schedules, setSchedules] = React.useState<any[]>([]);
+  const [schedules, setSchedules] = React.useState<Schedule[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [viewMode, setViewMode] = React.useState<'month' | 'week'>('month');
+  const calendarRef = React.useRef<FullCalendar>(null);
 
   React.useEffect(() => {
     loadSchedules();
@@ -144,37 +154,34 @@ export default function HabitPlanner() {
     title: schedule.title,
     start: schedule.start_time,
     end: schedule.end_time,
-    backgroundColor: '#0891b2',
-    borderColor: '#06b6d4',
+    backgroundColor: '#0e7490',
+    borderColor: '#155e75',
     extendedProps: {
       category: schedule.category,
     },
   }));
 
   return (
-    <div className="container-custom py-8">
+    <div className="container-custom py-8 lg:py-12">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-8"
+        transition={{ duration: 0.4 }}
+        className="space-y-10 lg:space-y-12"
       >
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-display-sm font-display font-bold text-white">Habit Planner</h1>
-            <p className="text-dark-400 mt-1">Plan and visualize your daily routines</p>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="text-display-sm font-bold text-white tracking-tight">Habit Planner</h1>
+            <p className="text-body-md text-dark-400">Plan and visualize your daily routines</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <Link
               to="/smart-scheduler"
-              className="btn-primary btn-sm group"
+              className="btn-primary btn-sm"
             >
-              <Zap className="h-4 w-4" />
               <Brain className="h-4 w-4" />
               Optimize with AI
-              <motion.div className="group-hover:translate-x-1 transition-transform">
-                <ChevronDown className="h-4 w-4" />
-              </motion.div>
             </Link>
             <button
               onClick={() => {
@@ -192,62 +199,68 @@ export default function HabitPlanner() {
         {/* Error Display */}
         {error && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400"
+            className="flex items-center gap-3 p-3.5 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400"
             role="alert"
           >
-            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+            <AlertCircle className="h-4 w-4 flex-shrink-0" />
             <span className="text-sm">{error}</span>
           </motion.div>
         )}
 
         {/* Calendar View Toggle */}
-        <div className="card p-2 flex items-center justify-between">
-          <div className="flex items-center gap-1 bg-dark-800 p-1 rounded-xl">
+        <div className="card p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-1 bg-dark-800 p-1 rounded-lg">
             <button
-              onClick={() => setViewMode('month')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                viewMode === 'month'
-                  ? 'bg-white text-dark-950 shadow-sm'
-                  : 'text-dark-400 hover:text-white'
-              }`}
+              onClick={() => {
+                setViewMode('month');
+                calendarRef.current?.getApi().changeView('dayGridMonth');
+              }}
+              className={viewMode === 'month' ? 'nav-link-active' : 'nav-link-inactive'}
             >
               Month
             </button>
             <button
-              onClick={() => setViewMode('week')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                viewMode === 'week'
-                  ? 'bg-white text-dark-950 shadow-sm'
-                  : 'text-dark-400 hover:text-white'
-              }`}
+              onClick={() => {
+                setViewMode('week');
+                calendarRef.current?.getApi().changeView('timeGridWeek');
+              }}
+              className={viewMode === 'week' ? 'nav-link-active' : 'nav-link-inactive'}
             >
               Week
             </button>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  calendarRef.current?.getApi().prev();
+                }}
+                className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
+                aria-label="Previous month"
+              >
+                <ChevronDown className="h-5 w-5 rotate-90" />
+              </button>
+              <span className="font-medium text-white min-w-[150px] text-center">
+                {format(currentMonth, 'MMMM yyyy')}
+              </span>
+              <button
+                onClick={() => {
+                  calendarRef.current?.getApi().next();
+                }}
+                className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
+                aria-label="Next month"
+              >
+                <ChevronDown className="h-5 w-5 -rotate-90" />
+              </button>
+            </div>
             <button
-              onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-              className="p-2 rounded-xl text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
-              aria-label="Previous month"
-            >
-              <ChevronDown className="h-5 w-5 rotate-90" />
-            </button>
-            <span className="font-medium text-white min-w-[150px] text-center">
-              {format(currentMonth, 'MMMM yyyy')}
-            </span>
-            <button
-              onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-              className="p-2 rounded-xl text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
-              aria-label="Next month"
-            >
-              <ChevronDown className="h-5 w-5 -rotate-90" />
-            </button>
-            <button
-              onClick={() => setCurrentMonth(new Date())}
-              className="btn-secondary btn-sm hidden sm:flex"
+              onClick={() => {
+                calendarRef.current?.getApi().today();
+              }}
+              className="btn-secondary btn-sm w-full sm:w-auto"
             >
               Today
             </button>
@@ -262,6 +275,7 @@ export default function HabitPlanner() {
           className="card overflow-hidden"
         >
           <FullCalendar
+            ref={calendarRef}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView={viewMode === 'month' ? 'dayGridMonth' : 'timeGridWeek'}
             dateClick={handleDateClick}
@@ -284,94 +298,109 @@ export default function HabitPlanner() {
                 <span className="text-xs font-medium truncate">{eventInfo.timeText}</span>
                 <span className="text-xs truncate">{eventInfo.event.title}</span>
                 {eventInfo.event.extendedProps.category && (
-                  <span className="text-[10px] px-1.5 py-0.5 bg-white/20 rounded text-center truncate">
+                  <span className="text-[10px] px-1.5 py-0.5 bg-white/10 rounded text-center truncate">
                     {eventInfo.event.extendedProps.category}
                   </span>
                 )}
               </div>
             )}
-            dayHeaderClassNames="bg-dark-900/50 text-dark-300 font-medium py-2"
-            dayCellClassNames="border-dark-800"
-            todayClassNames="bg-primary-500/10"
+            dayHeaderClassNames="bg-dark-800/50 text-dark-600 font-medium py-2"
+            dayCellClassNames={(arg) => {
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              const cellDate = new Date(arg.date);
+              cellDate.setHours(0, 0, 0, 0);
+              if (cellDate.getTime() === today.getTime()) {
+                return 'bg-primary-500/5 border-dark-700';
+              }
+              return 'border-dark-700';
+            }}
+            datesSet={(info) => {
+              setCurrentMonth(info.start);
+            }}
           />
         </motion.div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="card p-6"
+            transition={{ delay: 0.06, duration: 0.3 }}
+            className="card p-5"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-dark-400 text-sm font-medium">This Month</p>
-                <p className="text-3xl font-display font-bold text-white mt-1">{schedules.length}</p>
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-caption font-medium text-dark-400 tracking-wide uppercase">This Month</p>
+                <p className="text-heading-lg font-display font-bold text-white mt-1.5 truncate">{schedules.length}</p>
+                <p className="text-caption text-dark-500 mt-0.5">Schedules</p>
               </div>
-              <div className="p-3 bg-primary-500/10 rounded-xl text-primary-400">
-                <CalendarIcon className="h-6 w-6" />
+              <div className="p-2.5 rounded-lg bg-primary-500/10 text-primary-400 flex-shrink-0">
+                <CalendarIcon className="h-5 w-5" />
               </div>
             </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="card p-6"
+            transition={{ delay: 0.12, duration: 0.3 }}
+            className="card p-5"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-dark-400 text-sm font-medium">Hours Scheduled</p>
-                <p className="text-3xl font-display font-bold text-white mt-1">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-caption font-medium text-dark-400 tracking-wide uppercase">Hours Scheduled</p>
+                <p className="text-heading-lg font-display font-bold text-white mt-1.5 truncate">
                   {schedules.reduce((sum, s) => {
                     const start = new Date(s.start_time);
                     const end = new Date(s.end_time);
                     return sum + (end.getTime() - start.getTime()) / (1000 * 60 * 60);
                   }, 0).toFixed(1)}
                 </p>
+                <p className="text-caption text-dark-500 mt-0.5">Total hours</p>
               </div>
-              <div className="p-3 bg-secondary-500/10 rounded-xl text-secondary-400">
-                <Zap className="h-6 w-6" />
+              <div className="p-2.5 rounded-lg bg-secondary-500/10 text-secondary-400 flex-shrink-0">
+                <Zap className="h-5 w-5" />
               </div>
             </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="card p-6"
+            transition={{ delay: 0.18, duration: 0.3 }}
+            className="card p-5"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-dark-400 text-sm font-medium">Categories</p>
-                <p className="text-3xl font-display font-bold text-white mt-1">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-caption font-medium text-dark-400 tracking-wide uppercase">Categories</p>
+                <p className="text-heading-lg font-display font-bold text-white mt-1.5 truncate">
                   {new Set(schedules.map(s => s.category)).size}
                 </p>
+                <p className="text-caption text-dark-500 mt-0.5">Active</p>
               </div>
-              <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400">
-                <Brain className="h-6 w-6" />
+              <div className="p-2.5 rounded-lg bg-green-500/10 text-green-400 flex-shrink-0">
+                <Brain className="h-5 w-5" />
               </div>
             </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="card p-6"
+            transition={{ delay: 0.24, duration: 0.3 }}
+            className="card p-5"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-dark-400 text-sm font-medium">Avg/Day</p>
-                <p className="text-3xl font-display font-bold text-white mt-1">
-                  {(schedules.length / Math.max(new Set(schedules.map(s => s.date)).size, 1)).toFixed(1)}
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-caption font-medium text-dark-400 tracking-wide uppercase">Avg/Day</p>
+                <p className="text-heading-lg font-display font-bold text-white mt-1.5 truncate">
+                  {(schedules.length / Math.max(new Set(schedules.map(s => s.start_time.split('T')[0])).size, 1)).toFixed(1)}
                 </p>
+                <p className="text-caption text-dark-500 mt-0.5">Per day</p>
               </div>
-              <div className="p-3 bg-orange-500/10 rounded-xl text-orange-400">
-                <Trash2 className="h-6 w-6" />
+              <div className="p-2.5 rounded-lg bg-purple-500/10 text-purple-400 flex-shrink-0">
+                <Timer className="h-5 w-5" />
               </div>
             </div>
           </motion.div>
@@ -379,12 +408,12 @@ export default function HabitPlanner() {
 
         {/* Upcoming Events List */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.3, duration: 0.3 }}
           className="card overflow-hidden"
         >
-          <div className="p-6 border-b border-dark-700 flex items-center justify-between">
+          <div className="p-5 border-b border-dark-700 flex items-center justify-between">
             <h2 className="text-heading-md font-bold text-white flex items-center gap-2">
               <CalendarIcon className="h-5 w-5 text-primary-400" />
               Upcoming Schedule
@@ -399,14 +428,15 @@ export default function HabitPlanner() {
               .map((schedule) => (
                 <motion.div
                   key={schedule.id}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -12 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="p-4 hover:bg-dark-800/50 transition-colors flex items-center justify-between gap-4"
+                  transition={{ duration: 0.2 }}
+                  className="p-4 hover:bg-dark-800/30 transition-colors flex items-center justify-between gap-4 group"
                 >
                   <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="flex flex-col items-center justify-center min-w-[60px] px-3 py-2 bg-dark-800 rounded-xl border border-dark-700">
-                      <span className="font-bold text-white text-lg">{format(new Date(schedule.start_time), 'MMM')}</span>
-                      <span className="font-display font-bold text-2xl text-primary-400">{format(new Date(schedule.start_time), 'd')}</span>
+                    <div className="flex flex-col items-center justify-center min-w-[56px] px-3 py-2 bg-dark-800 rounded-lg border border-dark-700">
+                      <span className="font-medium text-white text-sm">{format(new Date(schedule.start_time), 'MMM')}</span>
+                      <span className="font-display font-bold text-xl text-primary-400">{format(new Date(schedule.start_time), 'd')}</span>
                       <span className="text-xs text-dark-400">{format(new Date(schedule.start_time), 'EEE')}</span>
                     </div>
                     <div className="min-w-0">
@@ -424,7 +454,7 @@ export default function HabitPlanner() {
                   </div>
                   <button
                     onClick={() => deleteEvent(schedule.id)}
-                    className="p-2 text-dark-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors opacity-0 group-hover:opacity-100"
+                    className="p-2 text-dark-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                     aria-label="Delete event"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -432,10 +462,10 @@ export default function HabitPlanner() {
                 </motion.div>
               ))}
             {schedules.length === 0 && (
-              <div className="p-12 text-center text-dark-400">
-                <CalendarIcon className="h-12 w-12 mx-auto mb-4 text-dark-600" />
-                <p className="text-lg">No schedules yet</p>
-                <p className="text-sm mt-1">Click any date to add your first habit</p>
+              <div className="p-10 text-center text-dark-400">
+                <CalendarIcon className="h-10 w-10 mx-auto mb-3 text-dark-600" />
+                <p className="text-body-md">No schedules yet</p>
+                <p className="text-sm text-dark-500 mt-1">Click any date to add your first habit</p>
               </div>
             )}
           </div>
@@ -455,22 +485,22 @@ export default function HabitPlanner() {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-dark-900 border border-dark-700 rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
+                className="bg-dark-900 border border-dark-700 rounded-xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
                 onClick={e => e.stopPropagation()}
               >
-                <div className="p-6 border-b border-dark-700 flex items-center justify-between">
+                <div className="p-5 border-b border-dark-700 flex items-center justify-between">
                   <h2 className="text-heading-md font-bold text-white">
                     Add Schedule for {format(selectedDate, 'MMMM d, yyyy')}
                   </h2>
                   <button
                     onClick={() => setShowTemplateModal(false)}
-                    className="p-2 rounded-xl text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
+                    className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
                   >
-                    <ChevronUp className="h-6 w-6" />
+                    <ChevronUp className="h-5 w-5" />
                   </button>
                 </div>
 
-                <div className="p-6 space-y-4">
+                <div className="p-5 space-y-3">
                   {templates.map((template) => (
                     <motion.button
                       key={template.name}
@@ -478,11 +508,11 @@ export default function HabitPlanner() {
                       disabled={loading}
                       whileHover={{ x: 4 }}
                       whileTap={{ scale: 0.98 }}
-                      className="w-full text-left p-4 rounded-xl transition-all duration-300 bg-dark-800/50 border border-dark-700 hover:border-dark-600 disabled:opacity-50"
+                      className="w-full text-left p-4 rounded-lg transition-all duration-200 bg-dark-800/50 border border-dark-700 hover:border-dark-600 disabled:opacity-50"
                     >
                       <div className="flex items-start gap-4">
-                        <div className={`p-3 rounded-xl ${template.color} shrink-0`}>
-                          <CalendarIcon className="h-5 w-5 text-white" />
+                        <div className={`p-3 rounded-lg ${template.color} shrink-0`}>
+                          <CalendarIcon className="h-5 w-5" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-medium text-white">{template.name}</h3>
@@ -502,7 +532,7 @@ export default function HabitPlanner() {
                     </motion.button>
                   ))}
 
-                  <div className="flex justify-end gap-4 pt-4 border-t border-dark-700">
+                  <div className="flex justify-end gap-3 pt-3 border-t border-dark-700">
                     <button
                       onClick={() => setShowTemplateModal(false)}
                       className="btn-secondary"

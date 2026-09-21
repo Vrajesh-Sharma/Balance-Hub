@@ -396,15 +396,7 @@ export default function BalanceTracker() {
                       verticalAlign="middle"
                       iconType="circle"
                       iconSize={10}
-                      formatter={(value) => (
-                        <span className="flex items-center gap-2 text-dark-300 text-sm">
-                          <span
-                            className="w-2.5 h-2.5 rounded-full"
-                            style={{ backgroundColor: ACTIVITY_COLOR_MAP[activityTypes.find(t => t.label === value)?.value || ''] || '#8884d8' }}
-                          />
-                          {value}
-                        </span>
-                      )}
+                      formatter={(value) => value}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -466,15 +458,7 @@ export default function BalanceTracker() {
                     iconType="circle"
                     iconSize={8}
                     wrapperStyle={{ paddingTop: 8, paddingBottom: 4 }}
-                    formatter={(value) => (
-                      <span className="flex items-center gap-2 text-dark-300 text-sm">
-                        <span
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: ACTIVITY_COLOR_MAP[value] || '#8884d8' }}
-                        />
-                        {activityLabels[value] || value}
-                      </span>
-                    )}
+                    formatter={(value) => activityLabels[value] || value}
                   />
                   {activityTypes.map((type, index) => (
                     <Bar
