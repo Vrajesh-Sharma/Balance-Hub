@@ -293,10 +293,17 @@ export default function HabitPlanner() {
               hour12: false,
             }}
             eventDisplay="block"
+            slotEventOverlap={false}
             eventContent={(eventInfo) => (
               <div className="p-1.5 h-full flex flex-col justify-between">
-                <span className="text-xs font-medium truncate">{eventInfo.timeText}</span>
-                <span className="text-xs truncate">{eventInfo.event.title}</span>
+                <span className="text-xs font-medium truncate">
+                  {eventInfo.timeText}
+                </span>
+
+                <span className="text-xs truncate">
+                  {eventInfo.event.title}
+                </span>
+
                 {eventInfo.event.extendedProps.category && (
                   <span className="text-[10px] px-1.5 py-0.5 bg-white/10 rounded text-center truncate">
                     {eventInfo.event.extendedProps.category}
@@ -308,11 +315,14 @@ export default function HabitPlanner() {
             dayCellClassNames={(arg) => {
               const today = new Date();
               today.setHours(0, 0, 0, 0);
+
               const cellDate = new Date(arg.date);
               cellDate.setHours(0, 0, 0, 0);
+
               if (cellDate.getTime() === today.getTime()) {
                 return 'bg-primary-500/5 border-dark-700';
               }
+
               return 'border-dark-700';
             }}
             datesSet={(info) => {
