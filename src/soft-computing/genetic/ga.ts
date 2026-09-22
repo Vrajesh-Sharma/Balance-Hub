@@ -30,6 +30,7 @@ const DEFAULT_WEIGHTS: FitnessWeights = {
 export interface GARuntimeConfig {
   config?: Partial<GAConfig>;
   weights?: Partial<FitnessWeights>;
+  currentSchedule?: any[];
   onGeneration?: (gen: number, bestFitness: number, avgFitness: number) => void;
   onComplete?: (best: Chromosome, convergence: number[]) => void;
 }
@@ -42,7 +43,7 @@ export async function runGeneticAlgorithm(
   const config: GAConfig = { ...DEFAULT_CONFIG, ...runtimeConfig.config };
   const weights: FitnessWeights = { ...DEFAULT_WEIGHTS, ...runtimeConfig.weights };
   
-  let population = generateInitialPopulation(config.populationSize, inputs, prefs);
+  let population = generateInitialPopulation(config.populationSize, inputs, prefs, runtimeConfig.currentSchedule);
   
   const convergence: number[] = [];
   let bestOverall: Chromosome | null = null;
@@ -145,20 +146,26 @@ export async function runGeneticAlgorithm(
 function generateInitialPopulation(
   size: number,
   inputs: UserInputs,
-  prefs: UserPreferences
+  prefs: UserPreferences,
+  currentSchedule?: any[]
 ): Chromosome[] {
   const population: Chromosome[] = [];
   const templates = ['Morning Routine', 'Focus Day', 'Balanced Day'];
   const templateCount = Math.floor(size * 0.4);
-  const currentCount = Math.floor(size * 0.3);
+  const currentCount = currentSchedule && currentSchedule.length > 0 ? Math.floor(size * 0.3) : 0;
   const randomCount = size - templateCount - currentCount;
   
   for (let i = 0; i < templateCount; i++) {
     population.push(createTemplateChromosome(templates[i % templates.length], prefs));
   }
   
-  for (let i = 0; i < currentCount; i++) {
-    population.push(createRandomChromosome(inputs, prefs));
+  if (currentSchedule && currentSchedule.length > 0) {
+    const currentChrom = createCurrentScheduleChromosome(currentSchedule, prefs);
+    population.push(currentChrom);
+    // Add variations of current schedule
+    for (let i = 1; i < currentCount; i++) {
+      population.push(createRandomChromosome(inputs, prefs));
+    }
   }
   
   for (let i = 0; i < randomCount; i++) {

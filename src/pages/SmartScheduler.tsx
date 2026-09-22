@@ -8,9 +8,10 @@ import {
   Zap,
   AlertCircle,
   CheckCircle,
-  Loader2
+  Loader2,
+  Database
 } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { 
   runGeneticAlgorithm, 
   runBaselineComparisons,
@@ -19,7 +20,7 @@ import {
   generateSyntheticProfile,
   schedulesToCurrentFormat,
 } from '../soft-computing';
-import { mockApi } from '../lib/dummyData';
+import { mockApi, smartSchedulerData } from '../lib/dummyData';
 import FitnessChart from '../components/SmartScheduler/FitnessChart';
 import ScheduleView from '../components/SmartScheduler/ScheduleView';
 import FuzzyExplanation from '../components/SmartScheduler/FuzzyExplanation';
@@ -32,8 +33,13 @@ export default function SmartScheduler() {
   const [optimizedSchedule, setOptimizedSchedule] = React.useState<any>(null);
   const [comparisonResults, setComparisonResults] = React.useState<any[]>([]);
   const [error, setError] = React.useState<string | null>(null);
-  const [useRealData, setUseRealData] = React.useState(true);
+  const [useTestData, setUseTestData] = React.useState(false);
   const [convergence, setConvergence] = React.useState<number[]>([]);
+  const [hasRealData, setHasRealData] = React.useState(false);
+
+  React.useEffect(() => {
+    setHasRealData(smartSchedulerData.hasRealData());
+  }, []);
 
   const handleOptimize = async () => {
     setStep('loading');
@@ -46,21 +52,29 @@ export default function SmartScheduler() {
       let prefs: any;
       let currentSchedule: any[] = [];
 
-      if (useRealData) {
-        const [activitiesRes, workLogsRes, journalRes, goalsRes, schedulesRes] = await Promise.all([
+      if (!useTestData) {
+        setStatusMessage('Fetching activities, work logs, journals, goals, and schedules...');
+        setProgress(20);
+
+        const [activitiesRes, goalsRes, journalRes, schedulesRes, workLogsRes] = await Promise.all([
           mockApi.getActivities(format(subDays(new Date(), 30), 'yyyy-MM-dd'), format(new Date(), 'yyyy-MM-dd')),
+          mockApi.getGoals(),
+          mockApi.getJournalEntries(),
           mockApi.getSchedules(format(subDays(new Date(), 30), 'yyyy-MM-dd'), format(new Date(), 'yyyy-MM-dd')),
-        ].concat([
-          Promise.resolve({ data: [], error: null }),
-          Promise.resolve({ data: [], error: null }),
-          Promise.resolve({ data: [], error: null }),
-        ]));
+          mockApi.getWorkLogs(format(subDays(new Date(), 30), 'yyyy-MM-dd'), format(new Date(), 'yyyy-MM-dd')),
+        ]);
 
         const activities = activitiesRes.data || [];
+        const goals = goalsRes.data || [];
+        const journal = journalRes.data || [];
         const schedules = schedulesRes.data || [];
-        const workLogs: any[] = [];
-        const journal: any[] = [];
-        const goals: any[] = [];
+        const workLogs = workLogsRes.data || [];
+
+        if (activities.length === 0 && goals.length === 0 && journal.length === 0 && schedules.length === 0 && workLogs.length === 0) {
+          setStep('error');
+          setError('No user data found. Please add activities, schedules, goals, journal entries, or work time logs first.');
+          return;
+        }
 
         inputs = aggregateUserProfile(activities, workLogs, journal, goals, schedules, getDefaultPreferences());
         prefs = getDefaultPreferences();
@@ -76,11 +90,17 @@ export default function SmartScheduler() {
       setStatusMessage('Running Fuzzy Logic evaluation...');
       setProgress(30);
 
+      // Run fuzzy logic evaluation first
+      const { evaluateBalance } = await import('../soft-computing/fuzzy');
+      const fuzzyResult = evaluateBalance(inputs);
+      console.log('Fuzzy Logic Result:', fuzzyResult);
+
       setStatusMessage('Optimizing schedule with Genetic Algorithm...');
       setProgress(50);
 
       const result = await runGeneticAlgorithm(inputs, prefs, {
         config: { populationSize: 100, generations: 150 },
+        currentSchedule,
         onGeneration: (gen, best, avg) => {
           setProgress(50 + Math.floor((gen / 150) * 40));
           setStatusMessage(`Generation ${gen}: Best fitness = ${best.toFixed(1)}`);
@@ -140,12 +160,24 @@ export default function SmartScheduler() {
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              checked={useRealData}
-              onChange={(e) => setUseRealData(e.target.checked)}
+              checked={useTestData}
+              onChange={(e) => setUseTestData(e.target.checked)}
               className="w-4 h-4 text-cyan-500 border-gray-600 rounded focus:ring-cyan-500"
             />
-            <span className="text-sm">Use real user data</span>
+            <span className="text-sm">Use test data (synthetic)</span>
           </label>
+          {hasRealData && !useTestData && (
+            <span className="flex items-center gap-1 text-xs text-green-400 self-center">
+              <Database size={12} />
+              Real user data detected
+            </span>
+          )}
+          {!hasRealData && !useTestData && (
+            <span className="flex items-center gap-1 text-xs text-yellow-400 self-center">
+              <AlertCircle size={12} />
+              No real data - add activities/schedules first
+            </span>
+          )}
         </div>
       </div>
 
@@ -330,18 +362,13 @@ export default function SmartScheduler() {
           <button
             onClick={handleOptimize}
             className="inline-flex items-center gap-2 px-8 py-3 bg-cyan-500 hover:bg-cyan-600 rounded-lg transition-colors text-lg font-medium"
+            disabled={!hasRealData && !useTestData}
           >
             <Brain size={24} />
-            Generate Optimized Schedule
+            {useTestData ? 'Generate Optimized Schedule (Test Data)' : hasRealData ? 'Generate Optimized Schedule (Real Data)' : 'Add Data First'}
           </button>
         </motion.div>
       )}
     </div>
   );
-}
-
-function subDays(date: Date, days: number): Date {
-  const result = new Date(date);
-  result.setDate(result.getDate() - days);
-  return result;
 }

@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
-import { Brain, Sparkles } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import React, { useState, useEffect } from 'react';
+import { Brain, Sparkles, AlertCircle, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { format } from 'date-fns';
+import { evaluateBalance, explainFuzzy } from '../soft-computing/fuzzy';
+import { aggregateUserProfile, getDefaultPreferences, schedulesToCurrentFormat } from '../soft-computing/data';
+import { mockApi, smartSchedulerData } from '../lib/dummyData';
+import { UserInputs } from '../soft-computing/types';
 
 interface ScheduleItem {
   activity: string;
   hours: number;
-}
-
-interface RecommendedTime {
-  name: string;
-  value: number;
-  color: string;
 }
 
 const AskAI: React.FC = () => {
@@ -19,128 +17,164 @@ const AskAI: React.FC = () => {
     { activity: 'Personal Time', hours: 0 },
     { activity: 'Sleep', hours: 0 },
   ]);
-
+  
   const [message, setMessage] = useState<string>('');
   const [messageType, setMessageType] = useState<'success' | 'warning' | 'error'>('success');
   const [showMessage, setShowMessage] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [fuzzyDetails, setFuzzyDetails] = useState<{
+    balanceScore: number;
+    stressScore: number;
+    firedRules: Array<{name: string; strength: number; consequence: {balance: number; stress: number}}>;
+  } | null>(null);
+  const [hasRealData, setHasRealData] = useState(false);
+  const [useTestData, setUseTestData] = useState(false);
 
-  // Recommended time allocation for a balanced 24-hour day
-  const recommendedTime: RecommendedTime[] = [
-    { name: 'Work', value: 8, color: '#22D3EE' }, // Cyan
-    { name: 'Personal Time', value: 8, color: '#F472B6' }, // Pink
-    { name: 'Sleep', value: 8, color: '#A78BFA' }, // Purple
-  ];
+  useEffect(() => {
+    setHasRealData(smartSchedulerData.hasRealData());
+  }, []);
 
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-gray-800 border border-gray-700 p-2 rounded-lg shadow-lg">
-          <p className="text-white font-medium">{`${payload[0].name}: ${payload[0].value} hours`}</p>
-        </div>
-      );
+  useEffect(() => {
+    if (hasRealData && !useTestData) {
+      loadRealUserData();
     }
-    return null;
-  };
+  }, [hasRealData, useTestData]);
 
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, name, value }: any) => {
-    const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-    return (
-      <text 
-        x={x} 
-        y={y} 
-        fill="white" 
-        textAnchor={x > cx ? 'start' : 'end'} 
-        dominantBaseline="central"
-        className="text-sm font-medium"
-      >
-        {`${value}hrs`}
-      </text>
-    );
+  const loadRealUserData = async () => {
+    try {
+      const inputs = smartSchedulerData.getUserInputs();
+      const workHours = inputs.workHours;
+      const personalHours = inputs.personalHours;
+      const sleepHours = inputs.sleepHours;
+      
+      setScheduleItems([
+        { activity: 'Work', hours: Math.round(workHours * 10) / 10 },
+        { activity: 'Personal Time', hours: Math.round(personalHours * 10) / 10 },
+        { activity: 'Sleep', hours: Math.round(sleepHours * 10) / 10 },
+      ]);
+    } catch (err) {
+      console.error('Failed to load real user data:', err);
+    }
   };
 
   const handleHoursChange = (index: number, hours: number) => {
     const newSchedule = [...scheduleItems];
-    newSchedule[index].hours = hours;
+    newSchedule[index].hours = Math.max(0, Math.min(24, hours));
     setScheduleItems(newSchedule);
     setShowMessage(false);
+    setFuzzyDetails(null);
   };
 
-  const handleAnalyzeClick = () => {
-    setShowMessage(true);
-    analyzeSchedule(scheduleItems);
+  const handleAnalyzeClick = async () => {
+    setIsAnalyzing(true);
+    setShowMessage(false);
+    setFuzzyDetails(null);
+
+    try {
+      const workHours = scheduleItems.find(item => item.activity === 'Work')?.hours || 0;
+      const personalHours = scheduleItems.find(item => item.activity === 'Personal Time')?.hours || 0;
+      const sleepHours = scheduleItems.find(item => item.activity === 'Sleep')?.hours || 0;
+      const totalHours = workHours + personalHours + sleepHours;
+
+      if (totalHours > 24) {
+        setMessage('Total hours cannot exceed 24 hours in a day!');
+        setMessageType('error');
+        setShowMessage(true);
+        setIsAnalyzing(false);
+        return;
+      }
+
+      if (totalHours === 0) {
+        setMessage('Please enter your daily schedule hours before analysis.');
+        setMessageType('warning');
+        setShowMessage(true);
+        setIsAnalyzing(false);
+        return;
+      }
+
+      // Build UserInputs for fuzzy logic from the user's entered hours
+      // We use real user data as base and override with entered hours
+      let baseInputs: UserInputs;
+      
+      if (!useTestData && hasRealData) {
+        baseInputs = smartSchedulerData.getUserInputs();
+      } else {
+        const profile = await import('../soft-computing/data').then(m => m.generateSyntheticProfile(30));
+        baseInputs = profile.inputs;
+      }
+
+      // Override with user-entered values
+      const fuzzyInputs: UserInputs = {
+        ...baseInputs,
+        workHours,
+        personalHours,
+        sleepHours,
+        exerciseHours: baseInputs.exerciseHours,
+      };
+
+      // Run the actual Fuzzy Logic inference engine
+      const fuzzyResult = evaluateBalance(fuzzyInputs);
+      const ruleExplanations = explainFuzzy(fuzzyInputs);
+
+      setFuzzyDetails({
+        balanceScore: fuzzyResult.balanceScore,
+        stressScore: fuzzyResult.stressScore,
+        firedRules: fuzzyResult.firedRules,
+      });
+
+      // Generate message based on actual fuzzy output
+      let analysisMessage = '';
+      let analysisType: 'success' | 'warning' | 'error' = 'success';
+
+      if (fuzzyResult.balanceScore >= 70 && fuzzyResult.stressScore <= 30) {
+        analysisMessage = `Excellent! Your schedule shows a healthy balance (Balance: ${fuzzyResult.balanceScore.toFixed(1)}/100, Stress: ${fuzzyResult.stressScore.toFixed(1)}/100).`;
+        analysisType = 'success';
+      } else if (fuzzyResult.balanceScore >= 50 && fuzzyResult.stressScore <= 50) {
+        analysisMessage = `Your schedule has fair balance (Balance: ${fuzzyResult.balanceScore.toFixed(1)}/100, Stress: ${fuzzyResult.stressScore.toFixed(1)}/100). Consider adjustments for better well-being.`;
+        analysisType = 'warning';
+      } else {
+        analysisMessage = `Your schedule needs improvement (Balance: ${fuzzyResult.balanceScore.toFixed(1)}/100, Stress: ${fuzzyResult.stressScore.toFixed(1)}/100). The fuzzy logic system detected significant imbalance.`;
+        analysisType = 'error';
+      }
+
+      // Add top fired rule info
+      if (fuzzyResult.firedRules.length > 0) {
+        const topRule = fuzzyResult.firedRules[0];
+        analysisMessage += ` Key factor: ${topRule.name} (strength: ${topRule.strength.toFixed(2)}).`;
+      }
+
+      setMessage(analysisMessage);
+      setMessageType(analysisType);
+      setShowMessage(true);
+    } catch (err) {
+      setMessage(`Analysis failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      setMessageType('error');
+      setShowMessage(true);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
-  const analyzeSchedule = (schedule: ScheduleItem[]) => {
-    const workHours = schedule.find(item => item.activity === 'Work')?.hours || 0;
-    const personalHours = schedule.find(item => item.activity === 'Personal Time')?.hours || 0;
-    const sleepHours = schedule.find(item => item.activity === 'Sleep')?.hours || 0;
-    const totalHours = workHours + personalHours + sleepHours;
-
-    // Check if total hours exceed 24
-    if (totalHours > 24) {
-      setMessage('Total hours cannot exceed 24 hours in a day!');
-      setMessageType('error');
-      return;
+  const handleUseTestDataChange = (checked: boolean) => {
+    setUseTestData(checked);
+    if (checked) {
+      loadTestData();
+    } else if (hasRealData) {
+      loadRealUserData();
     }
+  };
 
-    // Analyze sleep patterns
-    if (sleepHours < 6) {
-      setMessage('You need more sleep! Aim for at least 7-8 hours of sleep for better health.');
-      setMessageType('error');
-      return;
-    }
-
-    if (sleepHours > 10) {
-      setMessage('You might be sleeping too much. Try to balance your sleep schedule.');
-      setMessageType('warning');
-      return;
-    }
-
-    // Analyze work-life balance
-    if (workHours > 10) {
-      setMessage('Too much work time. Consider reducing work hours for better work-life balance.');
-      setMessageType('error');
-      return;
-    }
-
-    if (workHours < 7 && totalHours > 0) {
-      setMessage('Consider dedicating more time to work for better productivity.');
-      setMessageType('warning');
-      return;
-    }
-
-    // Analyze personal time
-    if (personalHours < 2 && totalHours > 0) {
-      setMessage('Try to allocate more personal time for better mental health.');
-      setMessageType('warning');
-      return;
-    }
-
-    if (personalHours > 8) {
-      setMessage('Consider balancing your personal time with other activities.');
-      setMessageType('warning');
-      return;
-    }
-
-    // Ideal balance
-    if (workHours >= 7 && workHours <= 10 && 
-        sleepHours >= 7 && sleepHours <= 9 && 
-        personalHours >= 2 && personalHours <= 8) {
-      setMessage('Great job! Your schedule shows a healthy balance between work, rest, and personal time.');
-      setMessageType('success');
-      return;
-    }
-
-    if (totalHours === 0) {
-      setMessage('Please enter your daily schedule hours before analysis.');
-      setMessageType('warning');
-    } else {
-      setMessage('Your schedule needs some adjustments to achieve better balance.');
-      setMessageType('warning');
+  const loadTestData = async () => {
+    try {
+      const { generateSyntheticProfile } = await import('../soft-computing/data');
+      const profile = generateSyntheticProfile(30);
+      setScheduleItems([
+        { activity: 'Work', hours: Math.round(profile.inputs.workHours * 10) / 10 },
+        { activity: 'Personal Time', hours: Math.round(profile.inputs.personalHours * 10) / 10 },
+        { activity: 'Sleep', hours: Math.round(profile.inputs.sleepHours * 10) / 10 },
+      ]);
+    } catch (err) {
+      console.error('Failed to load test data:', err);
     }
   };
 
@@ -151,6 +185,31 @@ const AskAI: React.FC = () => {
         <div className="flex items-center justify-center mb-8">
           <Brain className="h-10 w-10 text-cyan-400 mr-4" />
           <h1 className="text-4xl font-bold text-white">Schedule Analysis</h1>
+        </div>
+
+        {/* Data Source Toggle */}
+        <div className="mb-6 flex items-center justify-center gap-4">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={useTestData}
+              onChange={(e) => handleUseTestDataChange(e.target.checked)}
+              className="w-4 h-4 text-cyan-500 border-gray-600 rounded focus:ring-cyan-500"
+            />
+            <span className="text-sm">Use test data (synthetic)</span>
+          </label>
+          {hasRealData && !useTestData && (
+            <span className="flex items-center gap-1 text-xs text-green-400">
+              <CheckCircle size={12} />
+              Real user data loaded
+            </span>
+          )}
+          {!hasRealData && !useTestData && (
+            <span className="flex items-center gap-1 text-xs text-yellow-400">
+              <AlertCircle size={12} />
+              No real data - using defaults
+            </span>
+          )}
         </div>
 
         {/* Main Content Card */}
@@ -166,6 +225,7 @@ const AskAI: React.FC = () => {
                     type="number"
                     min="0"
                     max="24"
+                    step="0.5"
                     value={item.hours}
                     onChange={(e) => handleHoursChange(index, Number(e.target.value))}
                     className="w-full bg-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-cyan-400 focus:outline-none"
@@ -179,14 +239,24 @@ const AskAI: React.FC = () => {
             ))}
           </div>
 
-          {/* Ask AI Button */}
+          {/* Analyze Button */}
           <div className="flex justify-center">
             <button
               onClick={handleAnalyzeClick}
-              className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 transform hover:scale-105"
+              disabled={isAnalyzing}
+              className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 disabled:bg-cyan-500/50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 transform hover:scale-105 disabled:transform-none"
             >
-              <Sparkles className="h-5 w-5" />
-              Ask AI
+              {isAnalyzing ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-5 w-5" />
+                  Analyze with Fuzzy Logic
+                </>
+              )}
             </button>
           </div>
 
@@ -203,45 +273,101 @@ const AskAI: React.FC = () => {
             </div>
           )}
 
-          {/* Pie Chart - Only show when there are warnings/errors */}
+          {/* Fuzzy Logic Details */}
+          {fuzzyDetails && (
+            <div className="mt-8 p-6 bg-gray-800 rounded-xl shadow-xl border border-gray-700">
+              <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                <Brain className="h-5 w-5 text-cyan-400" />
+                Fuzzy Logic Analysis Details
+              </h3>
+              
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-gray-700 p-4 rounded-lg">
+                  <p className="text-sm text-gray-400">Balance Score</p>
+                  <p className="text-3xl font-bold text-green-400">{fuzzyDetails.balanceScore.toFixed(1)} / 100</p>
+                </div>
+                <div className="bg-gray-700 p-4 rounded-lg">
+                  <p className="text-sm text-gray-400">Stress Score</p>
+                  <p className="text-3xl font-bold text-red-400">{fuzzyDetails.stressScore.toFixed(1)} / 100</p>
+                </div>
+              </div>
+
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                <p className="text-sm font-medium text-cyan-300 mb-2">Activated Fuzzy Rules:</p>
+                {fuzzyDetails.firedRules.length === 0 ? (
+                  <p className="text-gray-400 text-center py-2">No rules fired significantly</p>
+                ) : (
+                  fuzzyDetails.firedRules.slice(0, 5).map((rule, index) => (
+                    <div key={index} className="p-3 bg-gray-700 rounded-lg border-l-4 border-cyan-500">
+                      <div className="flex justify-between items-start mb-1">
+                        <p className="text-sm font-medium text-cyan-300">{rule.name}</p>
+                        <span className="text-xs text-gray-400 px-2 py-0.5 bg-gray-600 rounded">
+                          Strength: {rule.strength.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex gap-4 text-xs text-gray-300">
+                        <span>→ Balance: <span className="font-medium text-green-400">{rule.consequence.balance}</span></span>
+                        <span>→ Stress: <span className="font-medium text-red-400">{rule.consequence.stress}</span></span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {fuzzyDetails.firedRules.length > 5 && (
+                <p className="mt-3 text-xs text-gray-500 text-center">
+                  + {fuzzyDetails.firedRules.length - 5} more rules fired
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Recommended Allocation Chart - Only show when there are warnings/errors */}
           {showMessage && messageType !== 'success' && (
             <div className="mt-8 p-6 bg-gray-800 rounded-xl shadow-xl border border-gray-700">
               <h3 className="text-xl font-semibold text-white mb-6 text-center">
-                Recommended Daily Time Allocation
+                Recommended Daily Time Allocation (Balanced Baseline)
               </h3>
-              <div className="h-[400px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={recommendedTime}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={150}
-                      innerRadius={80}
-                      dataKey="value"
-                      labelLine={false}
-                      label={renderCustomizedLabel}
-                      animationDuration={750}
-                      animationBegin={0}
-                    >
-                      {recommendedTime.map((entry, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={entry.color}
-                          className="transition-opacity duration-200 hover:opacity-80"
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend 
-                      verticalAlign="bottom" 
-                      height={36}
-                      formatter={(value) => (
-                        <span className="text-gray-300">{value}</span>
-                      )}
+              <div className="h-[300px] w-full flex items-center justify-center">
+                <div className="w-full max-w-md">
+                  <svg viewBox="0 0 200 200" className="mx-auto">
+                    <circle 
+                      cx="100" cy="100" r="80" 
+                      stroke="#22D3EE" strokeWidth="40" fill="none" 
+                      strokeDasharray="502.65" strokeDashoffset="502.65"
+                      className="transition-all duration-1000"
+                      style={{ strokeDashoffset: 502.65 * (1 - 8/24) }}
                     />
-                  </PieChart>
-                </ResponsiveContainer>
+                    <circle 
+                      cx="100" cy="100" r="80" 
+                      stroke="#F472B6" strokeWidth="40" fill="none" 
+                      strokeDasharray="502.65" strokeDashoffset="0"
+                      className="transition-all duration-1000"
+                      style={{ strokeDashoffset: 502.65 * (1 - 8/24) }}
+                    />
+                    <circle 
+                      cx="100" cy="100" r="80" 
+                      stroke="#A78BFA" strokeWidth="40" fill="none" 
+                      strokeDasharray="502.65" strokeDashoffset="0"
+                      className="transition-all duration-1000"
+                      style={{ strokeDashoffset: 502.65 * (1 - 16/24) }}
+                    />
+                  </svg>
+                  <div className="flex justify-center gap-6 mt-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#22D3EE' }}></span>
+                      Work: 8 hrs
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#F472B6' }}></span>
+                      Personal: 8 hrs
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#A78BFA' }}></span>
+                      Sleep: 8 hrs
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -249,13 +375,16 @@ const AskAI: React.FC = () => {
 
         {/* Tips Section */}
         <div className="bg-gray-800 rounded-xl shadow-xl p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">Healthy Schedule Tips</h2>
+          <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+            <Brain className="h-5 w-5 text-cyan-400" />
+            How Fuzzy Logic Analyzes Your Schedule
+          </h2>
           <ul className="space-y-2 text-gray-300">
-            <li>• Aim for 7-9 hours of sleep daily</li>
-            <li>• Maintain 7-10 hours of work for optimal productivity</li>
-            <li>• Include at least 2-3 hours of personal time</li>
-            <li>• Take regular breaks during work hours</li>
-            <li>• Balance is key - no single activity should dominate your day</li>
+            <li>• <strong>Membership functions</strong> convert your hours into fuzzy sets (e.g., "high work", "adequate sleep")</li>
+            <li>• <strong>Fuzzy rules</strong> (15 rules) evaluate combinations like "High work + Low sleep → High stress"</li>
+            <li>• <strong>Inference engine</strong> combines all fired rules using min/max composition</li>
+            <li>• <strong>Defuzzification</strong> (centroid method) produces crisp Balance/Stress scores (0-100)</li>
+            <li>• These scores feed into the <strong>Genetic Algorithm</strong> for schedule optimization</li>
           </ul>
         </div>
       </div>
@@ -263,4 +392,4 @@ const AskAI: React.FC = () => {
   );
 };
 
-export default AskAI; 
+export default AskAI;

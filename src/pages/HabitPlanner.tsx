@@ -74,6 +74,20 @@ export default function HabitPlanner() {
     loadSchedules();
   }, [currentMonth]);
 
+  React.useEffect(() => {
+    const api = calendarRef.current?.getApi();
+    if (api) {
+      api.gotoDate(new Date());
+    }
+  }, []);
+
+  React.useEffect(() => {
+    const api = calendarRef.current?.getApi();
+    if (api && viewMode === 'month') {
+      api.gotoDate(new Date());
+    }
+  }, [viewMode]);
+
   const loadSchedules = async () => {
     setLoading(true);
     setError(null);
@@ -86,7 +100,12 @@ export default function HabitPlanner() {
         format(end, 'yyyy-MM-dd')
       );
       if (error) throw error;
-      setSchedules(data || []);
+      // Map ScheduleEvent[] to Schedule[] - add default category if missing
+      const mappedSchedules: Schedule[] = (data || []).map(s => ({
+        ...s,
+        category: s.template_name || 'personal',
+      }));
+      setSchedules(mappedSchedules);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load schedules');
     } finally {
@@ -278,6 +297,8 @@ export default function HabitPlanner() {
             ref={calendarRef}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView={viewMode === 'month' ? 'dayGridMonth' : 'timeGridWeek'}
+            initialDate={new Date()}
+            now={new Date()}
             dateClick={handleDateClick}
             eventClick={handleEventClick}
             events={calendarEvents}
@@ -326,7 +347,7 @@ export default function HabitPlanner() {
               return 'border-dark-700';
             }}
             datesSet={(info) => {
-              setCurrentMonth(info.start);
+              setCurrentMonth(info.view.currentStart);
             }}
           />
         </motion.div>

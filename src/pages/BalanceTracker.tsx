@@ -1,9 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BarChart, PieChart, Pie, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, ResponsiveContainer } from 'recharts';
-import { Clock, Download, Calendar, Plus, Trash2, AlertCircle } from 'lucide-react';
+import { Clock, Download, Calendar, Plus, Trash2, AlertCircle, Brain } from 'lucide-react';
 import { format, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
-import { mockApi } from '../lib/dummyData';
+import { mockApi, smartSchedulerData } from '../lib/dummyData';
+import { evaluateBalance } from '../soft-computing/fuzzy';
+import { FiredRule } from '../soft-computing/types';
 import { balanceTrackerData } from '../lib/staticData';
 
 const { activityTypes, colors: COLORS } = balanceTrackerData;
@@ -38,12 +40,16 @@ export default function BalanceTracker() {
   const [selectedActivity, setSelectedActivity] = React.useState('');
   const [hours, setHours] = React.useState('');
   const [showHistory, setShowHistory] = React.useState(false);
+  const [fuzzyBalanceScore, setFuzzyBalanceScore] = React.useState<number | null>(null);
+  const [fuzzyStressScore, setFuzzyStressScore] = React.useState<number | null>(null);
+  const [fuzzyFiredRules, setFuzzyFiredRules] = React.useState<FiredRule[]>([]);
 
   const startDate = startOfWeek(new Date());
   const endDate = endOfWeek(new Date());
 
   React.useEffect(() => {
     loadActivities();
+    loadFuzzyEvaluation();
   }, []);
 
   const loadActivities = async () => {
@@ -60,6 +66,18 @@ export default function BalanceTracker() {
       setError(err instanceof Error ? err.message : 'Failed to load activities');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadFuzzyEvaluation = async () => {
+    try {
+      const inputs = smartSchedulerData.getUserInputs();
+      const result = evaluateBalance(inputs);
+      setFuzzyBalanceScore(result.balanceScore);
+      setFuzzyStressScore(result.stressScore);
+      setFuzzyFiredRules(result.firedRules);
+    } catch (err) {
+      console.error('Failed to run fuzzy evaluation:', err);
     }
   };
 
@@ -155,13 +173,19 @@ export default function BalanceTracker() {
   const workHoursToday = todayActivities
     .filter(a => a.type === 'work')
     .reduce((s, a) => s + a.hours, 0);
-  const balanceScore = activityTypes.length > 0 && totalHoursToday > 0
+  const simpleBalanceScore = activityTypes.length > 0 && totalHoursToday > 0
     ? Math.round(100 - Math.abs((workHoursToday / totalHoursToday) * 100 - 50) * 2)
     : 0;
 
   const recentActivities = [...activities]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 10);
+
+  // Use fuzzy logic balance score if available, otherwise fall back to simple calculation
+  const displayBalanceScore = fuzzyBalanceScore !== null ? Math.round(fuzzyBalanceScore) : simpleBalanceScore;
+  const balanceSubtext = fuzzyBalanceScore !== null 
+    ? `Fuzzy Logic: Balance ${fuzzyBalanceScore.toFixed(1)}/100, Stress ${fuzzyStressScore?.toFixed(1) || 0}/100`
+    : "Based on today's work/personal split (simple)";
 
   const metrics = [
     {
@@ -190,11 +214,11 @@ export default function BalanceTracker() {
     },
     {
       label: "Balance Score",
-      value: `${balanceScore}%`,
-      subtext: "Based on today's work/personal split",
-      icon: <Trash2 className="h-5 w-5" />,
-      iconColor: "text-purple-400",
-      iconBg: "bg-purple-500/10",
+      value: `${displayBalanceScore}%`,
+      subtext: balanceSubtext,
+      icon: <Brain className="h-5 w-5" />,
+      iconColor: "text-cyan-400",
+      iconBg: "bg-cyan-500/10",
     },
   ];
 
@@ -475,6 +499,58 @@ export default function BalanceTracker() {
             </div>
           </motion.div>
         </div>
+
+        {/* Fuzzy Logic Evaluation Details */}
+        {fuzzyBalanceScore !== null && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.28, duration: 0.3 }}
+            className="bg-dark-900 border border-dark-700 rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-heading-md font-semibold text-white flex items-center gap-2">
+                <Brain className="h-5 w-5 text-cyan-400" />
+                Fuzzy Logic Balance Evaluation
+              </h2>
+              <div className="flex gap-4 text-sm">
+                <span className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#10b981' }}></span>
+                  Balance: {fuzzyBalanceScore.toFixed(1)}
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ef4444' }}></span>
+                  Stress: {fuzzyStressScore?.toFixed(1) || 0}
+                </span>
+              </div>
+            </div>
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {fuzzyFiredRules.length === 0 ? (
+                <p className="text-gray-400 text-center py-4">No rules fired significantly</p>
+              ) : (
+                fuzzyFiredRules.slice(0, 5).map((rule, index) => (
+                  <div key={index} className="p-3 bg-gray-700 rounded-lg border-l-4 border-cyan-500">
+                    <div className="flex justify-between items-start mb-1">
+                      <p className="text-sm font-medium text-cyan-300">{rule.name}</p>
+                      <span className="text-xs text-gray-400 px-2 py-0.5 bg-gray-600 rounded">
+                        Strength: {rule.strength.toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex gap-4 text-xs text-gray-300">
+                      <span>→ Balance: <span className="font-medium text-green-400">{rule.consequence.balance}</span></span>
+                      <span>→ Stress: <span className="font-medium text-red-400">{rule.consequence.stress}</span></span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+            {fuzzyFiredRules.length > 5 && (
+              <p className="mt-3 text-xs text-gray-500 text-center">
+                + {fuzzyFiredRules.length - 5} more rules fired
+              </p>
+            )}
+          </motion.div>
+        )}
 
         {/* Activity History */}
         {showHistory && (
