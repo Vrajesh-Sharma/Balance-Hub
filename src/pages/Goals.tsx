@@ -93,7 +93,7 @@ export default function Goals() {
       </div>
 
       {error && (
-        <div className="mb-6 flex items-center gap-2 text-red-500 bg-red-500 bg-opacity-10 p-4 rounded-lg">
+        <div className="mb-6 flex items-center gap-2 text-red-500 bg-coral-100 bg-opacity-10 p-4 rounded-lg">
           <AlertCircle size={20} />
           {error}
         </div>
@@ -105,16 +105,16 @@ export default function Goals() {
             key={goal.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gray-800 p-6 rounded-xl"
+            className="bg-cream-50 p-6 rounded-xl"
           >
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h3 className="text-lg font-semibold mb-1">{goal.title}</h3>
-                <span className="text-sm text-gray-400">
+                <span className="text-sm text-charcoal-400">
                   Due {format(new Date(goal.deadline), 'MMM d, yyyy')}
                 </span>
               </div>
-              <span className="px-2 py-1 text-sm rounded-full bg-gray-700">
+              <span className="px-2 py-1 text-sm rounded-full bg-charcoal-700">
                 {goal.category}
               </span>
             </div>
@@ -124,7 +124,7 @@ export default function Goals() {
                 <span>Progress</span>
                 <span>{goal.progress}%</span>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
+              <div className="w-full bg-charcoal-700 rounded-full h-2">
                 <div
                   className="bg-cyan-500 h-2 rounded-full transition-all"
                   style={{ width: `${goal.progress}%` }}
@@ -148,7 +148,7 @@ export default function Goals() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-gray-800 p-6 rounded-xl w-full max-w-md"
+            className="bg-cream-50 p-6 rounded-xl w-full max-w-md"
           >
             <h2 className="text-xl font-bold mb-4">Add New Goal</h2>
             <form onSubmit={handleAddGoal} className="space-y-4">
@@ -158,7 +158,7 @@ export default function Goals() {
                   type="text"
                   value={newGoal.title}
                   onChange={(e) => setNewGoal({ ...newGoal, title: e.target.value })}
-                  className="w-full bg-gray-700 rounded-lg p-2"
+                  className="w-full bg-charcoal-700 rounded-lg p-2"
                   required
                 />
               </div>
@@ -168,7 +168,7 @@ export default function Goals() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full bg-gray-700 rounded-lg p-2"
+                  className="w-full bg-charcoal-700 rounded-lg p-2"
                   required
                 >
                   <option value="">Select category...</option>
@@ -186,7 +186,7 @@ export default function Goals() {
                   type="date"
                   value={newGoal.deadline}
                   onChange={(e) => setNewGoal({ ...newGoal, deadline: e.target.value })}
-                  className="w-full bg-gray-700 rounded-lg p-2"
+                  className="w-full bg-charcoal-700 rounded-lg p-2"
                   required
                 />
               </div>
@@ -195,7 +195,7 @@ export default function Goals() {
                 <button
                   type="button"
                   onClick={() => setShowNewGoalModal(false)}
-                  className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
+                  className="px-4 py-2 text-charcoal-400 hover:text-white transition-colors"
                 >
                   Cancel
                 </button>

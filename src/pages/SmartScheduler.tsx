@@ -149,10 +149,10 @@ export default function SmartScheduler() {
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Brain className="text-cyan-500" size={28} />
+            <Brain className="text-sage-500" size={28} />
             Smart Schedule Optimizer
           </h1>
-          <p className="text-gray-400 mt-1">
+          <p className="text-charcoal-400 mt-1">
             AI-powered daily schedule optimization using Fuzzy Logic + Genetic Algorithm
           </p>
         </div>
@@ -162,7 +162,7 @@ export default function SmartScheduler() {
               type="checkbox"
               checked={useTestData}
               onChange={(e) => setUseTestData(e.target.checked)}
-              className="w-4 h-4 text-cyan-500 border-gray-600 rounded focus:ring-cyan-500"
+              className="w-4 h-4 text-sage-500 border-gray-600 rounded focus:ring-cyan-500"
             />
             <span className="text-sm">Use test data (synthetic)</span>
           </label>
@@ -185,7 +185,7 @@ export default function SmartScheduler() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6 flex items-center gap-2 text-red-500 bg-red-500/10 p-4 rounded-lg"
+          className="mb-6 flex items-center gap-2 text-red-500 bg-coral-100/10 p-4 rounded-lg"
         >
           <AlertCircle size={20} />
           {error}
@@ -199,13 +199,13 @@ export default function SmartScheduler() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 bg-gray-800 p-6 rounded-xl"
+          className="mb-8 bg-cream-50 p-6 rounded-xl"
         >
           <div className="flex items-center gap-4 mb-4">
-            <Loader2 className="h-8 w-8 text-cyan-500 animate-spin" />
+            <Loader2 className="h-8 w-8 text-sage-500 animate-spin" />
             <div>
               <p className="font-medium">{statusMessage}</p>
-              <div className="w-full h-2 bg-gray-700 rounded-full mt-2 overflow-hidden">
+              <div className="w-full h-2 bg-cream-50 rounded-full mt-2 overflow-hidden">
                 <motion.div
                   className="h-full bg-cyan-500 rounded-full"
                   initial={{ width: 0 }}
@@ -213,7 +213,7 @@ export default function SmartScheduler() {
                   transition={{ duration: 0.3 }}
                 />
               </div>
-              <p className="text-sm text-gray-400 mt-1">{progress}%</p>
+              <p className="text-sm text-charcoal-400 mt-1">{progress}%</p>
             </div>
           </div>
         </motion.div>
@@ -229,11 +229,11 @@ export default function SmartScheduler() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-gray-800 p-6 rounded-xl border-l-4 border-green-500"
+              className="bg-cream-50 p-6 rounded-xl border-l-4 border-green-500"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-400">Fitness Score</p>
+                  <p className="text-sm text-charcoal-400">Fitness Score</p>
                   <p className="text-3xl font-bold text-green-400">{optimizedSchedule.fitness.toFixed(1)}</p>
                 </div>
                 <Zap className="h-10 w-10 text-green-500" />
@@ -243,25 +243,25 @@ export default function SmartScheduler() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-gray-800 p-6 rounded-xl border-l-4 border-cyan-500"
+              className="bg-cream-50 p-6 rounded-xl border-l-4 border-cyan-500"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-400">Balance Score</p>
+                  <p className="text-sm text-charcoal-400">Balance Score</p>
                   <p className="text-3xl font-bold text-cyan-400">{optimizedSchedule.balanceScore.toFixed(1)}</p>
                 </div>
-                <Brain className="h-10 w-10 text-cyan-500" />
+                <Brain className="h-10 w-10 text-sage-500" />
               </div>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-gray-800 p-6 rounded-xl border-l-4 border-yellow-500"
+              className="bg-cream-50 p-6 rounded-xl border-l-4 border-yellow-500"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-400">Productivity</p>
+                  <p className="text-sm text-charcoal-400">Productivity</p>
                   <p className="text-3xl font-bold text-yellow-400">{optimizedSchedule.productivityScore.toFixed(1)}</p>
                 </div>
                 <BarChart2 className="h-10 w-10 text-yellow-500" />
@@ -271,11 +271,11 @@ export default function SmartScheduler() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-gray-800 p-6 rounded-xl border-l-4 border-red-500"
+              className="bg-cream-50 p-6 rounded-xl border-l-4 border-red-500"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-400">Stress Score</p>
+                  <p className="text-sm text-charcoal-400">Stress Score</p>
                   <p className="text-3xl font-bold text-red-400">{optimizedSchedule.stressScore.toFixed(1)}</p>
                 </div>
                 <AlertCircle className="h-10 w-10 text-red-500" />
@@ -317,7 +317,7 @@ export default function SmartScheduler() {
           <div className="flex justify-end gap-4 pt-4 border-t border-gray-700">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-cream-50 hover:bg-cream-100 rounded-lg transition-colors"
             >
               <Download size={20} />
               Export Schedule (CSV)
@@ -337,11 +337,11 @@ export default function SmartScheduler() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gray-800 p-8 rounded-xl text-center"
+          className="bg-cream-50 p-8 rounded-xl text-center"
         >
-          <Brain className="h-16 w-16 text-cyan-500 mx-auto mb-6" />
+          <Brain className="h-16 w-16 text-sage-500 mx-auto mb-6" />
           <h2 className="text-2xl font-bold mb-4">Ready to Optimize Your Schedule?</h2>
-          <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
+          <p className="text-charcoal-400 mb-8 max-w-2xl mx-auto">
             The Smart Schedule Optimizer analyzes your work patterns, sleep, exercise, stress levels, and goals 
             using Fuzzy Logic, then generates an optimal daily schedule using a Genetic Algorithm that maximizes 
             work-life balance and productivity while minimizing stress.
@@ -352,10 +352,10 @@ export default function SmartScheduler() {
               { icon: Zap, title: 'Genetic Algorithm', desc: 'Evolves optimal schedules over generations' },
               { icon: BarChart2, title: 'Baseline Comparison', desc: 'Compares against manual, template & greedy' },
             ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="p-4 bg-gray-700 rounded-lg">
-                <Icon className="h-8 w-8 text-cyan-500 mb-2" />
+              <div key={title} className="p-4 bg-cream-50 rounded-lg">
+                <Icon className="h-8 w-8 text-sage-500 mb-2" />
                 <h3 className="font-semibold">{title}</h3>
-                <p className="text-sm text-gray-400 mt-1">{desc}</p>
+                <p className="text-sm text-charcoal-400 mt-1">{desc}</p>
               </div>
             ))}
           </div>

@@ -15,7 +15,6 @@ import {
   Tag,
   Pen,
   Trash2,
-  ChevronDown,
   ChevronUp,
 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -31,11 +30,11 @@ const moodIcons = {
 };
 
 const moodColors = {
-  productive: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20',
-  happy: 'text-green-400 bg-green-500/10 border-green-500/20',
-  neutral: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
-  stressed: 'text-red-400 bg-red-500/10 border-red-500/20',
-  tired: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
+  productive: 'text-honey-400 bg-yellow-500/10 border-yellow-500/20',
+  happy: 'text-emerald-400 bg-emerald-500/10 border-green-500/20',
+  neutral: 'text-sage-400 bg-blue-500/10 border-blue-500/20',
+  stressed: 'text-coral-400 bg-coral-100/10 border-red-500/20',
+  tired: 'text-lavender-400 bg-lavender-500/10 border-purple-500/20',
 };
 
 const moodLabels = {
@@ -141,11 +140,11 @@ export default function Journal() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-display-sm font-display font-bold text-white flex items-center gap-3">
+            <h1 className="text-display-sm font-display font-bold text-charcoal-900 flex items-center gap-3">
               <BookOpen className="h-8 w-8 text-primary-400" />
               Work-Life Journal
             </h1>
-            <p className="text-dark-400 mt-1">Document your journey and track your growth</p>
+            <p className="text-charcoal-400 mt-1">Document your journey and track your growth</p>
           </div>
           <button
             onClick={() => setShowNewEntryModal(true)}
@@ -166,8 +165,8 @@ export default function Journal() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-dark-400 text-sm font-medium">Total Entries</p>
-                <p className="text-3xl font-display font-bold text-white mt-1">{stats.total}</p>
+                <p className="text-charcoal-400 text-sm font-medium">Total Entries</p>
+                <p className="text-3xl font-display font-bold text-charcoal-900 mt-1">{stats.total}</p>
               </div>
               <div className="p-3 bg-primary-500/10 rounded-xl text-primary-400">
                 <BookOpen className="h-6 w-6" />
@@ -183,10 +182,10 @@ export default function Journal() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-dark-400 text-sm font-medium">This Week</p>
-                <p className="text-3xl font-display font-bold text-white mt-1">{stats.thisWeek}</p>
+                <p className="text-charcoal-400 text-sm font-medium">This Week</p>
+                <p className="text-3xl font-display font-bold text-charcoal-900 mt-1">{stats.thisWeek}</p>
               </div>
-              <div className="p-3 bg-green-500/10 rounded-xl text-green-400">
+              <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400">
                 <Calendar className="h-6 w-6" />
               </div>
             </div>
@@ -200,10 +199,10 @@ export default function Journal() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-dark-400 text-sm font-medium">Categories</p>
-                <p className="text-3xl font-display font-bold text-white mt-1">{stats.categories}</p>
+                <p className="text-charcoal-400 text-sm font-medium">Categories</p>
+                <p className="text-3xl font-display font-bold text-charcoal-900 mt-1">{stats.categories}</p>
               </div>
-              <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400">
+              <div className="p-3 bg-lavender-500/10 rounded-xl text-lavender-400">
                 <Tag className="h-6 w-6" />
               </div>
             </div>
@@ -217,10 +216,10 @@ export default function Journal() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-dark-400 text-sm font-medium">Avg Length</p>
-                <p className="text-3xl font-display font-bold text-white mt-1">{stats.avgLength} chars</p>
+                <p className="text-charcoal-400 text-sm font-medium">Avg Length</p>
+                <p className="text-3xl font-display font-bold text-charcoal-900 mt-1">{stats.avgLength} chars</p>
               </div>
-              <div className="p-3 bg-orange-500/10 rounded-xl text-orange-400">
+              <div className="p-3 bg-honey-100 rounded-xl text-orange-400">
                 <Pen className="h-6 w-6" />
               </div>
             </div>
@@ -232,7 +231,7 @@ export default function Journal() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400"
+            className="flex items-center gap-3 p-4 bg-coral-100/10 border border-red-500/20 rounded-xl text-coral-400"
             role="alert"
           >
             <AlertCircle className="h-5 w-5 flex-shrink-0" />
@@ -249,7 +248,7 @@ export default function Journal() {
         >
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-500" size={20} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal-500" size={20} />
               <input
                 type="text"
                 placeholder="Search entries..."
@@ -327,14 +326,14 @@ export default function Journal() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.03 }}
-                    className="p-6 hover:bg-dark-800/50 transition-colors group"
+                    className="p-6 hover:bg-cream-50/50 transition-colors group"
                   >
                     <div className="flex items-start justify-between gap-4 mb-4">
                       <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className="flex flex-col items-center justify-center min-w-[60px] px-3 py-2 bg-dark-800 rounded-xl border border-dark-700">
-                          <span className="font-bold text-white text-lg">{format(new Date(entry.date), 'MMM')}</span>
+                        <div className="flex flex-col items-center justify-center min-w-[60px] px-3 py-2 bg-cream-50 rounded-xl border-border">
+                          <span className="font-bold text-charcoal-900 text-lg">{format(new Date(entry.date), 'MMM')}</span>
                           <span className="font-display font-bold text-2xl text-primary-400">{format(new Date(entry.date), 'd')}</span>
-                          <span className="text-xs text-dark-400">{format(new Date(entry.date), 'EEE')}</span>
+                          <span className="text-xs text-charcoal-400">{format(new Date(entry.date), 'EEE')}</span>
                         </div>
                         <div className="min-w-0">
                           <div className="flex items-center gap-3 flex-wrap">
@@ -343,7 +342,7 @@ export default function Journal() {
                               {moodLabels[entry.mood as keyof typeof moodLabels]}
                             </span>
                             {entry.category && (
-                              <span className="px-3 py-1 bg-dark-700 rounded-full text-xs text-dark-300 flex items-center gap-1">
+                              <span className="px-3 py-1 bg-dark-700 rounded-full text-xs text-charcoal-300 flex items-center gap-1">
                                 <Tag className="h-3 w-3" />
                                 {entry.category}
                               </span>
@@ -354,14 +353,14 @@ export default function Journal() {
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => handleDeleteEntry(entry.id)}
-                          className="p-2 text-dark-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
+                          className="p-2 text-charcoal-500 hover:text-coral-400 hover:bg-coral-100/10 rounded-xl transition-colors"
                           aria-label="Delete entry"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
-                    <p className="text-dark-300 whitespace-pre-wrap leading-relaxed">{entry.content}</p>
+                    <p className="text-charcoal-300 whitespace-pre-wrap leading-relaxed">{entry.content}</p>
                   </motion.div>
                 );
               })}
@@ -371,10 +370,10 @@ export default function Journal() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-dark-400"
+                className="text-charcoal-400"
               >
                 <BookOpen className="h-16 w-16 mx-auto mb-6 text-dark-600" />
-                <h3 className="text-xl font-semibold text-white mb-2">
+                <h3 className="text-xl font-semibold text-charcoal-900 mb-2">
                   {searchQuery || selectedCategory ? 'No matching entries' : 'Start your journal'}
                 </h3>
                 <p className="mb-6 max-w-md mx-auto">
@@ -405,8 +404,8 @@ export default function Journal() {
         >
           <div className="card p-6 h-fit sticky top-24">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-heading-md font-bold text-white flex items-center gap-2">
-                <Zap className="h-5 w-5 text-yellow-400" />
+              <h2 className="text-heading-md font-bold text-charcoal-900 flex items-center gap-2">
+                <Zap className="h-5 w-5 text-honey-400" />
                 Writing Prompts
               </h2>
             </div>
@@ -419,9 +418,9 @@ export default function Journal() {
                     setNewEntry(prev => ({ ...prev, content: prompt.question }));
                   }}
                   whileHover={{ x: 4 }}
-                  className="w-full text-left p-4 rounded-xl transition-all duration-300 bg-dark-800/50 border border-dark-700 hover:border-primary-500/30 hover:bg-primary-500/5"
+                  className="w-full text-left p-4 rounded-xl transition-all duration-300 bg-cream-50/50 border-border hover:border-primary-500/30 hover:bg-primary-500/5"
                 >
-                  <p className="text-sm text-dark-300 mb-2">{prompt.question}</p>
+                  <p className="text-sm text-charcoal-300 mb-2">{prompt.question}</p>
                   <span className="text-xs px-2 py-1 bg-primary-500/10 text-primary-400 rounded-full">{prompt.category}</span>
                 </motion.button>
               ))}
@@ -444,14 +443,14 @@ export default function Journal() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-dark-900 border border-dark-700 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              className="bg-charcoal-900 border-border rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
               onClick={e => e.stopPropagation()}
             >
               <div className="p-6 border-b border-dark-700 flex items-center justify-between">
-                <h2 className="text-heading-md font-bold text-white">New Journal Entry</h2>
+                <h2 className="text-heading-md font-bold text-charcoal-900">New Journal Entry</h2>
                 <button
                   onClick={() => setShowNewEntryModal(false)}
-                  className="p-2 rounded-xl text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
+                  className="p-2 rounded-xl text-charcoal-400 hover:text-charcoal-900 hover:bg-cream-50/50 transition-colors"
                 >
                   <ChevronUp className="h-6 w-6" />
                 </button>

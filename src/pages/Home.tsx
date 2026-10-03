@@ -60,7 +60,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.4 }}
             >
-              <h1 className="text-display-md md:text-display-lg lg:text-display-xl font-bold tracking-tight text-white text-balance">
+              <h1 className="text-display-md md:text-display-lg lg:text-display-xl font-bold tracking-tight text-charcoal-900 text-balance">
                 Plan your day. Track your balance. Feel better.
               </h1>
             </motion.div>
@@ -72,7 +72,7 @@ export default function Home() {
               transition={{ delay: 0.2, duration: 0.4 }}
               className="max-w-2xl mx-auto"
             >
-              <p className="text-body-lg md:text-heading-sm text-dark-300 leading-relaxed">
+              <p className="text-body-lg md:text-heading-sm text-charcoal-300 leading-relaxed">
                 {homePageData.hero.subtitle}
               </p>
             </motion.div>
@@ -110,17 +110,17 @@ export default function Home() {
               className="mt-8 relative"
             >
               <div className="relative max-w-5xl mx-auto">
-                <div className="bg-dark-900 border border-dark-700 rounded-xl overflow-hidden">
-                  <div className="flex items-center gap-2 px-4 py-3 bg-dark-800 border-b border-dark-700">
+                <div className="bg-cream-50 border-border rounded-xl overflow-hidden">
+                  <div className="flex items-center gap-2 px-4 py-3 bg-charcoal-800 border-b border-dark-700">
                     <div className="flex gap-1.5">
                       <div className="w-3 h-3 rounded-full bg-red-500/60" />
                       <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
                       <div className="w-3 h-3 rounded-full bg-green-500/60" />
                     </div>
-                    <div className="flex-1 text-center text-sm text-dark-500 font-mono">
+                    <div className="flex-1 text-center text-sm text-charcoal-500 font-mono">
                       dashboard.balance-hub.app
                     </div>
-                    <Monitor className="h-5 w-5 text-dark-500" />
+                    <Monitor className="h-5 w-5 text-charcoal-500" />
                   </div>
                   <div className="relative p-6 md:p-8">
                     <img
@@ -144,10 +144,10 @@ export default function Home() {
           className="relative"
         >
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-display-sm md:text-display-md font-bold text-white mb-4">
+            <h2 className="text-display-sm md:text-display-md font-bold text-charcoal-900 mb-4">
               Everything in one place
             </h2>
-            <p className="text-body-lg text-dark-400">
+            <p className="text-body-lg text-charcoal-400">
               Six core tools that work together — no switching apps, no syncing issues.
             </p>
           </div>
@@ -162,16 +162,16 @@ export default function Home() {
                 transition={{ delay: index * 0.08, duration: 0.4 }}
                 className="card p-6"
               >
-                <div className="p-3 bg-primary-500/15 border border-primary-500/20 rounded-lg w-fit mb-4">
+                <div className="p-3 bg-sage-600/15 border border-primary-500/20 rounded-lg w-fit mb-4">
                   {(() => {
                     const Icon = iconMap[feature.icon as keyof typeof iconMap];
                     return <Icon className="h-6 w-6 text-primary-400" />;
                   })()}
                 </div>
-                <h3 className="text-heading-md font-semibold text-white mb-2">
+                <h3 className="text-heading-md font-semibold text-charcoal-900 mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-body-md text-dark-400 leading-relaxed">
+                <p className="text-body-md text-charcoal-400 leading-relaxed">
                   {feature.description}
                 </p>
                 <Link
@@ -196,10 +196,10 @@ export default function Home() {
           transition={{ duration: 0.5 }}
         >
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-display-sm md:text-display-md font-bold text-white mb-4">
+            <h2 className="text-display-sm md:text-display-md font-bold text-charcoal-900 mb-4">
               More ways to find balance
             </h2>
-            <p className="text-body-lg text-dark-400">
+            <p className="text-body-lg text-charcoal-400">
               Supporting tools for reflection, planning, and team coordination.
             </p>
           </div>
@@ -214,16 +214,16 @@ export default function Home() {
                 transition={{ delay: index * 0.08, duration: 0.4 }}
                 className="card p-6"
               >
-                <div className="p-3 bg-dark-800 rounded-lg mb-4">
+                <div className="p-3 bg-charcoal-800 rounded-lg mb-4">
                   {(() => {
                     const Icon = iconMap[capability.icon as keyof typeof iconMap];
-                    return <Icon className="h-6 w-6 text-dark-300" />;
+                    return <Icon className="h-6 w-6 text-charcoal-300" />;
                   })()}
                 </div>
-                <h3 className="text-heading-md font-semibold text-white mb-2">
+                <h3 className="text-heading-md font-semibold text-charcoal-900 mb-2">
                   {capability.title}
                 </h3>
-                <p className="text-body-md text-dark-400 leading-relaxed">
+                <p className="text-body-md text-charcoal-400 leading-relaxed">
                   {capability.description}
                 </p>
                 <Link
@@ -248,14 +248,14 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.5 }}
-          className="bg-dark-900/50 border border-dark-700 rounded-xl p-8 md:p-12"
+          className="bg-cream-50/50 border-border rounded-xl p-8 md:p-12"
         >
           <div className="grid lg:grid-cols-3 gap-8 md:gap-12 items-start">
             <div className="lg:col-span-1">
-              <h2 className="text-display-sm md:text-display-md font-bold text-white mb-4">
+              <h2 className="text-display-sm md:text-display-md font-bold text-charcoal-900 mb-4">
                 How Balance Hub helps
               </h2>
-              <p className="text-body-lg text-dark-400 mb-8">
+              <p className="text-body-lg text-charcoal-400 mb-8">
                 Most productivity tools optimize for output. Balance Hub optimizes for sustainability.
               </p>
               <ul className="space-y-4">
@@ -273,9 +273,9 @@ export default function Home() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.06, duration: 0.3 }}
-                    className="flex items-start gap-3 text-dark-300"
+                    className="flex items-start gap-3 text-charcoal-300"
                   >
-                    <div className="flex-shrink-0 mt-1.5 w-2 h-2 bg-primary-500 rounded-full" />
+                    <div className="flex-shrink-0 mt-1.5 w-2 h-2 bg-sage-600 rounded-full" />
                     <span className="text-body-md leading-relaxed">{item}</span>
                   </motion.li>
                 ))}
@@ -297,11 +297,11 @@ export default function Home() {
                   transition={{ delay: index * 0.08, duration: 0.4 }}
                   className="card p-6"
                 >
-                  <div className="p-3 bg-dark-800 rounded-lg mb-4">
+                  <div className="p-3 bg-charcoal-800 rounded-lg mb-4">
                     <item.icon className="h-6 w-6 text-primary-400" />
                   </div>
-                  <h3 className="text-heading-sm font-semibold text-white mb-2">{item.title}</h3>
-                  <p className="text-body-sm text-dark-400">{item.desc}</p>
+                  <h3 className="text-heading-sm font-semibold text-charcoal-900 mb-2">{item.title}</h3>
+                  <p className="text-body-sm text-charcoal-400">{item.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -316,10 +316,10 @@ export default function Home() {
           transition={{ duration: 0.5 }}
         >
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-display-sm md:text-display-md font-bold text-white mb-4">
+            <h2 className="text-display-sm md:text-display-md font-bold text-charcoal-900 mb-4">
               What people say
             </h2>
-            <p className="text-body-lg text-dark-400">
+            <p className="text-body-lg text-charcoal-400">
               Real feedback from people using Balance Hub daily.
             </p>
           </div>
@@ -339,18 +339,18 @@ export default function Home() {
                     <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
-                <p className="text-body-md text-dark-300 leading-relaxed mb-6">
+                <p className="text-body-md text-charcoal-300 leading-relaxed mb-6">
                   &ldquo;{testimonial.content}&rdquo;
                 </p>
                 <div className="flex items-center gap-3 pt-4 border-t border-dark-700">
                   <img
                     src={testimonial.image}
                     alt={testimonial.name}
-                    className="w-10 h-10 rounded-full border border-dark-700"
+                    className="w-10 h-10 rounded-full border-border"
                   />
                   <div>
-                    <div className="font-medium text-white text-sm">{testimonial.name}</div>
-                    <div className="text-xs text-dark-500">{testimonial.role}</div>
+                    <div className="font-medium text-charcoal-900 text-sm">{testimonial.name}</div>
+                    <div className="text-xs text-charcoal-500">{testimonial.role}</div>
                   </div>
                 </div>
               </motion.div>
@@ -364,13 +364,13 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.5 }}
-          className="bg-dark-900 border border-dark-700 rounded-xl p-8 md:p-12 lg:p-16 text-center"
+          className="bg-cream-50 border-border rounded-xl p-8 md:p-12 lg:p-16 text-center"
         >
           <div className="max-w-2xl mx-auto space-y-6">
-            <h2 className="text-display-sm md:text-display-md font-bold text-white">
+            <h2 className="text-display-sm md:text-display-md font-bold text-charcoal-900">
               Ready to see where your time goes?
             </h2>
-            <p className="text-body-lg text-dark-400">
+            <p className="text-body-lg text-charcoal-400">
               Start with the balance tracker. No account required to try it.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
@@ -391,7 +391,7 @@ export default function Home() {
                 Try Balance Tracker
               </Link>
             </div>
-            <p className="text-sm text-dark-500">
+            <p className="text-sm text-charcoal-500">
               No credit card &middot; Works offline &middot; Export your data anytime
             </p>
           </div>
@@ -402,48 +402,48 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8 md:gap-12 mb-10">
             <div className="md:col-span-2">
               <Link to="/" className="flex items-center gap-2.5 mb-4" aria-label="Balance Hub Home">
-                <div className="p-2 bg-primary-500 rounded-lg">
-                  <BarChart2 className="h-5 w-5 text-white" />
+                <div className="p-2 bg-sage-600 rounded-lg">
+                  <BarChart2 className="h-5 w-5 text-charcoal-900" />
                 </div>
-                <span className="font-bold text-lg text-white tracking-tight">Balance Hub</span>
+                <span className="font-bold text-lg text-charcoal-900 tracking-tight">Balance Hub</span>
               </Link>
-              <p className="text-body-md text-dark-400 max-w-xs">
+              <p className="text-body-md text-charcoal-400 max-w-xs">
                 Plan your day. Track your balance. Feel better.
               </p>
             </div>
             <nav aria-label="Product navigation">
-              <h3 className="font-semibold text-white mb-4">Product</h3>
+              <h3 className="font-semibold text-charcoal-900 mb-4">Product</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/tracker" className="text-dark-400 hover:text-white transition-colors">Balance Tracker</Link></li>
-                <li><Link to="/planner" className="text-dark-400 hover:text-white transition-colors">Habit Planner</Link></li>
-                <li><Link to="/stress-hub" className="text-dark-400 hover:text-white transition-colors">Stress Hub</Link></li>
-                <li><Link to="/goals" className="text-dark-400 hover:text-white transition-colors">Goals</Link></li>
-                <li><Link to="/journal" className="text-dark-400 hover:text-white transition-colors">Journal</Link></li>
+                <li><Link to="/tracker" className="text-charcoal-400 hover:text-charcoal-900 transition-colors">Balance Tracker</Link></li>
+                <li><Link to="/planner" className="text-charcoal-400 hover:text-charcoal-900 transition-colors">Habit Planner</Link></li>
+                <li><Link to="/stress-hub" className="text-charcoal-400 hover:text-charcoal-900 transition-colors">Stress Hub</Link></li>
+                <li><Link to="/goals" className="text-charcoal-400 hover:text-charcoal-900 transition-colors">Goals</Link></li>
+                <li><Link to="/journal" className="text-charcoal-400 hover:text-charcoal-900 transition-colors">Journal</Link></li>
               </ul>
             </nav>
             <nav aria-Label="More tools navigation">
-              <h3 className="font-semibold text-white mb-4">More Tools</h3>
+              <h3 className="font-semibold text-charcoal-900 mb-4">More Tools</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/game" className="text-dark-400 hover:text-white transition-colors">Balance Game</Link></li>
-                <li><Link to="/resources" className="text-dark-400 hover:text-white transition-colors">Resources</Link></li>
-                <li><Link to="/work-time" className="text-dark-400 hover:text-white transition-colors">Work Time Tracker</Link></li>
-                <li><Link to="/smart-scheduler" className="text-dark-400 hover:text-white transition-colors">Smart Scheduler</Link></li>
-                <li><Link to="/ask-ai" className="text-dark-400 hover:text-white transition-colors">Ask AI</Link></li>
+                <li><Link to="/game" className="text-charcoal-400 hover:text-charcoal-900 transition-colors">Balance Game</Link></li>
+                <li><Link to="/resources" className="text-charcoal-400 hover:text-charcoal-900 transition-colors">Resources</Link></li>
+                <li><Link to="/work-time" className="text-charcoal-400 hover:text-charcoal-900 transition-colors">Work Time Tracker</Link></li>
+                <li><Link to="/smart-scheduler" className="text-charcoal-400 hover:text-charcoal-900 transition-colors">Smart Scheduler</Link></li>
+                <li><Link to="/ask-ai" className="text-charcoal-400 hover:text-charcoal-900 transition-colors">Ask AI</Link></li>
               </ul>
             </nav>
           </div>
           <div className="pt-8 border-t border-dark-800 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-dark-500">
+            <p className="text-sm text-charcoal-500">
               Built by the Balance Hub Team. Not backed by venture capital.
             </p>
             <div className="flex items-center gap-6">
-              <a href="https://github.com/Vrajesh-Sharma" target="_blank" rel="noopener noreferrer" className="text-dark-400 hover:text-white transition-colors text-sm">
+              <a href="https://github.com/Vrajesh-Sharma" target="_blank" rel="noopener noreferrer" className="text-charcoal-400 hover:text-charcoal-900 transition-colors text-sm">
                 GitHub
               </a>
-              <a href="#" className="text-dark-400 hover:text-white transition-colors text-sm">
+              <a href="#" className="text-charcoal-400 hover:text-charcoal-900 transition-colors text-sm">
                 Privacy
               </a>
-              <a href="#" className="text-dark-400 hover:text-white transition-colors text-sm">
+              <a href="#" className="text-charcoal-400 hover:text-charcoal-900 transition-colors text-sm">
                 Terms
               </a>
             </div>

@@ -13,7 +13,7 @@ export default function FitnessChart({ convergence, className = '' }: FitnessCha
   }));
 
   return (
-    <div className={`bg-gray-800 p-6 rounded-xl ${className}`}>
+    <div className={`bg-cream-50 p-6 rounded-xl ${className}`}>
       <h3 className="text-lg font-semibold mb-4">Convergence Curve</h3>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
@@ -48,16 +48,16 @@ export default function FitnessChart({ convergence, className = '' }: FitnessCha
       </div>
       <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
         <div>
-          <p className="text-gray-400">Initial</p>
-          <p className="font-mono text-cyan-400">{data[0]?.fitness ?? 0}</p>
+          <p className="text-charcoal-400">Initial</p>
+          <p className="font-mono text-sage-400">{data[0]?.fitness ?? 0}</p>
         </div>
         <div>
-          <p className="text-gray-400">Best</p>
-          <p className="font-mono text-green-400">{Math.max(...data.map(d => d.fitness), 0)}</p>
+          <p className="text-charcoal-400">Best</p>
+          <p className="font-mono text-emerald-400">{Math.max(...data.map(d => d.fitness), 0)}</p>
         </div>
         <div>
-          <p className="text-gray-400">Generations</p>
-          <p className="font-mono text-cyan-400">{data.length}</p>
+          <p className="text-charcoal-400">Generations</p>
+          <p className="font-mono text-sage-400">{data.length}</p>
         </div>
       </div>
     </div>

@@ -21,7 +21,7 @@ interface Schedule {
 const templates = [
   {
     name: 'Morning Routine',
-    color: 'bg-primary-500/20 text-primary-400 border border-primary-500/30',
+    color: 'bg-sage-600/20 text-primary-400 border border-primary-500/30',
     schedule: [
       { time: '06:00', activity: 'Morning Workout', duration: 45 },
       { time: '07:00', activity: 'Breakfast & Planning', duration: 30 },
@@ -39,7 +39,7 @@ const templates = [
   },
   {
     name: 'Balanced Day',
-    color: 'bg-green-500/20 text-green-400 border border-green-500/30',
+    color: 'bg-emerald-500/20 text-green-400 border border-green-500/30',
     schedule: [
       { time: '08:00', activity: 'Exercise', duration: 60 },
       { time: '10:00', activity: 'Work Block', duration: 180 },
@@ -49,7 +49,7 @@ const templates = [
   },
   {
     name: 'Evening Wind-down',
-    color: 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+    color: 'bg-lavender-500/20 text-purple-400 border border-purple-500/30',
     schedule: [
       { time: '17:00', activity: 'Wrap Up Work', duration: 30 },
       { time: '17:30', activity: 'Light Exercise', duration: 45 },
@@ -191,8 +191,8 @@ export default function HabitPlanner() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div className="space-y-1">
-            <h1 className="text-display-sm font-bold text-white tracking-tight">Habit Planner</h1>
-            <p className="text-body-md text-dark-400">Plan and visualize your daily routines</p>
+            <h1 className="text-display-sm font-bold text-charcoal-900 tracking-tight">Habit Planner</h1>
+            <p className="text-body-md text-charcoal-400">Plan and visualize your daily routines</p>
           </div>
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <Link
@@ -257,19 +257,19 @@ export default function HabitPlanner() {
                 onClick={() => {
                   calendarRef.current?.getApi().prev();
                 }}
-                className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
+                className="p-2 rounded-lg text-charcoal-400 hover:text-charcoal-900 hover:bg-dark-800/50 transition-colors"
                 aria-label="Previous month"
               >
                 <ChevronDown className="h-5 w-5 rotate-90" />
               </button>
-              <span className="font-medium text-white min-w-[150px] text-center">
+              <span className="font-medium text-charcoal-900 min-w-[150px] text-center">
                 {format(currentMonth, 'MMMM yyyy')}
               </span>
               <button
                 onClick={() => {
                   calendarRef.current?.getApi().next();
                 }}
-                className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
+                className="p-2 rounded-lg text-charcoal-400 hover:text-charcoal-900 hover:bg-dark-800/50 transition-colors"
                 aria-label="Next month"
               >
                 <ChevronDown className="h-5 w-5 -rotate-90" />
@@ -341,7 +341,7 @@ export default function HabitPlanner() {
               cellDate.setHours(0, 0, 0, 0);
 
               if (cellDate.getTime() === today.getTime()) {
-                return 'bg-primary-500/5 border-dark-700';
+                return 'bg-sage-600/5 border-dark-700';
               }
 
               return 'border-dark-700';
@@ -362,11 +362,11 @@ export default function HabitPlanner() {
           >
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-caption font-medium text-dark-400 tracking-wide uppercase">This Month</p>
-                <p className="text-heading-lg font-display font-bold text-white mt-1.5 truncate">{schedules.length}</p>
-                <p className="text-caption text-dark-500 mt-0.5">Schedules</p>
+                <p className="text-caption font-medium text-charcoal-400 tracking-wide uppercase">This Month</p>
+                <p className="text-heading-lg font-display font-bold text-charcoal-900 mt-1.5 truncate">{schedules.length}</p>
+                <p className="text-caption text-charcoal-500 mt-0.5">Schedules</p>
               </div>
-              <div className="p-2.5 rounded-lg bg-primary-500/10 text-primary-400 flex-shrink-0">
+              <div className="p-2.5 rounded-lg bg-sage-600/10 text-primary-400 flex-shrink-0">
                 <CalendarIcon className="h-5 w-5" />
               </div>
             </div>
@@ -380,15 +380,15 @@ export default function HabitPlanner() {
           >
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-caption font-medium text-dark-400 tracking-wide uppercase">Hours Scheduled</p>
-                <p className="text-heading-lg font-display font-bold text-white mt-1.5 truncate">
+                <p className="text-caption font-medium text-charcoal-400 tracking-wide uppercase">Hours Scheduled</p>
+                <p className="text-heading-lg font-display font-bold text-charcoal-900 mt-1.5 truncate">
                   {schedules.reduce((sum, s) => {
                     const start = new Date(s.start_time);
                     const end = new Date(s.end_time);
                     return sum + (end.getTime() - start.getTime()) / (1000 * 60 * 60);
                   }, 0).toFixed(1)}
                 </p>
-                <p className="text-caption text-dark-500 mt-0.5">Total hours</p>
+                <p className="text-caption text-charcoal-500 mt-0.5">Total hours</p>
               </div>
               <div className="p-2.5 rounded-lg bg-secondary-500/10 text-secondary-400 flex-shrink-0">
                 <Zap className="h-5 w-5" />
@@ -404,13 +404,13 @@ export default function HabitPlanner() {
           >
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-caption font-medium text-dark-400 tracking-wide uppercase">Categories</p>
-                <p className="text-heading-lg font-display font-bold text-white mt-1.5 truncate">
+                <p className="text-caption font-medium text-charcoal-400 tracking-wide uppercase">Categories</p>
+                <p className="text-heading-lg font-display font-bold text-charcoal-900 mt-1.5 truncate">
                   {new Set(schedules.map(s => s.category)).size}
                 </p>
-                <p className="text-caption text-dark-500 mt-0.5">Active</p>
+                <p className="text-caption text-charcoal-500 mt-0.5">Active</p>
               </div>
-              <div className="p-2.5 rounded-lg bg-green-500/10 text-green-400 flex-shrink-0">
+              <div className="p-2.5 rounded-lg bg-emerald-500/10 text-green-400 flex-shrink-0">
                 <Brain className="h-5 w-5" />
               </div>
             </div>
@@ -424,13 +424,13 @@ export default function HabitPlanner() {
           >
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-caption font-medium text-dark-400 tracking-wide uppercase">Avg/Day</p>
-                <p className="text-heading-lg font-display font-bold text-white mt-1.5 truncate">
+                <p className="text-caption font-medium text-charcoal-400 tracking-wide uppercase">Avg/Day</p>
+                <p className="text-heading-lg font-display font-bold text-charcoal-900 mt-1.5 truncate">
                   {(schedules.length / Math.max(new Set(schedules.map(s => s.start_time.split('T')[0])).size, 1)).toFixed(1)}
                 </p>
-                <p className="text-caption text-dark-500 mt-0.5">Per day</p>
+                <p className="text-caption text-charcoal-500 mt-0.5">Per day</p>
               </div>
-              <div className="p-2.5 rounded-lg bg-purple-500/10 text-purple-400 flex-shrink-0">
+              <div className="p-2.5 rounded-lg bg-lavender-500/10 text-purple-400 flex-shrink-0">
                 <Timer className="h-5 w-5" />
               </div>
             </div>
@@ -445,7 +445,7 @@ export default function HabitPlanner() {
           className="card overflow-hidden"
         >
           <div className="p-5 border-b border-dark-700 flex items-center justify-between">
-            <h2 className="text-heading-md font-bold text-white flex items-center gap-2">
+            <h2 className="text-heading-md font-bold text-charcoal-900 flex items-center gap-2">
               <CalendarIcon className="h-5 w-5 text-primary-400" />
               Upcoming Schedule
             </h2>
@@ -465,14 +465,14 @@ export default function HabitPlanner() {
                   className="p-4 hover:bg-dark-800/30 transition-colors flex items-center justify-between gap-4 group"
                 >
                   <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="flex flex-col items-center justify-center min-w-[56px] px-3 py-2 bg-dark-800 rounded-lg border border-dark-700">
-                      <span className="font-medium text-white text-sm">{format(new Date(schedule.start_time), 'MMM')}</span>
+                    <div className="flex flex-col items-center justify-center min-w-[56px] px-3 py-2 bg-dark-800 rounded-lg border-border">
+                      <span className="font-medium text-charcoal-900 text-sm">{format(new Date(schedule.start_time), 'MMM')}</span>
                       <span className="font-display font-bold text-xl text-primary-400">{format(new Date(schedule.start_time), 'd')}</span>
-                      <span className="text-xs text-dark-400">{format(new Date(schedule.start_time), 'EEE')}</span>
+                      <span className="text-xs text-charcoal-400">{format(new Date(schedule.start_time), 'EEE')}</span>
                     </div>
                     <div className="min-w-0">
-                      <p className="font-medium text-white truncate">{schedule.title}</p>
-                      <p className="text-sm text-dark-400 flex items-center gap-2">
+                      <p className="font-medium text-charcoal-900 truncate">{schedule.title}</p>
+                      <p className="text-sm text-charcoal-400 flex items-center gap-2">
                         <span>{formatEventTime(schedule.start_time, schedule.end_time)}</span>
                         {schedule.category && (
                           <>
@@ -485,7 +485,7 @@ export default function HabitPlanner() {
                   </div>
                   <button
                     onClick={() => deleteEvent(schedule.id)}
-                    className="p-2 text-dark-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                    className="p-2 text-charcoal-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                     aria-label="Delete event"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -493,10 +493,10 @@ export default function HabitPlanner() {
                 </motion.div>
               ))}
             {schedules.length === 0 && (
-              <div className="p-10 text-center text-dark-400">
+              <div className="p-10 text-center text-charcoal-400">
                 <CalendarIcon className="h-10 w-10 mx-auto mb-3 text-dark-600" />
                 <p className="text-body-md">No schedules yet</p>
-                <p className="text-sm text-dark-500 mt-1">Click any date to add your first habit</p>
+                <p className="text-sm text-charcoal-500 mt-1">Click any date to add your first habit</p>
               </div>
             )}
           </div>
@@ -516,16 +516,16 @@ export default function HabitPlanner() {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-dark-900 border border-dark-700 rounded-xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
+                className="bg-cream-50 border-border rounded-xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
                 onClick={e => e.stopPropagation()}
               >
                 <div className="p-5 border-b border-dark-700 flex items-center justify-between">
-                  <h2 className="text-heading-md font-bold text-white">
+                  <h2 className="text-heading-md font-bold text-charcoal-900">
                     Add Schedule for {format(selectedDate, 'MMMM d, yyyy')}
                   </h2>
                   <button
                     onClick={() => setShowTemplateModal(false)}
-                    className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
+                    className="p-2 rounded-lg text-charcoal-400 hover:text-charcoal-900 hover:bg-dark-800/50 transition-colors"
                   >
                     <ChevronUp className="h-5 w-5" />
                   </button>
@@ -539,15 +539,15 @@ export default function HabitPlanner() {
                       disabled={loading}
                       whileHover={{ x: 4 }}
                       whileTap={{ scale: 0.98 }}
-                      className="w-full text-left p-4 rounded-lg transition-all duration-200 bg-dark-800/50 border border-dark-700 hover:border-dark-600 disabled:opacity-50"
+                      className="w-full text-left p-4 rounded-lg transition-all duration-200 bg-dark-800/50 border-border hover:border-dark-600 disabled:opacity-50"
                     >
                       <div className="flex items-start gap-4">
                         <div className={`p-3 rounded-lg ${template.color} shrink-0`}>
                           <CalendarIcon className="h-5 w-5" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-white">{template.name}</h3>
-                          <p className="text-sm text-dark-400 mt-1">
+                          <h3 className="font-medium text-charcoal-900">{template.name}</h3>
+                          <p className="text-sm text-charcoal-400 mt-1">
                             {template.schedule.length} activities · {template.schedule.reduce((sum, s) => sum + s.duration, 0)} min total
                           </p>
                           <div className="mt-3 flex flex-wrap gap-2">

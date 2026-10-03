@@ -60,20 +60,20 @@ export default function Layout() {
   const allNavItems = [...primaryNavItems, ...secondaryNavItems];
 
   return (
-    <div className="min-h-screen bg-dark-950 text-white">
+    <div className="min-h-screen bg-cream-50 text-charcoal-900">
       {/* Header */}
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
           isScrolled 
-            ? 'bg-dark-950/95 backdrop-blur-sm border-b border-dark-800 shadow-subtle' 
-            : 'bg-dark-950 border-b border-dark-800/50'
+            ? 'bg-cream-50/95 backdrop-blur-sm border-b border-charcoal-200 shadow-subtle' 
+            : 'bg-cream-50 border-b border-charcoal-200/50'
         }`}
       >
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-16 gap-4 max-w-full">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 shrink-0" aria-label="Balance Hub Home" onClick={handleLinkClick}>
-              <div className="p-2 bg-primary-500 rounded-lg">
+              <div className="p-2 bg-sage-600 rounded-lg">
                 <BarChart2 className="h-5 w-5 text-white" />
               </div>
               <span className="hidden sm:block font-bold text-lg text-white tracking-tight">
@@ -104,7 +104,7 @@ export default function Layout() {
                 <button
                   onClick={() => setIsMoreOpen(!isMoreOpen)}
                   onMouseEnter={() => setIsMoreOpen(true)}
-                  className={`nav-link-inactive gap-1.5 ${isMoreOpen ? 'text-primary-400' : ''}`}
+                  className={`nav-link-inactive gap-1.5 ${isMoreOpen ? 'text-sage-600' : ''}`}
                   aria-expanded={isMoreOpen}
                   aria-haspopup="true"
                   aria-label="More navigation items"
@@ -130,11 +130,11 @@ export default function Layout() {
                             key={item.path}
                             to={item.path}
                             onClick={handleLinkClick}
-                            className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors ${
+className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors ${
                               isActive 
-                                ? 'bg-primary-500/15 text-primary-400' 
-                                : 'text-dark-300 hover:text-white hover:bg-dark-800/50'
-                            }`}
+                            ? 'bg-sage-100 text-sage-700 border border-sage-200' 
+                            : 'text-charcoal-500 hover:text-charcoal-900 hover:bg-cream-100'
+                        }`}
                             role="menuitem"
                             aria-current={isActive ? 'page' : undefined}
                           >
@@ -174,7 +174,7 @@ export default function Layout() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => { setIsMenuOpen(!isMenuOpen); setIsMoreOpen(false); }}
-              className="lg:hidden p-2 rounded-lg text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors shrink-0"
+              className="lg:hidden p-2 rounded-lg text-charcoal-600 hover:text-charcoal-900 hover:bg-cream-100 transition-colors shrink-0"
               aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isMenuOpen}
             >

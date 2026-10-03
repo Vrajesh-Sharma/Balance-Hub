@@ -209,7 +209,7 @@ export default function BalanceTracker() {
       value: activities.length.toString(),
       subtext: "This week",
       icon: <Plus className="h-5 w-5" />,
-      iconColor: "text-green-400",
+      iconColor: "text-emerald-400",
       iconBg: "bg-green-500/10",
     },
     {
@@ -217,7 +217,7 @@ export default function BalanceTracker() {
       value: `${displayBalanceScore}%`,
       subtext: balanceSubtext,
       icon: <Brain className="h-5 w-5" />,
-      iconColor: "text-cyan-400",
+      iconColor: "text-sage-400",
       iconBg: "bg-cyan-500/10",
     },
   ];
@@ -233,8 +233,8 @@ export default function BalanceTracker() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div className="space-y-1">
-            <h1 className="text-display-sm font-bold text-white tracking-tight">Activity Tracker</h1>
-            <p className="text-body-md text-dark-400">See where your time goes and keep your day balanced.</p>
+            <h1 className="text-display-sm font-bold text-charcoal-900 tracking-tight">Activity Tracker</h1>
+            <p className="text-body-md text-charcoal-500">See where your time goes and keep your day balanced.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
@@ -257,19 +257,19 @@ export default function BalanceTracker() {
 
         {/* Summary Metrics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {metrics.map((metric, index) => (
+{metrics.map((metric, index) => (
             <motion.div
               key={metric.label}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.06, duration: 0.3 }}
-              className="bg-dark-900 border border-dark-700 rounded-xl p-5 hover:border-dark-600 transition-colors"
+              className="bg-cream-50 border-border rounded-xl p-5 sm:p-6 hover:border-sage-200 transition-colors"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
-                  <p className="text-caption font-medium text-dark-400 tracking-wide uppercase">{metric.label}</p>
+                  <p className="text-caption font-medium text-charcoal-400 tracking-wide uppercase">{metric.label}</p>
                   <p className="text-heading-lg font-display font-bold text-white mt-1.5 truncate">{metric.value}</p>
-                  <p className="text-caption text-dark-500 mt-0.5">{metric.subtext}</p>
+                  <p className="text-caption text-charcoal-500 mt-0.5">{metric.subtext}</p>
                 </div>
                 <div className={`p-2.5 rounded-lg ${metric.iconBg} ${metric.iconColor} flex-shrink-0`}>
                   {metric.icon}
@@ -284,7 +284,7 @@ export default function BalanceTracker() {
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 p-3.5 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400"
+            className="flex items-center gap-3 p-3.5 bg-coral-100 border border-coral-200 rounded-lg text-coral-700"
             role="alert"
           >
             <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -297,7 +297,7 @@ export default function BalanceTracker() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.12, duration: 0.3 }}
-          className="bg-dark-900 border border-dark-700 rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
+          className="bg-cream-50 border-border rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
         >
           <div className="flex items-center gap-2 mb-5">
             <Plus className="h-5 w-5 text-primary-400" />
@@ -340,7 +340,7 @@ export default function BalanceTracker() {
                   required
                   disabled={loading}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-500 pointer-events-none text-sm">hrs</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-charcoal-500 pointer-events-none text-sm">hrs</span>
               </div>
             </div>
 
@@ -379,11 +379,11 @@ export default function BalanceTracker() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.18, duration: 0.3 }}
-            className="bg-dark-900 border border-dark-700 rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
+            className="bg-cream-50 border-border rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
           >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
               <h2 className="text-heading-md font-semibold text-white">Today's Balance</h2>
-              <span className="text-sm text-dark-400">{formatHours(totalHoursToday)} hrs total</span>
+              <span className="text-sm text-charcoal-400">{formatHours(totalHoursToday)} hrs total</span>
             </div>
 
             {pieChartData.length > 0 ? (
@@ -426,10 +426,10 @@ export default function BalanceTracker() {
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="h-64 sm:h-72 flex flex-col items-center justify-center text-dark-400">
+              <div className="h-64 sm:h-72 flex flex-col items-center justify-center text-charcoal-400">
                 <Clock className="h-10 w-10 mb-3 text-dark-600" />
                 <p className="text-center text-body-md">No activity logged today</p>
-                <p className="text-sm text-dark-500 mt-1">Log an activity above to start tracking your day</p>
+                <p className="text-sm text-charcoal-500 mt-1">Log an activity above to start tracking your day</p>
               </div>
             )}
           </motion.div>
@@ -439,11 +439,11 @@ export default function BalanceTracker() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.22, duration: 0.3 }}
-            className="bg-dark-900 border border-dark-700 rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
+            className="bg-cream-50 border-border rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
           >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
               <h2 className="text-heading-md font-semibold text-white">Weekly Overview</h2>
-              <span className="text-sm text-dark-400">{formatHours(totalHoursWeek)} hrs total</span>
+              <span className="text-sm text-charcoal-400">{formatHours(totalHoursWeek)} hrs total</span>
             </div>
 
             <div className="h-64 sm:h-72">
@@ -506,11 +506,11 @@ export default function BalanceTracker() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.28, duration: 0.3 }}
-            className="bg-dark-900 border border-dark-700 rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
+            className="bg-cream-50 border-border rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-heading-md font-semibold text-white flex items-center gap-2">
-                <Brain className="h-5 w-5 text-cyan-400" />
+                <Brain className="h-5 w-5 text-sage-400" />
                 Fuzzy Logic Balance Evaluation
               </h2>
               <div className="flex gap-4 text-sm">
@@ -529,7 +529,7 @@ export default function BalanceTracker() {
                 <p className="text-gray-400 text-center py-4">No rules fired significantly</p>
               ) : (
                 fuzzyFiredRules.slice(0, 5).map((rule, index) => (
-                  <div key={index} className="p-3 bg-gray-700 rounded-lg border-l-4 border-cyan-500">
+                  <div key={index} className="p-3 bg-charcoal-700 rounded-lg border-l-4 border-cyan-500">
                     <div className="flex justify-between items-start mb-1">
                       <p className="text-sm font-medium text-cyan-300">{rule.name}</p>
                       <span className="text-xs text-gray-400 px-2 py-0.5 bg-gray-600 rounded">
@@ -537,8 +537,8 @@ export default function BalanceTracker() {
                       </span>
                     </div>
                     <div className="flex gap-4 text-xs text-gray-300">
-                      <span>→ Balance: <span className="font-medium text-green-400">{rule.consequence.balance}</span></span>
-                      <span>→ Stress: <span className="font-medium text-red-400">{rule.consequence.stress}</span></span>
+                      <span>→ Balance: <span className="font-medium text-emerald-400">{rule.consequence.balance}</span></span>
+                      <span>→ Stress: <span className="font-medium text-coral-400">{rule.consequence.stress}</span></span>
                     </div>
                   </div>
                 ))
@@ -559,7 +559,7 @@ export default function BalanceTracker() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25 }}
-            className="bg-dark-900 border border-dark-700 rounded-xl overflow-hidden hover:border-dark-600 transition-colors"
+            className="bg-cream-50 border-border rounded-xl overflow-hidden hover:border-dark-600 transition-colors"
           >
             <div className="px-5 sm:px-6 py-4 border-b border-dark-700">
               <h2 className="text-heading-md font-semibold text-white flex items-center gap-2">
@@ -568,7 +568,7 @@ export default function BalanceTracker() {
               </h2>
             </div>
 
-            <div className="divide-y divide-dark-700">
+            <div className="divide-y divide-charcoal-200">
               {recentActivities.length > 0 ? (
                 recentActivities.map((activity, index) => {
                   const typeInfo = activityTypes.find(t => t.value === activity.type);
@@ -588,7 +588,7 @@ export default function BalanceTracker() {
                         </div>
                         <div className="min-w-0">
                           <p className="font-medium text-white truncate">{typeInfo?.label || activity.type}</p>
-                          <p className="text-sm text-dark-400">{format(new Date(activity.date), 'MMM d, yyyy')}</p>
+                          <p className="text-sm text-charcoal-400">{format(new Date(activity.date), 'MMM d, yyyy')}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
@@ -596,7 +596,7 @@ export default function BalanceTracker() {
                         <button
                           onClick={() => handleDelete(activity.id)}
                           disabled={loading}
-                          className="p-2 text-dark-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                          className="p-2 text-charcoal-500 hover:text-coral-400 hover:bg-coral-400/10 rounded-lg transition-colors disabled:opacity-50"
                           aria-label="Delete activity"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -606,10 +606,10 @@ export default function BalanceTracker() {
                   );
                 })
               ) : (
-                <div className="px-5 sm:px-6 py-10 text-center text-dark-400">
+                <div className="px-5 sm:px-6 py-10 text-center text-charcoal-400">
                   <Calendar className="h-10 w-10 mx-auto mb-3 text-dark-600" />
                   <p className="text-body-md">No activities logged yet</p>
-                  <p className="text-sm text-dark-500 mt-1">Your history will appear here</p>
+                  <p className="text-sm text-charcoal-500 mt-1">Your history will appear here</p>
                 </div>
               )}
             </div>

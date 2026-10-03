@@ -72,7 +72,7 @@ export default function Game() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800 p-6 rounded-xl"
+        className="bg-cream-50 p-6 rounded-xl"
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Balance Game</h2>
@@ -83,40 +83,40 @@ export default function Game() {
         </div>
 
         <div className="grid md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gray-700 p-4 rounded-lg">
+          <div className="bg-cream-100 p-4 rounded-lg">
             <Battery className="h-6 w-6 text-cyan-400 mb-2" />
             <h3 className="font-medium">Energy</h3>
-            <div className="w-full h-2 bg-gray-600 rounded-full mt-2">
+            <div className="w-full h-2 bg-cream-100 rounded-full mt-2">
               <div
-                className="h-full bg-cyan-500 rounded-full"
+                className="h-full bg-sage-600 rounded-full"
                 style={{ width: `${character.energy}%` }}
               />
             </div>
           </div>
-          <div className="bg-gray-700 p-4 rounded-lg">
-            <Heart className="h-6 w-6 text-pink-400 mb-2" />
+          <div className="bg-cream-100 p-4 rounded-lg">
+            <Heart className="h-6 w-6 text-emerald-400 mb-2" />
             <h3 className="font-medium">Health</h3>
-            <div className="w-full h-2 bg-gray-600 rounded-full mt-2">
+            <div className="w-full h-2 bg-cream-100 rounded-full mt-2">
               <div
-                className="h-full bg-pink-500 rounded-full"
+                className="h-full bg-emerald-500 rounded-full"
                 style={{ width: `${character.health}%` }}
               />
             </div>
           </div>
-          <div className="bg-gray-700 p-4 rounded-lg">
-            <Brain className="h-6 w-6 text-purple-400 mb-2" />
+          <div className="bg-cream-100 p-4 rounded-lg">
+            <Brain className="h-6 w-6 text-lavender-400 mb-2" />
             <h3 className="font-medium">Happiness</h3>
-            <div className="w-full h-2 bg-gray-600 rounded-full mt-2">
+            <div className="w-full h-2 bg-cream-100 rounded-full mt-2">
               <div
-                className="h-full bg-purple-500 rounded-full"
+                className="h-full bg-lavender-500 rounded-full"
                 style={{ width: `${character.happiness}%` }}
               />
             </div>
           </div>
-          <div className="bg-gray-700 p-4 rounded-lg">
-            <Award className="h-6 w-6 text-yellow-400 mb-2" />
+          <div className="bg-cream-100 p-4 rounded-lg">
+            <Award className="h-6 w-6 text-honey-400 mb-2" />
             <h3 className="font-medium">Score</h3>
-            <p className="text-2xl font-bold text-yellow-400">{score}</p>
+            <p className="text-2xl font-bold text-honey-400">{score}</p>
           </div>
         </div>
 
@@ -131,43 +131,43 @@ export default function Game() {
                 disabled={character.energy < task.energyCost || gameTime + task.time > 17}
                 className={`w-full text-left p-4 rounded-lg transition-colors ${
                   character.energy < task.energyCost || gameTime + task.time > 17
-                    ? 'bg-gray-700 opacity-50 cursor-not-allowed'
-                    : 'bg-gray-700 hover:bg-gray-600'
+                    ? 'bg-cream-100 opacity-50 cursor-not-allowed'
+                    : 'bg-cream-100 hover:bg-cream-100'
                 }`}
               >
                 <div className="flex justify-between items-center">
                   <h4 className="font-medium">{task.name}</h4>
-                  <span className="text-sm text-gray-400">{task.time}h</span>
+                  <span className="text-sm text-charcoal-400">{task.time}h</span>
                 </div>
                 <div className="flex items-center gap-4 mt-2 text-sm">
                   <span className="text-cyan-400">-{task.energyCost} Energy</span>
-                  <span className="text-yellow-400">+{task.reward} Points</span>
+                  <span className="text-honey-400">+{task.reward} Points</span>
                 </div>
               </motion.button>
             ))}
           </div>
 
-          <div className="bg-gray-700 p-6 rounded-lg">
+          <div className="bg-cream-100 p-6 rounded-lg">
             <h3 className="text-xl font-bold mb-4">Current Task</h3>
             {selectedTask ? (
               <div className="space-y-4">
-                <div className="p-4 bg-gray-600 rounded-lg">
+                <div className="p-4 bg-cream-100 rounded-lg">
                   <h4 className="font-medium mb-2">{selectedTask.name}</h4>
                   <div className="flex items-center gap-4 text-sm">
                     <span className="text-cyan-400">-{selectedTask.energyCost} Energy</span>
-                    <span className="text-yellow-400">+{selectedTask.reward} Points</span>
-                    <span className="text-gray-400">{selectedTask.time}h</span>
+                    <span className="text-honey-400">+{selectedTask.reward} Points</span>
+                    <span className="text-charcoal-400">{selectedTask.time}h</span>
                   </div>
                 </div>
                 <button
                   onClick={handleTaskComplete}
-                  className="w-full bg-cyan-500 hover:bg-cyan-600 py-2 rounded-lg transition-colors"
+                  className="w-full bg-sage-600 hover:bg-cyan-600 py-2 rounded-lg transition-colors"
                 >
                   Complete Task
                 </button>
               </div>
             ) : (
-              <p className="text-gray-400">Select a task to begin</p>
+              <p className="text-charcoal-400">Select a task to begin</p>
             )}
           </div>
         </div>

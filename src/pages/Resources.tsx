@@ -21,7 +21,7 @@ const resources = [
   {
     category: 'Templates & Tools',
     icon: FileText,
-    color: 'bg-primary-500/20 text-primary-400 border-primary-500/30',
+    color: 'bg-sage-600/20 text-primary-400 border-primary-500/30',
     items: [
       {
         title: 'Daily Planner Template',
@@ -68,7 +68,7 @@ const resources = [
   {
     category: 'Recommended Reading',
     icon: BookOpen,
-    color: 'bg-green-500/20 text-green-400 border-green-500/30',
+    color: 'bg-emerald-500/20 text-green-400 border-green-500/30',
     items: [
       {
         title: 'The Power of Rest',
@@ -111,7 +111,7 @@ const resources = [
   {
     category: 'Video Resources',
     icon: Play,
-    color: 'bg-red-500/20 text-red-400 border-red-500/30',
+    color: 'bg-coral-500/20 text-red-400 border-red-500/30',
     items: [
       {
         title: 'Mindfulness at Work',
@@ -154,7 +154,7 @@ const resources = [
   {
     category: 'Mental Wellness',
     icon: Brain,
-    color: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+    color: 'bg-lavender-500/20 text-purple-400 border-purple-500/30',
     items: [
       {
         title: '5-Minute Breathing Exercise',
@@ -225,11 +225,11 @@ export default function Resources() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-display-sm font-display font-bold text-white flex items-center gap-3">
+            <h1 className="text-display-sm font-display font-bold text-charcoal-900 flex items-center gap-3">
               <BookOpen className="h-8 w-8 text-primary-400" />
               Resource Hub
             </h1>
-            <p className="text-dark-400 mt-1">Curated tools, guides, and content for your balance journey</p>
+            <p className="text-charcoal-400 mt-1">Curated tools, guides, and content for your balance journey</p>
           </div>
           <div className="relative max-w-sm">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-500" size={20} />
@@ -260,13 +260,13 @@ export default function Resources() {
                 className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
                   activeCategory === index
                     ? 'bg-white text-dark-950 shadow-sm'
-                    : 'text-dark-400 hover:text-white hover:bg-dark-800/50'
+                    : 'text-charcoal-400 hover:text-charcoal-900 hover:bg-dark-800/50'
                 } ${category.color}`}
               >
                 <category.icon className="h-4 w-4" />
                 {category.category}
                 <span className={`px-2 py-0.5 rounded-full text-xs ${
-                  activeCategory === index ? 'bg-dark-900 text-white' : 'bg-dark-700 text-dark-400'
+                  activeCategory === index ? 'bg-dark-900 text-charcoal-900' : 'bg-dark-700 text-charcoal-400'
                 }`}>
                   {category.items.length}
                 </span>
@@ -276,11 +276,11 @@ export default function Resources() {
               <button
                 onClick={() => setSearchQuery('')}
                 role="tab"
-                className="px-4 py-2.5 rounded-xl text-sm font-medium text-orange-400 bg-orange-500/10 border border-orange-500/20 flex items-center gap-2"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium text-honey-400 bg-honey-100/10 border border-orange-500/20 flex items-center gap-2"
               >
                 <Sparkles className="h-4 w-4" />
                 Search Results
-                <span className="px-2 py-0.5 rounded-full text-xs bg-orange-500/20 text-orange-400">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-orange-500/20 text-honey-400">
                   {filteredItems.length}
                 </span>
               </button>
@@ -337,10 +337,10 @@ export default function Resources() {
               className="col-span-full p-16 text-center"
             >
               <BookOpen className="h-16 w-16 mx-auto mb-6 text-dark-600" />
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <h3 className="text-xl font-semibold text-charcoal-900 mb-2">
                 {searchQuery ? 'No resources found' : 'No resources in this category'}
               </h3>
-              <p className="text-dark-400 max-w-md mx-auto">
+              <p className="text-charcoal-400 max-w-md mx-auto">
                 {searchQuery 
                   ? 'Try adjusting your search terms or browse all categories'
                   : 'Resources coming soon!'}
@@ -361,7 +361,7 @@ export default function Resources() {
             <div className="absolute top-10 right-10 w-48 h-48 bg-primary-500/10 rounded-full blur-3xl" />
             <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div className="max-w-2xl">
-                <h2 className="text-heading-lg font-bold text-white mb-3">Join Our Community</h2>
+                <h2 className="text-heading-lg font-bold text-charcoal-900 mb-3">Join Our Community</h2>
                 <p className="text-dark-300 mb-6">
                   Connect with others on their work-life balance journey. Share experiences, ask questions, and get support.
                 </p>
@@ -385,15 +385,15 @@ export default function Resources() {
               <div className="flex items-center gap-8 text-center md:text-left">
                 <div>
                   <div className="text-3xl font-display font-bold text-primary-400">10K+</div>
-                  <div className="text-dark-400 text-sm">Members</div>
+                  <div className="text-charcoal-400 text-sm">Members</div>
                 </div>
                 <div>
                   <div className="text-3xl font-display font-bold text-secondary-400">500+</div>
-                  <div className="text-dark-400 text-sm">Discussions</div>
+                  <div className="text-charcoal-400 text-sm">Discussions</div>
                 </div>
                 <div>
                   <div className="text-3xl font-display font-bold text-green-400">24/7</div>
-                  <div className="text-dark-400 text-sm">Support</div>
+                  <div className="text-charcoal-400 text-sm">Support</div>
                 </div>
               </div>
             </div>
@@ -407,7 +407,7 @@ export default function Resources() {
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-heading-lg font-bold text-white mb-6">Featured Collections</h2>
+          <h2 className="text-heading-lg font-bold text-charcoal-900 mb-6">Featured Collections</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {[
               { 
@@ -415,21 +415,21 @@ export default function Resources() {
                 title: 'Quick Reads', 
                 desc: 'Resources under 5 minutes for busy days',
                 count: '12 items',
-                color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+                color: 'bg-honey-100/20 text-yellow-400 border-yellow-500/30',
               },
               { 
                 icon: Sparkles, 
                 title: 'Beginner Friendly', 
                 desc: 'Start here if you\'re new to balance practices',
                 count: '8 items',
-                color: 'bg-green-500/20 text-green-400 border-green-500/30',
+                color: 'bg-emerald-500/20 text-green-400 border-green-500/30',
               },
               { 
                 icon: Brain, 
                 title: 'Deep Dives', 
                 desc: 'Comprehensive guides for mastery',
                 count: '6 items',
-                color: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+                color: 'bg-lavender-500/20 text-purple-400 border-purple-500/30',
               },
             ].map((collection, index) => (
               <motion.div
@@ -443,8 +443,8 @@ export default function Resources() {
                 <div className={`p-3 rounded-xl mb-4 ${collection.color}`}>
                   <collection.icon className="h-6 w-6" />
                 </div>
-                <h3 className="text-heading-sm font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">{collection.title}</h3>
-                <p className="text-body-sm text-dark-400 mb-3">{collection.desc}</p>
+                <h3 className="text-heading-sm font-bold text-charcoal-900 mb-2 group-hover:text-primary-400 transition-colors">{collection.title}</h3>
+                <p className="text-body-sm text-charcoal-400 mb-3">{collection.desc}</p>
                 <button className="text-sm font-medium text-primary-400 hover:text-primary-300 flex items-center gap-1 group-hover:gap-2 transition-all">
                   Explore
                   <ChevronRight className="h-4 w-4" />
@@ -483,15 +483,15 @@ function ResourceCard({ item, onClick }: {
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap gap-2 mb-2">
             {item.tags.map((tag, idx) => (
-              <span key={idx} className="px-2 py-0.5 bg-dark-700 rounded text-xs text-dark-400">
+              <span key={idx} className="px-2 py-0.5 bg-dark-700 rounded text-xs text-charcoal-400">
                 {tag}
               </span>
             ))}
           </div>
-          <h4 className="font-semibold text-white mb-1 group-hover:text-primary-400 transition-colors">{item.title}</h4>
+          <h4 className="font-semibold text-charcoal-900 mb-1 group-hover:text-primary-400 transition-colors">{item.title}</h4>
         </div>
       </div>
-      <p className="text-dark-400 text-sm mb-4 leading-relaxed">{item.description}</p>
+      <p className="text-charcoal-400 text-sm mb-4 leading-relaxed">{item.description}</p>
       <div className="flex items-center justify-between pt-4 border-t border-dark-700">
         <span className="text-xs text-dark-500 flex items-center gap-1">
           <Clock className="h-3 w-3" />

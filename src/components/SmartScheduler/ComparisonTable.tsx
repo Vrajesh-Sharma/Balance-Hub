@@ -26,8 +26,8 @@ const METRICS = [
 export default function ComparisonTable({ rows, className = '' }: ComparisonTableProps) {
   if (rows.length === 0) {
     return (
-      <div className={`bg-gray-800 p-6 rounded-xl ${className}`}>
-        <p className="text-gray-400 text-center">No comparison data available</p>
+      <div className={`bg-cream-50 p-6 rounded-xl ${className}`}>
+        <p className="text-charcoal-400 text-center">No comparison data available</p>
       </div>
     );
   }
@@ -39,15 +39,15 @@ export default function ComparisonTable({ rows, className = '' }: ComparisonTabl
   });
 
   return (
-    <div className={`bg-gray-800 p-6 rounded-xl ${className}`}>
+    <div className={`bg-cream-50 p-6 rounded-xl ${className}`}>
       <h3 className="text-lg font-semibold mb-4">Baseline Comparison</h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-700">
-              <th className="text-left p-3 font-medium text-gray-300">Method</th>
+            <tr className="border-b border-charcoal-700">
+              <th className="text-left p-3 font-medium text-charcoal-300">Method</th>
               {METRICS.map(m => (
-                <th key={m.key} className="text-right p-3 font-medium text-gray-300">
+                <th key={m.key} className="text-right p-3 font-medium text-charcoal-300">
                   {m.label}
                 </th>
               ))}
@@ -55,8 +55,8 @@ export default function ComparisonTable({ rows, className = '' }: ComparisonTabl
           </thead>
           <tbody>
             {rows.map((row, rowIndex) => (
-              <tr key={row.name} className={`border-b border-gray-700/50 ${rowIndex === 0 ? 'bg-cyan-500/10' : ''}`}>
-                <td className="p-3 font-medium {rowIndex === 0 ? 'text-cyan-400' : 'text-white'}">
+              <tr key={row.name} className={`border-b border-charcoal-700/50 ${rowIndex === 0 ? 'bg-cyan-500/10' : ''}`}>
+                <td className="p-3 font-medium {rowIndex === 0 ? 'text-sage-400' : 'text-charcoal-900'}">
                   {row.name} {rowIndex === 0 && <span className="ml-2 text-xs bg-cyan-500 text-black px-1.5 py-0.5 rounded">Best</span>}
                 </td>
                 {METRICS.map(m => {
@@ -68,7 +68,7 @@ export default function ComparisonTable({ rows, className = '' }: ComparisonTabl
                   
                   return (
                     <td key={m.key} className="p-3 text-right">
-                      <span className={`font-mono ${isBest ? 'font-bold' : ''} ${m.higher ? (isBest ? 'text-green-400' : 'text-gray-300') : (isBest ? 'text-green-400' : 'text-gray-300')}`}>
+                      <span className={`font-mono ${isBest ? 'font-bold' : ''} ${m.higher ? (isBest ? 'text-emerald-400' : 'text-charcoal-300') : (isBest ? 'text-emerald-400' : 'text-charcoal-300')}`}>
                         {displayValue}
                       </span>
                     </td>
@@ -80,16 +80,16 @@ export default function ComparisonTable({ rows, className = '' }: ComparisonTabl
         </table>
       </div>
       
-      <div className="mt-4 pt-4 border-t border-gray-700">
-        <h4 className="text-sm font-medium text-gray-300 mb-2">Violation Details</h4>
+      <div className="mt-4 pt-4 border-t border-charcoal-700">
+        <h4 className="text-sm font-medium text-charcoal-300 mb-2">Violation Details</h4>
         <div className="space-y-2 max-h-48 overflow-y-auto">
           {rows.map((row, rowIndex) => (
-            <div key={row.name} className="p-3 bg-gray-700 rounded-lg">
-              <p className="font-medium text-sm {rowIndex === 0 ? 'text-cyan-400' : 'text-white'}">{row.name}</p>
+            <div key={row.name} className="p-3 bg-charcoal-700 rounded-lg">
+              <p className="font-medium text-sm {rowIndex === 0 ? 'text-sage-400' : 'text-charcoal-900'}">{row.name}</p>
               {row.violations.length === 0 ? (
-                <p className="text-xs text-green-400 mt-1">No constraint violations</p>
+                <p className="text-xs text-emerald-400 mt-1">No constraint violations</p>
               ) : (
-                <ul className="mt-1 space-y-1 text-xs text-gray-300">
+                <ul className="mt-1 space-y-1 text-xs text-charcoal-300">
                   {row.violations.map((v, i) => (
                     <li key={i} className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: v.severity > 50 ? '#ef4444' : '#f59e0b' }}></span>
