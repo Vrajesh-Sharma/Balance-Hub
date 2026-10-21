@@ -268,7 +268,7 @@ export default function BalanceTracker() {
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
                   <p className="text-caption font-medium text-charcoal-400 tracking-wide uppercase">{metric.label}</p>
-                  <p className="text-heading-lg font-display font-bold text-white mt-1.5 truncate">{metric.value}</p>
+                  <p className="text-heading-lg font-display font-bold text-charcoal-900 mt-1.5 truncate">{metric.value}</p>
                   <p className="text-caption text-charcoal-500 mt-0.5">{metric.subtext}</p>
                 </div>
                 <div className={`p-2.5 rounded-lg ${metric.iconBg} ${metric.iconColor} flex-shrink-0`}>
@@ -301,7 +301,7 @@ export default function BalanceTracker() {
         >
           <div className="flex items-center gap-2 mb-5">
             <Plus className="h-5 w-5 text-primary-400" />
-            <h2 className="text-heading-md font-semibold text-white">Log New Activity</h2>
+            <h2 className="text-heading-md font-semibold text-charcoal-900">Log New Activity</h2>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4 sm:grid sm:grid-cols-[1fr_1fr_auto] sm:gap-4 sm:items-end">
@@ -382,7 +382,7 @@ export default function BalanceTracker() {
             className="bg-cream-50 border-border rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
           >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
-              <h2 className="text-heading-md font-semibold text-white">Today's Balance</h2>
+              <h2 className="text-heading-md font-semibold text-charcoal-900">Today's Balance</h2>
               <span className="text-sm text-charcoal-400">{formatHours(totalHoursToday)} hrs total</span>
             </div>
 
@@ -442,7 +442,7 @@ export default function BalanceTracker() {
             className="bg-cream-50 border-border rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
           >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
-              <h2 className="text-heading-md font-semibold text-white">Weekly Overview</h2>
+              <h2 className="text-heading-md font-semibold text-charcoal-900">Weekly Overview</h2>
               <span className="text-sm text-charcoal-400">{formatHours(totalHoursWeek)} hrs total</span>
             </div>
 
@@ -509,7 +509,7 @@ export default function BalanceTracker() {
             className="bg-cream-50 border-border rounded-xl p-5 sm:p-6 hover:border-dark-600 transition-colors"
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-heading-md font-semibold text-white flex items-center gap-2">
+              <h2 className="text-heading-md font-semibold text-charcoal-900 flex items-center gap-2">
                 <Brain className="h-5 w-5 text-sage-400" />
                 Fuzzy Logic Balance Evaluation
               </h2>
@@ -562,7 +562,7 @@ export default function BalanceTracker() {
             className="bg-cream-50 border-border rounded-xl overflow-hidden hover:border-dark-600 transition-colors"
           >
             <div className="px-5 sm:px-6 py-4 border-b border-dark-700">
-              <h2 className="text-heading-md font-semibold text-white flex items-center gap-2">
+              <h2 className="text-heading-md font-semibold text-charcoal-900 flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary-400" />
                 Recent Activities
               </h2>
@@ -587,7 +587,7 @@ export default function BalanceTracker() {
                           <Icon className="h-5 w-5" />
                         </div>
                         <div className="min-w-0">
-                          <p className="font-medium text-white truncate">{typeInfo?.label || activity.type}</p>
+                          <p className="font-medium text-charcoal-900 truncate">{typeInfo?.label || activity.type}</p>
                           <p className="text-sm text-charcoal-400">{format(new Date(activity.date), 'MMM d, yyyy')}</p>
                         </div>
                       </div>

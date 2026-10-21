@@ -244,7 +244,7 @@ export default function StressHub() {
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
           <div className="max-w-3xl">
-            <h1 className="text-display-sm md:text-display-md font-display font-bold tracking-tight text-white">
+            <h1 className="text-display-sm md:text-display-md font-display font-bold tracking-tight text-charcoal-900">
               Stress Hub
             </h1>
 
@@ -275,7 +275,7 @@ export default function StressHub() {
               className="card p-6"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-heading-md font-bold text-white flex items-center gap-2">
+                <h2 className="text-heading-md font-bold text-charcoal-900 flex items-center gap-2">
                   <Settings className="h-5 w-5 text-primary-400" />
                   Preferences
                 </h2>
@@ -283,7 +283,7 @@ export default function StressHub() {
                 <button
                   type="button"
                   onClick={() => setShowSettings(false)}
-                  className="p-2 text-dark-500 hover:text-white hover:bg-dark-800 rounded-lg transition-colors"
+                  className="p-2 text-dark-500 hover:text-charcoal-900 hover:bg-dark-800 rounded-lg transition-colors"
                   aria-label="Close settings"
                 >
                   <X className="h-5 w-5" />
@@ -306,7 +306,7 @@ export default function StressHub() {
                     <div className="flex items-center gap-3">
                       <Volume2 className="h-5 w-5 text-dark-400" />
 
-                      <span className="font-medium text-white">
+                      <span className="font-medium text-charcoal-900">
                         Guided Audio
                       </span>
                     </div>
@@ -325,7 +325,7 @@ export default function StressHub() {
                     <div className="flex items-center gap-3">
                       <Heart className="h-5 w-5 text-dark-400" />
 
-                      <span className="font-medium text-white">
+                      <span className="font-medium text-charcoal-900">
                         Haptic Feedback
                       </span>
                     </div>
@@ -388,7 +388,7 @@ export default function StressHub() {
           className="card p-6 md:p-8"
         >
           <div className="mb-8">
-            <h2 className="text-heading-lg font-semibold text-white mb-2">
+            <h2 className="text-heading-lg font-semibold text-charcoal-900 mb-2">
               Breathing Exercise
             </h2>
 
@@ -401,7 +401,7 @@ export default function StressHub() {
 
             {/* Pattern Selector */}
             <div className="space-y-4">
-              <h3 className="text-heading-sm font-semibold text-white">
+              <h3 className="text-heading-sm font-semibold text-charcoal-900">
                 Choose Pattern
               </h3>
 
@@ -428,7 +428,7 @@ export default function StressHub() {
                           className={`font-medium ${
                             selectedPattern.name === pattern.name
                               ? 'text-primary-400'
-                              : 'text-white'
+                              : 'text-charcoal-900'
                           }`}
                         >
                           {pattern.name}
@@ -714,7 +714,7 @@ export default function StressHub() {
         >
           <div className="flex items-center justify-between mb-6">
 
-            <h2 className="text-heading-lg font-semibold text-white">
+            <h2 className="text-heading-lg font-semibold text-charcoal-900">
               Quick Stress Relief
             </h2>
 
@@ -759,7 +759,7 @@ export default function StressHub() {
                   {getTipIcon(tip.icon)}
                 </div>
 
-                <h3 className="text-heading-sm font-semibold text-white mb-2">
+                <h3 className="text-heading-sm font-semibold text-charcoal-900 mb-2">
                   {tip.title}
                 </h3>
 
@@ -805,7 +805,7 @@ export default function StressHub() {
 
           <div className="flex items-center justify-between mb-6">
 
-            <h2 className="text-heading-lg font-semibold text-white">
+            <h2 className="text-heading-lg font-semibold text-charcoal-900">
               Guided Meditation
             </h2>
 
@@ -839,7 +839,7 @@ export default function StressHub() {
               <div className="flex items-center justify-between">
 
                 <div>
-                  <h3 className="text-heading-md font-semibold text-white">
+                  <h3 className="text-heading-md font-semibold text-charcoal-900">
                     10-Minute Stress Relief Meditation
                   </h3>
 
@@ -883,7 +883,7 @@ export default function StressHub() {
           }}
         >
 
-          <h2 className="text-heading-lg font-semibold text-white mb-6">
+          <h2 className="text-heading-lg font-semibold text-charcoal-900 mb-6">
             More Ways to Relax
           </h2>
 
@@ -960,7 +960,7 @@ export default function StressHub() {
                   <item.icon className="h-6 w-6" />
                 </div>
 
-                <h3 className="text-heading-sm font-semibold text-white mb-2">
+                <h3 className="text-heading-sm font-semibold text-charcoal-900 mb-2">
                   {item.title}
                 </h3>
 

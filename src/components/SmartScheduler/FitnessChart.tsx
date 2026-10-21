@@ -15,7 +15,7 @@ export default function FitnessChart({ convergence, className = '' }: FitnessCha
   return (
     <div className={`bg-cream-50 p-6 rounded-xl ${className}`}>
       <h3 className="text-lg font-semibold mb-4">Convergence Curve</h3>
-      <div className="h-64">
+      <div className="h-48">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Brain, Sparkles, AlertCircle, CheckCircle, XCircle, Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
-import { evaluateBalance, explainFuzzy } from '../soft-computing/fuzzy';
-import { aggregateUserProfile, getDefaultPreferences, schedulesToCurrentFormat } from '../soft-computing/data';
-import { mockApi, smartSchedulerData } from '../lib/dummyData';
+import { Brain, Sparkles, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { evaluateBalance } from '../soft-computing/fuzzy';
+import { smartSchedulerData } from '../lib/dummyData';
 import { UserInputs } from '../soft-computing/types';
 
 interface ScheduleItem {
@@ -114,7 +112,6 @@ const AskAI: React.FC = () => {
 
       // Run the actual Fuzzy Logic inference engine
       const fuzzyResult = evaluateBalance(fuzzyInputs);
-      const ruleExplanations = explainFuzzy(fuzzyInputs);
 
       setFuzzyDetails({
         balanceScore: fuzzyResult.balanceScore,
@@ -179,33 +176,33 @@ const AskAI: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+      <div className="mx-auto max-w-4xl">
         {/* Header Section */}
-        <div className="flex items-center justify-center mb-8">
-          <Brain className="h-10 w-10 text-sage-400 mr-4" />
-          <h1 className="text-4xl font-bold text-charcoal-900">Schedule Analysis</h1>
+        <div className="mb-6 flex items-center justify-center gap-3 text-center sm:mb-8">
+          <Brain className="h-8 w-8 shrink-0 text-teal-700 sm:h-10 sm:w-10" />
+          <h1 className="text-2xl font-bold tracking-tight text-stone-900 sm:text-4xl">Schedule Analysis</h1>
         </div>
 
         {/* Data Source Toggle */}
-        <div className="mb-6 flex items-center justify-center gap-4">
-          <label className="flex items-center gap-2 cursor-pointer">
+        <div className="mb-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+          <label className="flex cursor-pointer items-center gap-2 text-stone-700">
             <input
               type="checkbox"
               checked={useTestData}
               onChange={(e) => handleUseTestDataChange(e.target.checked)}
-              className="w-4 h-4 text-cyan-500 border-charcoal-600 rounded focus:ring-cyan-500"
+              className="h-4 w-4 rounded border-stone-300 text-teal-700 focus:ring-teal-600"
             />
             <span className="text-sm">Use test data (synthetic)</span>
           </label>
           {hasRealData && !useTestData && (
-            <span className="flex items-center gap-1 text-xs text-emerald-400">
+            <span className="flex items-center gap-1 text-xs font-medium text-emerald-700">
               <CheckCircle size={12} />
               Real user data loaded
             </span>
           )}
           {!hasRealData && !useTestData && (
-            <span className="flex items-center gap-1 text-xs text-honey-400">
+            <span className="flex items-center gap-1 text-xs font-medium text-amber-700">
               <AlertCircle size={12} />
               No real data - using defaults
             </span>
@@ -213,11 +210,11 @@ const AskAI: React.FC = () => {
         </div>
 
         {/* Main Content Card */}
-        <div className="bg-charcoal-800 rounded-xl shadow-xl p-6 mb-8">
-          <div className="grid gap-6 md:grid-cols-3 mb-8">
+        <div className="mb-8 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:p-6">
+          <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
             {scheduleItems.map((item, index) => (
               <div key={item.activity} className="space-y-2">
-                <label className="block text-sage-400 text-sm font-semibold">
+                <label className="block text-sm font-semibold text-stone-700">
                   {item.activity}
                 </label>
                 <div className="relative">
@@ -228,10 +225,10 @@ const AskAI: React.FC = () => {
                     step="0.5"
                     value={item.hours}
                     onChange={(e) => handleHoursChange(index, Number(e.target.value))}
-                    className="w-full bg-charcoal-700 text-charcoal-900 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-cyan-400 focus:outline-none"
+                    className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 pr-14 text-stone-900 placeholder:text-stone-400 focus:border-teal-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600/20"
                     placeholder="Hours"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-charcoal-400 text-sm">
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-stone-500">
                     hrs
                   </span>
                 </div>
@@ -244,7 +241,7 @@ const AskAI: React.FC = () => {
             <button
               onClick={handleAnalyzeClick}
               disabled={isAnalyzing}
-              className="flex items-center gap-2 bg-sage-500 hover:bg-cyan-600 disabled:bg-sage-500/50 disabled:cursor-not-allowed text-charcoal-900 px-6 py-3 rounded-lg font-semibold transition-colors duration-200 transform hover:scale-105 disabled:transform-none"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-teal-700 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isAnalyzing ? (
                 <>
@@ -264,10 +261,10 @@ const AskAI: React.FC = () => {
           {showMessage && message && (
             <div className={`mt-8 p-4 rounded-lg text-center font-medium ${
               messageType === 'success' 
-                ? 'bg-green-900/50 text-emerald-400 border border-green-400'
+                ? 'border border-emerald-200 bg-emerald-50 text-emerald-800'
                 : messageType === 'warning'
-                  ? 'bg-yellow-900/50 text-honey-400 border border-yellow-400'
-                  : 'bg-red-900/50 text-coral-400 border border-red-400'
+                  ? 'border border-amber-200 bg-amber-50 text-amber-900'
+                  : 'border border-rose-200 bg-rose-50 text-rose-800'
             }`}>
               {message}
             </div>
@@ -275,39 +272,39 @@ const AskAI: React.FC = () => {
 
           {/* Fuzzy Logic Details */}
           {fuzzyDetails && (
-            <div className="mt-8 p-6 bg-charcoal-800 rounded-xl shadow-xl border border-gray-700">
-              <h3 className="text-xl font-semibold text-charcoal-900 mb-4 flex items-center gap-2">
-                <Brain className="h-5 w-5 text-sage-400" />
+            <div className="mt-8 rounded-2xl border border-stone-200 bg-stone-50 p-4 shadow-sm sm:p-6">
+              <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-stone-900 sm:text-xl">
+                <Brain className="h-5 w-5 text-teal-700" />
                 Fuzzy Logic Analysis Details
               </h3>
               
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-charcoal-700 p-4 rounded-lg">
-                  <p className="text-sm text-charcoal-400">Balance Score</p>
-                  <p className="text-3xl font-bold text-emerald-400">{fuzzyDetails.balanceScore.toFixed(1)} / 100</p>
+              <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="rounded-xl border border-stone-200 bg-white p-4">
+                  <p className="text-sm text-stone-600">Balance Score</p>
+                  <p className="text-2xl font-bold text-emerald-700 sm:text-3xl">{fuzzyDetails.balanceScore.toFixed(1)} / 100</p>
                 </div>
-                <div className="bg-charcoal-700 p-4 rounded-lg">
-                  <p className="text-sm text-charcoal-400">Stress Score</p>
-                  <p className="text-3xl font-bold text-coral-400">{fuzzyDetails.stressScore.toFixed(1)} / 100</p>
+                <div className="rounded-xl border border-stone-200 bg-white p-4">
+                  <p className="text-sm text-stone-600">Stress Score</p>
+                  <p className="text-2xl font-bold text-rose-700 sm:text-3xl">{fuzzyDetails.stressScore.toFixed(1)} / 100</p>
                 </div>
               </div>
 
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                <p className="text-sm font-medium text-sage-300 mb-2">Activated Fuzzy Rules:</p>
+              <div className="max-h-64 space-y-3 overflow-y-auto">
+                <p className="mb-2 text-sm font-semibold text-stone-700">Activated Fuzzy Rules:</p>
                 {fuzzyDetails.firedRules.length === 0 ? (
-                  <p className="text-charcoal-400 text-center py-2">No rules fired significantly</p>
+                  <p className="py-2 text-center text-stone-600">No rules fired significantly</p>
                 ) : (
                   fuzzyDetails.firedRules.slice(0, 5).map((rule, index) => (
-                    <div key={index} className="p-3 bg-charcoal-700 rounded-lg border-l-4 border-cyan-500">
+                    <div key={index} className="rounded-xl border border-stone-200 border-l-4 border-l-teal-600 bg-white p-3">
                       <div className="flex justify-between items-start mb-1">
-                        <p className="text-sm font-medium text-sage-300">{rule.name}</p>
-                        <span className="text-xs text-charcoal-400 px-2 py-0.5 bg-charcoal-600 rounded">
+                        <p className="text-sm font-medium text-stone-800">{rule.name}</p>
+                        <span className="rounded-md bg-stone-100 px-2 py-1 text-xs text-stone-600">
                           Strength: {rule.strength.toFixed(2)}
                         </span>
                       </div>
-                      <div className="flex gap-4 text-xs text-charcoal-300">
-                        <span>→ Balance: <span className="font-medium text-emerald-400">{rule.consequence.balance}</span></span>
-                        <span>→ Stress: <span className="font-medium text-coral-400">{rule.consequence.stress}</span></span>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-stone-600">
+                        <span>→ Balance: <span className="font-medium text-emerald-700">{rule.consequence.balance}</span></span>
+                        <span>→ Stress: <span className="font-medium text-rose-700">{rule.consequence.stress}</span></span>
                       </div>
                     </div>
                   ))
@@ -315,7 +312,7 @@ const AskAI: React.FC = () => {
               </div>
 
               {fuzzyDetails.firedRules.length > 5 && (
-                <p className="mt-3 text-xs text-charcoal-500 text-center">
+                <p className="mt-3 text-center text-xs text-stone-500">
                   + {fuzzyDetails.firedRules.length - 5} more rules fired
                 </p>
               )}
@@ -324,46 +321,49 @@ const AskAI: React.FC = () => {
 
           {/* Recommended Allocation Chart - Only show when there are warnings/errors */}
           {showMessage && messageType !== 'success' && (
-            <div className="mt-8 p-6 bg-charcoal-800 rounded-xl shadow-xl border border-gray-700">
-              <h3 className="text-xl font-semibold text-charcoal-900 mb-6 text-center">
+            <div className="mt-8 rounded-2xl border border-stone-200 bg-stone-50 p-4 shadow-sm sm:p-6">
+              <h3 className="mb-6 text-center text-lg font-semibold text-stone-900 sm:text-xl">
                 Recommended Daily Time Allocation (Balanced Baseline)
               </h3>
-              <div className="h-[300px] w-full flex items-center justify-center">
-                <div className="w-full max-w-md">
-                  <svg viewBox="0 0 200 200" className="mx-auto">
+              <div className="flex w-full items-center justify-center py-2">
+                <div className="w-full max-w-xs">
+                  <svg viewBox="0 0 200 200" role="img" aria-label="Illustrative daily time allocation: 8 hours work, 8 hours personal time, 8 hours sleep" className="mx-auto block h-auto w-full max-w-[240px]">
                     <circle 
                       cx="100" cy="100" r="80" 
-                      stroke="#22D3EE" strokeWidth="40" fill="none" 
+                      stroke="#22D3EE" strokeWidth="40" strokeLinecap="butt" fill="none" 
                       strokeDasharray="502.65" strokeDashoffset="502.65"
                       className="transition-all duration-1000"
-                      style={{ strokeDashoffset: 502.65 * (1 - 8/24) }}
+                      transform="rotate(-90 100 100)"
+                      style={{ strokeDasharray: `${502.65 * (8/24)} ${502.65}`, strokeDashoffset: 0 }}
                     />
                     <circle 
                       cx="100" cy="100" r="80" 
-                      stroke="#F472B6" strokeWidth="40" fill="none" 
+                      stroke="#F472B6" strokeWidth="40" strokeLinecap="butt" fill="none" 
                       strokeDasharray="502.65" strokeDashoffset="0"
                       className="transition-all duration-1000"
-                      style={{ strokeDashoffset: 502.65 * (1 - 8/24) }}
+                      transform="rotate(30 100 100)"
+                      style={{ strokeDasharray: `${502.65 * (8/24)} ${502.65}`, strokeDashoffset: 0 }}
                     />
                     <circle 
                       cx="100" cy="100" r="80" 
-                      stroke="#A78BFA" strokeWidth="40" fill="none" 
+                      stroke="#A78BFA" strokeWidth="40" strokeLinecap="butt" fill="none" 
                       strokeDasharray="502.65" strokeDashoffset="0"
                       className="transition-all duration-1000"
-                      style={{ strokeDashoffset: 502.65 * (1 - 16/24) }}
+                      transform="rotate(150 100 100)"
+                      style={{ strokeDasharray: `${502.65 * (8/24)} ${502.65}`, strokeDashoffset: 0 }}
                     />
                   </svg>
-                  <div className="flex justify-center gap-6 mt-4 text-sm">
+                  <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-stone-700 sm:text-sm">
                     <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#22D3EE' }}></span>
+                      <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: '#22D3EE' }}></span>
                       Work: 8 hrs
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#F472B6' }}></span>
+                      <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: '#F472B6' }}></span>
                       Personal: 8 hrs
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#A78BFA' }}></span>
+                      <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: '#A78BFA' }}></span>
                       Sleep: 8 hrs
                     </div>
                   </div>
@@ -374,12 +374,12 @@ const AskAI: React.FC = () => {
         </div>
 
         {/* Tips Section */}
-        <div className="bg-charcoal-800 rounded-xl shadow-xl p-6">
-          <h2 className="text-xl font-semibold text-charcoal-900 mb-4 flex items-center gap-2">
-            <Brain className="h-5 w-5 text-sage-400" />
+        <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:p-6">
+          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-stone-900 sm:text-xl">
+            <Brain className="h-5 w-5 text-teal-700" />
             How Fuzzy Logic Analyzes Your Schedule
           </h2>
-          <ul className="space-y-2 text-charcoal-300">
+          <ul className="space-y-3 text-sm leading-6 text-stone-700 sm:text-base">
             <li>• <strong>Membership functions</strong> convert your hours into fuzzy sets (e.g., "high work", "adequate sleep")</li>
             <li>• <strong>Fuzzy rules</strong> (15 rules) evaluate combinations like "High work + Low sleep → High stress"</li>
             <li>• <strong>Inference engine</strong> combines all fired rules using min/max composition</li>

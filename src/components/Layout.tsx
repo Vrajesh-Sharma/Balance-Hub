@@ -57,6 +57,25 @@ export default function Layout() {
     setIsMoreOpen(false);
   };
 
+  // Lock background scrolling while the mobile drawer is open, then restore it.
+  React.useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    if (isMenuOpen) document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isMenuOpen]);
+
+  // Allow keyboard users to dismiss the mobile drawer.
+  React.useEffect(() => {
+    if (!isMenuOpen) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMenuOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMenuOpen]);
+
   const allNavItems = [...primaryNavItems, ...secondaryNavItems];
 
   return (
@@ -102,7 +121,7 @@ export default function Layout() {
               {/* More Dropdown */}
               <div className="relative" onMouseLeave={() => setIsMoreOpen(false)}>
                 <button
-                  onClick={() => setIsMoreOpen(!isMoreOpen)}
+                  onClick={() => setIsMoreOpen(true)}
                   onMouseEnter={() => setIsMoreOpen(true)}
                   className={`nav-link-inactive gap-1.5 ${isMoreOpen ? 'text-sage-600' : ''}`}
                   aria-expanded={isMoreOpen}
@@ -116,11 +135,11 @@ export default function Layout() {
                 <AnimatePresence>
                   {isMoreOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: -8 }}
+                      initial={{ opacity: 0, y: 0 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
+                      exit={{ opacity: 0, y: 0 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-dark-900 border border-dark-700 rounded-lg shadow-card-hover py-2 z-50"
+                      className="absolute top-full right-0 w-56 max-w-[calc(100vw-2rem)] rounded-xl border border-stone-200 bg-white py-2 text-stone-700 shadow-xl z-[60]"
                       role="menu"
                     >
                       {secondaryNavItems.map((item) => {
@@ -132,8 +151,8 @@ export default function Layout() {
                             onClick={handleLinkClick}
 className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors ${
                               isActive 
-                            ? 'bg-sage-100 text-sage-700 border border-sage-200' 
-                            : 'text-charcoal-500 hover:text-charcoal-900 hover:bg-cream-100'
+                            ? 'bg-teal-50 text-teal-800 border-l-2 border-teal-600' 
+                            : 'text-stone-700 hover:text-stone-950 hover:bg-stone-50'
                         }`}
                             role="menuitem"
                             aria-current={isActive ? 'page' : undefined}
@@ -191,9 +210,9 @@ className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-c
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            className="fixed inset-0 z-[55] bg-black/45 lg:hidden"
             onClick={() => setIsMenuOpen(false)}
-            aria-hidden="true"
+            aria-label="Menu overlay"
           />
         )}
       </AnimatePresence>
@@ -205,7 +224,7 @@ className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-c
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -300, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed inset-y-0 left-0 z-50 w-72 lg:hidden bg-dark-950 border-r border-dark-800 p-6 flex flex-col"
+            className="fixed inset-y-0 left-0 z-[60] w-[min(20rem,85vw)] lg:hidden bg-[#173b36] text-white border-r border-white/15 p-5 sm:p-6 flex flex-col shadow-2xl"
           >
             <div className="flex items-center justify-between mb-8">
               <Link to="/" className="flex items-center gap-3" onClick={handleLinkClick}>
@@ -216,7 +235,7 @@ className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-c
               </Link>
               <button
                 onClick={() => setIsMenuOpen(false)}
-                className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-dark-800/50 transition-colors"
+                className="p-2 rounded-lg text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 transition-colors"
                 aria-label="Close menu"
               >
                 <X className="h-6 w-6" />
@@ -235,8 +254,8 @@ className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-c
                       onClick={handleLinkClick}
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors ${
                         isActive 
-                          ? 'bg-primary-500/15 text-primary-400 border border-primary-500/20' 
-                          : 'text-dark-300 hover:text-white hover:bg-dark-800/50'
+                          ? 'bg-white/15 text-white border border-white/25'
+                          : 'text-white/90 hover:text-white hover:bg-white/10 border border-transparent'
                       }`}
                       aria-current={isActive ? 'page' : undefined}
                     >
@@ -247,7 +266,7 @@ className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-c
                 })}
               </nav>
 
-              <div className="my-4 border-t border-dark-800" />
+              <div className="my-4 border-t border-white/20" />
 
               {/* Secondary Navigation */}
               <nav aria-label="Secondary navigation">
@@ -260,8 +279,8 @@ className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-c
                       onClick={handleLinkClick}
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors ${
                         isActive 
-                          ? 'bg-primary-500/15 text-primary-400 border border-primary-500/20' 
-                          : 'text-dark-300 hover:text-white hover:bg-dark-800/50'
+                          ? 'bg-white/15 text-white border border-white/25'
+                          : 'text-white/90 hover:text-white hover:bg-white/10 border border-transparent'
                       }`}
                       aria-current={isActive ? 'page' : undefined}
                     >
@@ -273,7 +292,7 @@ className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-c
               </nav>
             </div>
 
-            <div className="pt-4 border-t border-dark-800">
+            <div className="pt-4 border-t border-white/20">
               <Link
                 to="/ask-ai"
                 onClick={handleLinkClick}
@@ -287,9 +306,9 @@ className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-c
         )}
       </AnimatePresence>
 
-      <div className="flex pt-16">
-        {/* Main Content */}
-        <main className="flex-1 min-w-0">
+      <div className="flex min-w-0 pt-16">
+        {/* Main content stays in place; the mobile drawer overlays it. */}
+        <main className="min-w-0 flex-1">
           <Outlet />
         </main>
       </div>
