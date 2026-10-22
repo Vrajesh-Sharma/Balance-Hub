@@ -1,4 +1,4 @@
-import { Chromosome, GAConfig, ActivityType } from '../../types';
+import { Chromosome, GAConfig, ActivityType } from '../types';
 import { createTemplateChromosome, createRandomChromosome } from './chromosome';
 
 export function tournamentSelection(

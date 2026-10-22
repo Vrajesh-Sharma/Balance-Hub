@@ -1,4 +1,4 @@
-import { UserInputs, ActivityLog, WorkLog, JournalEntry, Goal, ScheduleEvent, UserPreferences, MoodType } from '../../types';
+import { UserInputs, ActivityLog, WorkLog, JournalEntry, Goal, ScheduleEvent, UserPreferences, MoodType } from '../types';
 import { format, subDays, subHours, addHours, startOfDay } from 'date-fns';
 
 const MOODS: MoodType[] = ['productive', 'happy', 'neutral', 'stressed', 'tired'];

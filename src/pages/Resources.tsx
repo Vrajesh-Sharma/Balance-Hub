@@ -3,12 +3,10 @@ import { motion } from 'framer-motion';
 import { 
   BookOpen, 
   Download, 
-  Link as LinkIcon, 
   Play, 
   FileText,
   ExternalLink,
   ChevronRight,
-  Star,
   Clock,
   Users,
   Brain,
@@ -21,7 +19,7 @@ const resources = [
   {
     category: 'Templates & Tools',
     icon: FileText,
-    color: 'bg-sage-600/20 text-primary-400 border-primary-500/30',
+    color: 'bg-sage-100 text-sage-800 border-sage-300',
     items: [
       {
         title: 'Daily Planner Template',
@@ -68,7 +66,7 @@ const resources = [
   {
     category: 'Recommended Reading',
     icon: BookOpen,
-    color: 'bg-emerald-500/20 text-green-400 border-green-500/30',
+    color: 'bg-emerald-100 text-emerald-800 border-emerald-300',
     items: [
       {
         title: 'The Power of Rest',
@@ -111,7 +109,7 @@ const resources = [
   {
     category: 'Video Resources',
     icon: Play,
-    color: 'bg-coral-500/20 text-red-400 border-red-500/30',
+    color: 'bg-coral-100 text-coral-800 border-coral-300',
     items: [
       {
         title: 'Mindfulness at Work',
@@ -154,7 +152,7 @@ const resources = [
   {
     category: 'Mental Wellness',
     icon: Brain,
-    color: 'bg-lavender-500/20 text-purple-400 border-purple-500/30',
+    color: 'bg-lavender-100 text-lavender-800 border-lavender-300',
     items: [
       {
         title: '5-Minute Breathing Exercise',
@@ -216,29 +214,30 @@ export default function Resources() {
   );
 
   return (
-    <div className="container-custom py-8">
+    <div className="page">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-8"
+        className="space-y-6 lg:space-y-8"
       >
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-display-sm font-display font-bold text-charcoal-900 flex items-center gap-3">
-              <BookOpen className="h-8 w-8 text-primary-400" />
+            <h1 className="page-title flex items-center gap-3">
+              <BookOpen className="h-7 w-7 sm:h-8 sm:w-8 text-sage-700 shrink-0" aria-hidden="true" />
               Resource Hub
             </h1>
-            <p className="text-charcoal-400 mt-1">Curated tools, guides, and content for your balance journey</p>
+            <p className="page-subtitle">Curated tools, guides, and content for your balance journey</p>
           </div>
-          <div className="relative max-w-sm">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-500" size={20} />
+          <div className="relative w-full sm:max-w-sm">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal-600" size={20} />
             <input
               type="text"
               placeholder="Search resources..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="input pl-12"
+              aria-label="Search resources"
             />
           </div>
         </div>
@@ -250,23 +249,24 @@ export default function Resources() {
           transition={{ delay: 0.1 }}
           className="card p-2"
         >
-          <div className="flex flex-wrap gap-2" role="tablist">
+          <div className="flex flex-wrap gap-2" role="tablist" aria-label="Resource categories">
             {resources.map((category, index) => (
               <button
                 key={category.category}
+                type="button"
                 onClick={() => setActiveCategory(index)}
                 role="tab"
                 aria-selected={activeCategory === index}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+                className={`px-3 sm:px-4 min-h-[44px] rounded-xl border text-sm font-medium transition-colors duration-200 flex items-center gap-2 ${
                   activeCategory === index
-                    ? 'bg-white text-dark-950 shadow-sm'
-                    : 'text-charcoal-400 hover:text-charcoal-900 hover:bg-dark-800/50'
-                } ${category.color}`}
+                    ? 'bg-sage-100 text-sage-800 border-sage-300'
+                    : 'text-charcoal-800 border-transparent hover:bg-cream-100 hover:text-charcoal-900'
+                }`}
               >
                 <category.icon className="h-4 w-4" />
                 {category.category}
                 <span className={`px-2 py-0.5 rounded-full text-xs ${
-                  activeCategory === index ? 'bg-dark-900 text-charcoal-900' : 'bg-dark-700 text-charcoal-400'
+                  activeCategory === index ? 'bg-white text-sage-800' : 'bg-charcoal-100 text-charcoal-800'
                 }`}>
                   {category.items.length}
                 </span>
@@ -274,13 +274,14 @@ export default function Resources() {
             ))}
             {searchQuery && (
               <button
+                type="button"
                 onClick={() => setSearchQuery('')}
-                role="tab"
-                className="px-4 py-2.5 rounded-xl text-sm font-medium text-honey-400 bg-honey-100/10 border border-orange-500/20 flex items-center gap-2"
+                className="px-3 sm:px-4 min-h-[44px] rounded-xl text-sm font-medium text-amber-800 bg-honey-100 border border-honey-300 flex items-center gap-2"
+                aria-label="Clear search"
               >
                 <Sparkles className="h-4 w-4" />
                 Search Results
-                <span className="px-2 py-0.5 rounded-full text-xs bg-orange-500/20 text-honey-400">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-white text-amber-800">
                   {filteredItems.length}
                 </span>
               </button>
@@ -302,7 +303,7 @@ export default function Resources() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="card-hover group"
+                  className="card-interactive group min-w-0"
                 >
                   <ResourceCard 
                     item={{ ...item, categoryColor: resources[item.categoryIndex].color }}
@@ -319,7 +320,7 @@ export default function Resources() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="card-hover group"
+                  className="card-interactive group min-w-0"
                 >
                   <ResourceCard 
                     item={{ ...item, categoryColor: resources[activeCategory].color }}
@@ -334,13 +335,13 @@ export default function Resources() {
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="col-span-full p-16 text-center"
+              className="col-span-full p-8 sm:p-16 text-center"
             >
-              <BookOpen className="h-16 w-16 mx-auto mb-6 text-dark-600" />
+              <BookOpen className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-6 text-charcoal-600" aria-hidden="true" />
               <h3 className="text-xl font-semibold text-charcoal-900 mb-2">
                 {searchQuery ? 'No resources found' : 'No resources in this category'}
               </h3>
-              <p className="text-charcoal-400 max-w-md mx-auto">
+              <p className="text-charcoal-700 max-w-md mx-auto">
                 {searchQuery 
                   ? 'Try adjusting your search terms or browse all categories'
                   : 'Resources coming soon!'}
@@ -356,16 +357,14 @@ export default function Resources() {
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.6 }}
         >
-          <div className="card p-8 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-secondary-500/10" />
-            <div className="absolute top-10 right-10 w-48 h-48 bg-primary-500/10 rounded-full blur-3xl" />
-            <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="card p-5 sm:p-8 bg-sage-50 border-sage-200">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div className="max-w-2xl">
                 <h2 className="text-heading-lg font-bold text-charcoal-900 mb-3">Join Our Community</h2>
-                <p className="text-dark-300 mb-6">
+                <p className="text-charcoal-700 mb-6">
                   Connect with others on their work-life balance journey. Share experiences, ask questions, and get support.
                 </p>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
                   <a
                     href="https://thinkinginenglish.blog/2023/09/02/the-perfect-work-life-balance/"
                     target="_blank"
@@ -376,24 +375,24 @@ export default function Resources() {
                     Join Discussion
                     <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </a>
-                  <button className="btn-secondary">
+                  <button type="button" className="btn-secondary">
                     <Heart className="h-5 w-5" />
                     Share Your Story
                   </button>
                 </div>
               </div>
-              <div className="flex items-center gap-8 text-center md:text-left">
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-4 text-left">
                 <div>
-                  <div className="text-3xl font-display font-bold text-primary-400">10K+</div>
-                  <div className="text-charcoal-400 text-sm">Members</div>
+                  <div className="text-3xl font-display font-bold text-sage-800">10K+</div>
+                  <div className="text-charcoal-700 text-sm">Members</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-display font-bold text-secondary-400">500+</div>
-                  <div className="text-charcoal-400 text-sm">Discussions</div>
+                  <div className="text-3xl font-display font-bold text-lavender-800">500+</div>
+                  <div className="text-charcoal-700 text-sm">Discussions</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-display font-bold text-green-400">24/7</div>
-                  <div className="text-charcoal-400 text-sm">Support</div>
+                  <div className="text-3xl font-display font-bold text-emerald-800">24/7</div>
+                  <div className="text-charcoal-700 text-sm">Support</div>
                 </div>
               </div>
             </div>
@@ -407,29 +406,29 @@ export default function Resources() {
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-heading-lg font-bold text-charcoal-900 mb-6">Featured Collections</h2>
-          <div className="grid md:grid-cols-3 gap-4">
+          <h2 className="text-heading-lg font-bold text-charcoal-900 mb-4 sm:mb-6">Featured Collections</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               { 
                 icon: Clock, 
                 title: 'Quick Reads', 
                 desc: 'Resources under 5 minutes for busy days',
                 count: '12 items',
-                color: 'bg-honey-100/20 text-yellow-400 border-yellow-500/30',
+                color: 'bg-honey-100 text-amber-800 border-honey-300',
               },
               { 
                 icon: Sparkles, 
                 title: 'Beginner Friendly', 
                 desc: 'Start here if you\'re new to balance practices',
                 count: '8 items',
-                color: 'bg-emerald-500/20 text-green-400 border-green-500/30',
+                color: 'bg-emerald-100 text-emerald-800 border-emerald-300',
               },
               { 
                 icon: Brain, 
                 title: 'Deep Dives', 
                 desc: 'Comprehensive guides for mastery',
                 count: '6 items',
-                color: 'bg-lavender-500/20 text-purple-400 border-purple-500/30',
+                color: 'bg-lavender-100 text-lavender-800 border-lavender-300',
               },
             ].map((collection, index) => (
               <motion.div
@@ -438,14 +437,14 @@ export default function Resources() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="card-hover p-6 group"
+                className="card-interactive p-5 sm:p-6 group"
               >
-                <div className={`p-3 rounded-xl mb-4 ${collection.color}`}>
+                <div className={`p-3 rounded-xl mb-4 w-fit border ${collection.color}`}>
                   <collection.icon className="h-6 w-6" />
                 </div>
-                <h3 className="text-heading-sm font-bold text-charcoal-900 mb-2 group-hover:text-primary-400 transition-colors">{collection.title}</h3>
-                <p className="text-body-sm text-charcoal-400 mb-3">{collection.desc}</p>
-                <button className="text-sm font-medium text-primary-400 hover:text-primary-300 flex items-center gap-1 group-hover:gap-2 transition-all">
+                <h3 className="text-heading-sm font-bold text-charcoal-900 mb-2 group-hover:text-sage-700 transition-colors">{collection.title}</h3>
+                <p className="text-body-sm text-charcoal-700 mb-3">{collection.desc}</p>
+                <button type="button" className="text-sm font-semibold text-sage-700 hover:text-sage-900 flex items-center gap-1 group-hover:gap-2 transition-all min-h-[44px]">
                   Explore
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -463,47 +462,59 @@ function ResourceCard({ item, onClick }: {
   onClick: () => void;
 }) {
   const Icon = item.icon;
-  const typeLabels = {
+  const typeLabels: Record<string, string> = {
     download: 'Download',
     link: 'Read Article',
     video: 'Watch Video',
   };
-  const typeIcons = {
+  const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
     download: Download,
     link: ExternalLink,
     video: Play,
   };
 
   return (
-    <div className="p-6 h-full" onClick={onClick}>
+    <div
+      className="p-5 sm:p-6 h-full cursor-pointer rounded-2xl"
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      aria-label={`${typeLabels[item.type]}: ${item.title}`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+    >
       <div className="flex items-start gap-4 mb-4">
-        <div className={`p-3 rounded-xl shrink-0 ${item.categoryColor}`}>
+        <div className={`p-3 rounded-xl border shrink-0 ${item.categoryColor}`}>
           <Icon className="h-6 w-6" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap gap-2 mb-2">
             {item.tags.map((tag, idx) => (
-              <span key={idx} className="px-2 py-0.5 bg-dark-700 rounded text-xs text-charcoal-400">
+              <span key={idx} className="px-2 py-0.5 bg-charcoal-100 rounded text-xs text-charcoal-800">
                 {tag}
               </span>
             ))}
           </div>
-          <h4 className="font-semibold text-charcoal-900 mb-1 group-hover:text-primary-400 transition-colors">{item.title}</h4>
+          <h4 className="font-semibold text-charcoal-900 mb-1 group-hover:text-sage-700 transition-colors break-words">{item.title}</h4>
         </div>
       </div>
-      <p className="text-charcoal-400 text-sm mb-4 leading-relaxed">{item.description}</p>
-      <div className="flex items-center justify-between pt-4 border-t border-dark-700">
-        <span className="text-xs text-dark-500 flex items-center gap-1">
+      <p className="text-charcoal-700 text-sm mb-4 leading-relaxed">{item.description}</p>
+      <div className="flex items-center justify-between pt-4 border-t border-border">
+        <span className="text-xs text-charcoal-700 flex items-center gap-1">
           <Clock className="h-3 w-3" />
           {item.time}
         </span>
-        <button className="text-sm font-medium text-primary-400 hover:text-primary-300 flex items-center gap-1 group-hover:gap-2 transition-all">
+        <span className="text-sm font-semibold text-sage-700 group-hover:text-sage-900 flex items-center gap-1 group-hover:gap-2 transition-all">
           {typeLabels[item.type]}
           {(() => {
             const TypeIcon = typeIcons[item.type];
             return <TypeIcon className="h-4 w-4" />;
           })()}
-        </button>
+        </span>
       </div>
     </div>
   );

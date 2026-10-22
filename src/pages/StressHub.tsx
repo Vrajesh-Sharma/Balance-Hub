@@ -26,15 +26,15 @@ const phaseLabels = {
 };
 
 const phaseTextColors = {
-  inhale: 'text-primary-500',
-  hold: 'text-yellow-500',
-  exhale: 'text-green-500',
+  inhale: 'text-sage-700',
+  hold: 'text-amber-700',
+  exhale: 'text-emerald-700',
 };
 
 const phaseBgColors = {
-  inhale: 'bg-primary-500',
-  hold: 'bg-yellow-500',
-  exhale: 'bg-green-500',
+  inhale: 'bg-sage-600',
+  hold: 'bg-amber-500',
+  exhale: 'bg-emerald-600',
 };
 
 const iconMap = {
@@ -233,8 +233,8 @@ export default function StressHub() {
   };
 
   return (
-    <div className="container-custom">
-      <div className="space-y-12 md:space-y-16 lg:space-y-20">
+    <div className="page">
+      <div className="space-y-6 lg:space-y-8">
 
         {/* Header */}
         <motion.div
@@ -244,11 +244,11 @@ export default function StressHub() {
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
           <div className="max-w-3xl">
-            <h1 className="text-display-sm md:text-display-md font-display font-bold tracking-tight text-charcoal-900">
+            <h1 className="page-title">
               Stress Hub
             </h1>
 
-            <p className="text-body-lg md:text-heading-sm text-dark-300 leading-relaxed mt-3">
+            <p className="page-subtitle">
               Find calm and restore balance with guided exercises
             </p>
           </div>
@@ -272,18 +272,18 @@ export default function StressHub() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="card p-6"
+              className="card p-4 sm:p-6"
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-4 sm:mb-6">
                 <h2 className="text-heading-md font-bold text-charcoal-900 flex items-center gap-2">
-                  <Settings className="h-5 w-5 text-primary-400" />
+                  <Settings className="h-5 w-5 text-sage-700" />
                   Preferences
                 </h2>
 
                 <button
                   type="button"
                   onClick={() => setShowSettings(false)}
-                  className="p-2 text-dark-500 hover:text-charcoal-900 hover:bg-dark-800 rounded-lg transition-colors"
+                  className="inline-flex h-11 w-11 items-center justify-center text-charcoal-700 hover:text-charcoal-900 hover:bg-cream-100 rounded-lg transition-colors"
                   aria-label="Close settings"
                 >
                   <X className="h-5 w-5" />
@@ -300,11 +300,11 @@ export default function StressHub() {
                       onChange={(e) =>
                         setSoundEnabled(e.target.checked)
                       }
-                      className="w-4 h-4 accent-primary-500 rounded border-dark-600 bg-dark-800 focus:ring-2 focus:ring-primary-500/20"
+                      className="w-4 h-4 accent-sage-600 rounded border border-border bg-cream-100 focus:ring-2 focus:ring-sage-500/20"
                     />
 
                     <div className="flex items-center gap-3">
-                      <Volume2 className="h-5 w-5 text-dark-400" />
+                      <Volume2 className="h-5 w-5 text-charcoal-600" />
 
                       <span className="font-medium text-charcoal-900">
                         Guided Audio
@@ -319,11 +319,11 @@ export default function StressHub() {
                       onChange={(e) =>
                         setHapticEnabled(e.target.checked)
                       }
-                      className="w-4 h-4 accent-primary-500 rounded border-dark-600 bg-dark-800 focus:ring-2 focus:ring-primary-500/20"
+                      className="w-4 h-4 accent-sage-600 rounded border border-border bg-cream-100 focus:ring-2 focus:ring-sage-500/20"
                     />
 
                     <div className="flex items-center gap-3">
-                      <Heart className="h-5 w-5 text-dark-400" />
+                      <Heart className="h-5 w-5 text-charcoal-600" />
 
                       <span className="font-medium text-charcoal-900">
                         Haptic Feedback
@@ -385,19 +385,19 @@ export default function StressHub() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="card p-6 md:p-8"
+          className="card p-4 sm:p-6 lg:p-8"
         >
           <div className="mb-8">
             <h2 className="text-heading-lg font-semibold text-charcoal-900 mb-2">
               Breathing Exercise
             </h2>
 
-            <p className="text-body-md text-dark-400">
+            <p className="text-body-md text-charcoal-700">
               Select a pattern and follow the visual guide
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 gap-8">
 
             {/* Pattern Selector */}
             <div className="space-y-4">
@@ -417,30 +417,30 @@ export default function StressHub() {
                     whileTap={{ scale: 0.98 }}
                     className={`w-full text-left p-4 rounded-lg transition-all duration-200 ${
                       selectedPattern.name === pattern.name
-                        ? 'bg-primary-500/10 border border-primary-500/20'
-                        : 'bg-dark-800/50 border border-dark-700 hover:border-dark-600'
+                        ? 'bg-sage-100 border border-sage-200'
+                        : 'bg-cream-100 border border-border hover:border-sage-300'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-4">
 
-                      <div>
+                      <div className="min-w-0">
                         <h4
                           className={`font-medium ${
                             selectedPattern.name === pattern.name
-                              ? 'text-primary-400'
+                              ? 'text-sage-700'
                               : 'text-charcoal-900'
                           }`}
                         >
                           {pattern.name}
                         </h4>
 
-                        <p className="text-body-sm text-dark-400 mt-1">
+                        <p className="text-body-sm text-charcoal-700 mt-1">
                           {pattern.description}
                         </p>
                       </div>
 
                       {selectedPattern.name === pattern.name && (
-                        <div className="flex items-center gap-2 text-primary-400">
+                        <div className="flex items-center gap-2 text-sage-700">
                           <Brain className="h-4 w-4" />
 
                           <span className="text-sm font-medium">
@@ -451,7 +451,7 @@ export default function StressHub() {
 
                     </div>
 
-                    <div className="mt-3 flex flex-wrap gap-3 text-xs text-dark-500">
+                    <div className="mt-3 flex flex-wrap gap-3 text-xs text-charcoal-700">
 
                       <span className="flex items-center gap-1">
                         <span
@@ -480,30 +480,30 @@ export default function StressHub() {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-3 pt-4 border-t border-dark-700">
+              <div className="grid grid-cols-3 gap-3 pt-4 border-t border-border">
 
-                <div className="text-center p-3 bg-dark-800/50 rounded-lg">
-                  <div className="text-xl font-display font-bold text-primary-400">
+                <div className="text-center p-3 bg-cream-100 rounded-lg">
+                  <div className="text-xl font-display font-bold text-sage-700">
                     {completedCycles}
                   </div>
 
-                  <div className="text-caption text-dark-500">
+                  <div className="text-caption text-charcoal-700">
                     Cycles
                   </div>
                 </div>
 
-                <div className="text-center p-3 bg-dark-800/50 rounded-lg">
-                  <div className="text-xl font-display font-bold text-secondary-400">
+                <div className="text-center p-3 bg-cream-100 rounded-lg">
+                  <div className="text-xl font-display font-bold text-lavender-700">
                     {formatTime(totalSeconds)}
                   </div>
 
-                  <div className="text-caption text-dark-500">
+                  <div className="text-caption text-charcoal-700">
                     Time
                   </div>
                 </div>
 
-                <div className="text-center p-3 bg-dark-800/50 rounded-lg">
-                  <div className="text-xl font-display font-bold text-green-400">
+                <div className="text-center p-3 bg-cream-100 rounded-lg">
+                  <div className="text-xl font-display font-bold text-emerald-700">
                     {Math.round(
                       (completedCycles *
                         totalPatternTime /
@@ -513,7 +513,7 @@ export default function StressHub() {
                     %
                   </div>
 
-                  <div className="text-caption text-dark-500">
+                  <div className="text-caption text-charcoal-700">
                     Focus
                   </div>
                 </div>
@@ -524,7 +524,7 @@ export default function StressHub() {
             {/* Breathing Visualization */}
             <div className="flex flex-col items-center justify-center">
 
-              <div className="relative w-64 h-64 md:w-72 md:h-72">
+              <div className="relative w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72">
 
                 <svg
                   viewBox="0 0 240 240"
@@ -537,7 +537,7 @@ export default function StressHub() {
                     cx="120"
                     cy="120"
                     r="100"
-                    className="text-dark-700"
+                    className="text-charcoal-200"
                     strokeWidth="10"
                     fill="none"
                     stroke="currentColor"
@@ -618,12 +618,12 @@ export default function StressHub() {
                         opacity: 1,
                         scale: 1,
                       }}
-                      className="text-6xl md:text-7xl font-display font-bold leading-none text-white font-mono tabular-nums"
+                      className="text-5xl sm:text-6xl md:text-7xl font-display font-bold leading-none text-charcoal-900 font-mono tabular-nums"
                     >
                       {maxProgress - progress}
                     </motion.div>
 
-                    <div className="text-body-sm text-dark-400 mt-2">
+                    <div className="text-body-sm text-charcoal-600 mt-2">
                       seconds
                     </div>
 
@@ -640,7 +640,7 @@ export default function StressHub() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={toggleBreathing}
-                  className="btn-primary p-3 rounded-lg relative z-10"
+                  className="btn-primary h-12 w-12 !p-0 rounded-xl relative z-10"
                   aria-label={
                     isBreathing
                       ? 'Pause breathing exercise'
@@ -665,7 +665,7 @@ export default function StressHub() {
                     currentPhase === 'inhale' &&
                     totalSeconds === 0
                   }
-                  className="btn-secondary p-3 rounded-lg relative z-10 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="btn-secondary h-12 w-12 !p-0 rounded-xl relative z-10 disabled:opacity-40 disabled:cursor-not-allowed"
                   aria-label="Reset breathing exercise"
                 >
                   <RefreshCw className="h-6 w-6" />
@@ -682,7 +682,7 @@ export default function StressHub() {
                       className={`w-2 h-2 rounded-full transition-all duration-300 ${
                         currentPhase === phase
                           ? `${phaseBgColors[phase]} w-6`
-                          : 'bg-dark-600'
+                          : 'bg-charcoal-200'
                       }`}
                       animate={{
                         scale:
@@ -712,7 +712,7 @@ export default function StressHub() {
             duration: 0.6,
           }}
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4 sm:mb-6">
 
             <h2 className="text-heading-lg font-semibold text-charcoal-900">
               Quick Stress Relief
@@ -731,7 +731,7 @@ export default function StressHub() {
 
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
             {quickTips.map((tip, index) => (
               <motion.div
@@ -752,10 +752,10 @@ export default function StressHub() {
                   delay: index * 0.08,
                   duration: 0.4,
                 }}
-                className="card p-6"
+                className="card p-5 sm:p-6"
               >
 
-                <div className="p-3 bg-primary-500/10 border border-primary-500/20 rounded-lg w-fit mb-4 text-primary-400">
+                <div className="p-3 bg-sage-100 border border-sage-200 rounded-lg w-fit mb-4 text-sage-700">
                   {getTipIcon(tip.icon)}
                 </div>
 
@@ -763,13 +763,13 @@ export default function StressHub() {
                   {tip.title}
                 </h3>
 
-                <p className="text-body-sm text-dark-400 mb-4">
+                <p className="text-body-sm text-charcoal-700 mb-4">
                   {tip.description}
                 </p>
 
                 <button
                   type="button"
-                  className="text-sm font-medium text-primary-400 hover:text-primary-300 flex items-center gap-1 transition-colors"
+                  className="text-sm font-semibold text-sage-700 hover:text-sage-900 flex items-center gap-1 min-h-[44px] transition-colors"
                   onClick={() =>
                     handleQuickTipAction(tip.title)
                   }
@@ -803,7 +803,7 @@ export default function StressHub() {
           }}
         >
 
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4 sm:mb-6">
 
             <h2 className="text-heading-lg font-semibold text-charcoal-900">
               Guided Meditation
@@ -818,7 +818,7 @@ export default function StressHub() {
 
           <div className="card overflow-hidden">
 
-            <div className="aspect-video relative bg-dark-800">
+            <div className="aspect-video relative bg-cream-100">
 
               <iframe
                 ref={meditationIframeRef}
@@ -834,16 +834,16 @@ export default function StressHub() {
 
             </div>
 
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
 
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
                 <div>
                   <h3 className="text-heading-md font-semibold text-charcoal-900">
                     10-Minute Stress Relief Meditation
                   </h3>
 
-                  <p className="text-body-sm text-dark-400 mt-1">
+                  <p className="text-body-sm text-charcoal-700 mt-1">
                     Perfect for a quick mental reset during your day
                   </p>
                 </div>
@@ -883,11 +883,11 @@ export default function StressHub() {
           }}
         >
 
-          <h2 className="text-heading-lg font-semibold text-charcoal-900 mb-6">
+          <h2 className="text-heading-lg font-semibold text-charcoal-900 mb-4 sm:mb-6">
             More Ways to Relax
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
             {[
               {
@@ -895,42 +895,42 @@ export default function StressHub() {
                 title: 'Calming Music',
                 desc: 'Curated playlists for focus and relaxation',
                 color:
-                  'bg-primary-500/15 text-primary-400 border-primary-500/20',
+                  'bg-sage-100 text-sage-700 border-sage-200',
               },
               {
                 icon: Wind,
                 title: 'Nature Sounds',
                 desc: 'Rain, ocean, forest ambience for deep calm',
                 color:
-                  'bg-primary-500/15 text-primary-400 border-primary-500/20',
+                  'bg-sage-100 text-sage-700 border-sage-200',
               },
               {
                 icon: Brain,
                 title: 'Mindfulness',
                 desc: 'Guided sessions for anxiety and stress',
                 color:
-                  'bg-secondary-500/15 text-secondary-400 border-secondary-500/20',
+                  'bg-lavender-100 text-lavender-700 border-lavender-200',
               },
               {
                 icon: Heart,
                 title: 'Body Scan',
                 desc: 'Progressive muscle relaxation techniques',
                 color:
-                  'bg-secondary-500/15 text-secondary-400 border-secondary-500/20',
+                  'bg-lavender-100 text-lavender-700 border-lavender-200',
               },
               {
                 icon: Volume2,
                 title: 'White Noise',
                 desc: 'Focus-enhancing background sounds',
                 color:
-                  'bg-primary-500/15 text-primary-400 border-primary-500/20',
+                  'bg-sage-100 text-sage-700 border-sage-200',
               },
               {
                 icon: Settings,
                 title: 'Custom Timer',
                 desc: 'Build your own breathing routine',
                 color:
-                  'bg-secondary-500/15 text-secondary-400 border-secondary-500/20',
+                  'bg-lavender-100 text-lavender-700 border-lavender-200',
               },
             ].map((item, index) => (
               <motion.div
@@ -964,7 +964,7 @@ export default function StressHub() {
                   {item.title}
                 </h3>
 
-                <p className="text-body-sm text-dark-400">
+                <p className="text-body-sm text-charcoal-700">
                   {item.desc}
                 </p>
 

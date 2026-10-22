@@ -95,7 +95,7 @@ export const balanceTrackerData = {
     { value: "exercise", label: "Exercise" },
     { value: "hobbies", label: "Hobbies" }
   ],
-  colors: ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]
+  colors: ["#437066", "#7d629d", "#c49550", "#ff7b45"]
 };
 
 // Goals Data

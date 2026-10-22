@@ -1,4 +1,4 @@
-import { UserInputs, UserProfile, UserPreferences, MoodType, ActivityLog, WorkLog, JournalEntry, Goal, ScheduleEvent } from '../../types';
+import { UserInputs, UserProfile, UserPreferences, MoodType, ActivityLog, WorkLog, JournalEntry, Goal, ScheduleEvent } from '../types';
 import { format, subDays, startOfWeek, endOfWeek, eachDayOfInterval, parseISO, differenceInHours } from 'date-fns';
 
 export function aggregateUserProfile(

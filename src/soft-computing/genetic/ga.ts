@@ -6,7 +6,7 @@ import {
   UserPreferences,
   OptimizedSchedule,
   ConstraintViolation 
-} from '../../types';
+} from '../types';
 import { calculateFitness, createTemplateChromosome, createRandomChromosome, createCurrentScheduleChromosome, decodeChromosome } from './chromosome';
 import { tournamentSelection, twoPointCrossover, mutate, elitism, blockSwapMutation } from './operators';
 

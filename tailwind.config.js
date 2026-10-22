@@ -130,9 +130,10 @@ export default {
         '3xl': '1.5rem',
       },
       boxShadow: {
-        'card': '0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15)',
-        'card-hover': '0 4px 12px 0 rgba(0, 0, 0, 0.2), 0 12px 24px -4px rgba(0, 0, 0, 0.15)',
-        'subtle': '0 1px 2px 0 rgba(0, 0, 0, 0.3)',
+        'card': '0 1px 2px 0 rgba(65, 58, 49, 0.06), 0 1px 3px 1px rgba(65, 58, 49, 0.04)',
+        'card-hover': '0 4px 12px 0 rgba(65, 58, 49, 0.08), 0 8px 20px -4px rgba(65, 58, 49, 0.08)',
+        'elevated': '0 8px 24px -6px rgba(65, 58, 49, 0.14), 0 2px 6px 0 rgba(65, 58, 49, 0.06)',
+        'subtle': '0 1px 2px 0 rgba(65, 58, 49, 0.08)',
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',

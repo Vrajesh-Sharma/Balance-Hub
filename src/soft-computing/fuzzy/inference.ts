@@ -1,4 +1,4 @@
-import { UserInputs, FuzzyOutput, FiredRule } from '../../types';
+import { UserInputs, FuzzyOutput, FiredRule } from '../types';
 import { fuzzyRules, getFiredRules } from './rules';
 import { outputBalance, outputStress, centroidDefuzzify, evaluateMF } from './membership';
 

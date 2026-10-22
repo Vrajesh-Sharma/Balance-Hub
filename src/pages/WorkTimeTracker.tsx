@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, AlertCircle, Timer, Target, Pencil, Trash2 } from 'lucide-react';
+import { Clock, Timer, Target, Pencil, Trash2 } from 'lucide-react';
 import { format, differenceInHours, differenceInMinutes, startOfWeek, endOfWeek } from 'date-fns';
 
 interface TimeLog {
@@ -100,62 +100,72 @@ const WorkTimeTracker: React.FC = () => {
     analyzeProgress();
   };
 
+  React.useEffect(() => {
+    if (!showGoalModal) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowGoalModal(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [showGoalModal]);
+
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="page">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Timer className="h-10 w-10 text-sage-400" />
-            <div>
-              <h1 className="text-3xl font-bold">Work Time Tracker</h1>
-              <p className="text-charcoal-400">Track your weekly work hours goal</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 lg:mb-8">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+            <Timer className="h-8 w-8 sm:h-10 sm:w-10 text-sage-700 shrink-0" aria-hidden="true" />
+            <div className="min-w-0">
+              <h1 className="page-title">Work Time Tracker</h1>
+              <p className="page-subtitle">Track your weekly work hours goal</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-4 py-2 bg-cream-50 rounded-lg">
-              <Target className="h-5 w-5 text-sage-400" />
+            <div className="flex items-center gap-2 px-4 min-h-[44px] bg-white border border-border rounded-xl text-charcoal-900">
+              <Target className="h-5 w-5 text-sage-700" aria-hidden="true" />
               <span>Goal: {weeklyGoal} hrs/week</span>
             </div>
             <button
+              type="button"
               onClick={() => setShowGoalModal(true)}
-              className="p-2 hover:bg-cream-50 rounded-lg transition-colors"
+              className="inline-flex h-11 w-11 items-center justify-center hover:bg-charcoal-100 rounded-xl transition-colors"
               title="Edit Goal"
+              aria-label="Edit weekly goal"
             >
-              <Pencil className="h-5 w-5 text-sage-400" />
+              <Pencil className="h-5 w-5 text-sage-700" aria-hidden="true" />
             </button>
           </div>
         </div>
 
         {/* Time Log Form */}
-        <div className="bg-cream-50 rounded-xl shadow-xl p-6 mb-8">
-          <form onSubmit={handleLogTime} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="card p-4 sm:p-6 mb-6">
+          <form onSubmit={handleLogTime} className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium mb-2">Punch In Time</label>
+              <label htmlFor="punch-in" className="label">Punch In Time</label>
               <input
+                id="punch-in"
                 type="time"
                 value={punchIn}
                 onChange={(e) => setPunchIn(e.target.value)}
-                className="w-full bg-cream-100 rounded-lg p-2 focus:ring-2 focus:ring-cyan-400"
+                className="input"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Punch Out Time</label>
+              <label htmlFor="punch-out" className="label">Punch Out Time</label>
               <input
+                id="punch-out"
                 type="time"
                 value={punchOut}
                 onChange={(e) => setPunchOut(e.target.value)}
-                className="w-full bg-cream-100 rounded-lg p-2 focus:ring-2 focus:ring-cyan-400"
+                className="input"
                 required
               />
             </div>
-            <div className="md:col-span-2">
-              <button
-                type="submit"
-                className="w-full bg-sage-500 hover:bg-cyan-600 text-charcoal-900 py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
-              >
-                <Clock className="h-5 w-5" />
+            <div className="sm:col-span-2">
+              <button type="submit" className="btn-primary w-full">
+                <Clock className="h-5 w-5" aria-hidden="true" />
                 Log Time
               </button>
             </div>
@@ -164,49 +174,54 @@ const WorkTimeTracker: React.FC = () => {
 
         {/* Progress Message */}
         {message && (
-          <div className={`mb-8 p-4 rounded-lg text-center font-medium ${
-            messageType === 'success' 
-              ? 'bg-green-900/50 text-emerald-400 border border-green-400'
-              : messageType === 'warning'
-                ? 'bg-yellow-900/50 text-honey-400 border border-yellow-400'
-                : 'bg-red-900/50 text-coral-400 border border-red-400'
-          }`}>
+          <div
+            role="status"
+            className={`mb-6 p-4 rounded-xl text-center font-medium border ${
+              messageType === 'success'
+                ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                : messageType === 'warning'
+                  ? 'bg-honey-50 text-amber-800 border-honey-300'
+                  : 'bg-coral-50 text-coral-800 border-coral-200'
+            }`}
+          >
             {message}
           </div>
         )}
 
         {/* Time Logs */}
-        <div className="bg-cream-50 rounded-xl shadow-xl p-6">
-          <h2 className="text-xl font-semibold mb-4">Time Logs</h2>
-          <div className="space-y-4">
+        <div className="card p-4 sm:p-6">
+          <h2 className="text-heading-md font-semibold text-charcoal-900 mb-4">Time Logs</h2>
+          <div className="space-y-3">
             {timeLogs.map((log) => (
               <div
                 key={log.id}
-                className="flex items-center justify-between p-4 bg-cream-100 rounded-lg group"
+                className="flex items-center justify-between gap-3 p-4 bg-cream-100 border border-border rounded-xl"
               >
-                <div className="flex items-center gap-4">
-                  <Clock className="h-5 w-5 text-sage-400" />
-                  <div>
-                    <p className="font-medium">{format(new Date(log.date), 'MMM dd, yyyy')}</p>
-                    <p className="text-sm text-charcoal-400">
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                  <Clock className="h-5 w-5 text-sage-700 shrink-0" aria-hidden="true" />
+                  <div className="min-w-0">
+                    <p className="font-medium text-charcoal-900">{format(new Date(log.date), 'MMM dd, yyyy')}</p>
+                    <p className="text-sm text-charcoal-700">
                       {log.punchIn} - {log.punchOut}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <p className="font-medium">{log.duration.toFixed(1)} hrs</p>
+                <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                  <p className="font-semibold text-charcoal-900">{log.duration.toFixed(1)} hrs</p>
                   <button
+                    type="button"
                     onClick={() => handleDeleteLog(log.id)}
-                    className="p-2 text-charcoal-400 hover:text-coral-400 hover:bg-cream-100 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+                    className="inline-flex h-10 w-10 items-center justify-center text-charcoal-700 hover:text-coral-700 hover:bg-coral-100 rounded-lg transition-colors"
                     title="Delete Log"
+                    aria-label={`Delete log for ${format(new Date(log.date), 'MMM dd, yyyy')}`}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" aria-hidden="true" />
                   </button>
                 </div>
               </div>
             ))}
             {timeLogs.length === 0 && (
-              <div className="text-center text-charcoal-400 py-4">
+              <div className="text-center text-charcoal-700 py-4">
                 No time logs yet. Start by logging your work hours!
               </div>
             )}
@@ -216,42 +231,42 @@ const WorkTimeTracker: React.FC = () => {
 
       {/* Weekly Goal Modal */}
       {showGoalModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div className="modal-overlay" onClick={() => setShowGoalModal(false)}>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-cream-50 p-6 rounded-xl w-full max-w-md"
+            className="modal-content max-w-md p-5 sm:p-6"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="goal-modal-title"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">
-                {weeklyGoal === 0 ? 'Set' : 'Update'} Weekly Work Hours Goal
-              </h2>
-            </div>
+            <h2 id="goal-modal-title" className="text-heading-md font-bold text-charcoal-900 mb-4">
+              {weeklyGoal === 0 ? 'Set' : 'Update'} Weekly Work Hours Goal
+            </h2>
             <form onSubmit={handleSetGoal}>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Weekly Hours Goal</label>
+                <label htmlFor="weekly-goal" className="label">Weekly Hours Goal</label>
                 <input
+                  id="weekly-goal"
                   type="number"
                   value={weeklyGoal}
                   onChange={(e) => setWeeklyGoal(Number(e.target.value))}
-                  className="w-full bg-cream-100 rounded-lg p-2 focus:ring-2 focus:ring-cyan-400"
+                  className="input"
                   min="1"
                   max="168"
                   required
                 />
               </div>
-              <div className="flex justify-end gap-4">
+              <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowGoalModal(false)}
-                  className="px-4 py-2 text-charcoal-400 hover:text-charcoal-900 transition-colors"
+                  className="btn-secondary"
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="bg-sage-500 hover:bg-cyan-600 text-charcoal-900 px-4 py-2 rounded-lg transition-colors"
-                >
+                <button type="submit" className="btn-primary">
                   {weeklyGoal === 0 ? 'Set' : 'Update'} Goal
                 </button>
               </div>
@@ -263,4 +278,5 @@ const WorkTimeTracker: React.FC = () => {
   );
 };
 
-export default WorkTimeTracker; 
+
+export default WorkTimeTracker;

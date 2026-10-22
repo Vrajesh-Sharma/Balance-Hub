@@ -1,4 +1,4 @@
-import { UserInputs, FuzzyRule } from '../../types';
+import { UserInputs, FuzzyRule } from '../types';
 import { fuzzyVariables, outputBalance, outputStress, evaluateMF } from './membership';
 
 function min(...values: number[]): number {

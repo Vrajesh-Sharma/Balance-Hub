@@ -1,4 +1,4 @@
-import { UserInputs, UserPreferences } from '../../types';
+import { UserInputs, UserPreferences } from '../types';
 
 export interface DatasetEntry {
   inputs: UserInputs;

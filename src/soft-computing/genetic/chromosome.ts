@@ -8,7 +8,7 @@ import {
   FitnessWeights,
   UserPreferences,
   FiredRule 
-} from '../../types';
+} from '../types';
 import { evaluateFuzzy } from '../fuzzy';
 
 const SLOTS_PER_DAY = 48;
@@ -134,14 +134,22 @@ function isFixedMeeting(hour: number, meetings: Array<{start: number, end: numbe
 
 export function decodeChromosome(chromosome: Chromosome): ScheduleSlot[] {
   const slots: ScheduleSlot[] = [];
-  let currentActivity = chromosome.genes[0];
+
+  if (chromosome.genes.length === 0) {
+    return slots;
+  }
+
+  let currentActivity: ActivityType = chromosome.genes[0];
   let startSlot = 0;
-  
+
   for (let i = 1; i <= SLOTS_PER_DAY; i++) {
-    const activity = i < SLOTS_PER_DAY ? chromosome.genes[i] : null;
+    const activity: ActivityType | null =
+      i < SLOTS_PER_DAY ? chromosome.genes[i] : null;
+
     if (activity !== currentActivity || i === SLOTS_PER_DAY) {
       const start = startSlot * 0.5;
       const end = i * 0.5;
+
       if (end > start) {
         slots.push({
           start,
@@ -150,13 +158,14 @@ export function decodeChromosome(chromosome: Chromosome): ScheduleSlot[] {
           isFixed: currentActivity === 'meeting',
         });
       }
-      if (i < SLOTS_PER_DAY) {
+
+      if (i < SLOTS_PER_DAY && activity !== null) {
         currentActivity = activity;
         startSlot = i;
       }
     }
   }
-  
+
   return slots;
 }
 
